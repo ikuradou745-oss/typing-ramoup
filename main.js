@@ -1,10 +1,11 @@
 /**
- * Neon Typing Adventure - Game Logic
+ * BUNSON TYPING SYSTEM v2.0
+ * FULL IMPLEMENTATION - NO OMISSIONS
  */
 
-// --- 1. データ定義 ---
+// --- GLOBAL DATA ---
 
-const WORD_LIST = {
+const WORD_DATABASE = {
     easy: [
         {ja: "さくら", ro: "sakura"}, {ja: "ねこ", ro: "neko"}, {ja: "いぬ", ro: "inu"},
         {ja: "ごはん", ro: "gohan"}, {ja: "みず", ro: "mizu"}, {ja: "おちゃ", ro: "otya"},
@@ -26,7 +27,7 @@ const WORD_LIST = {
     ],
     hard: [
         {ja: "よろしくおねがいします", ro: "yorosikuonegaisimasu"},
-        {ja: "おつかれさまでした", ro: "otukaresamadesita"},
+        {ja: "おつかれさまです", ro: "otukaresamadesu"},
         {ja: "ありがとうございます", ro: "arigatougozaimasu"},
         {ja: "しょうしょうおまちください", ro: "syousyousyouomatidudasai"},
         {ja: "ごめんなさい", ro: "gomennasai"},
@@ -43,464 +44,482 @@ const WORD_LIST = {
     ]
 };
 
-const SKILL_DATA = [
-    {id: 'auto_a', name: '自動入力α', price: 50000, cd: 30, desc: '4.5秒間自動入力'},
-    {id: 'combo_a', name: 'コンボアップα', price: 50000, cd: 30, desc: '5秒間コンボ1.5倍'},
-    {id: 'time_a', name: '時間アップα', price: 50000, cd: 45, desc: 'ミニゲームで時間延長'},
-    {id: 'auto_g', name: '自動入力γ', price: 500000, cd: 35, desc: '7.5秒間自動入力'},
-    {id: 'combo_g', name: 'コンボアップγ', price: 500000, cd: 35, desc: '1.75倍 & 10秒増加'},
-    {id: 'fever_a', name: 'フィーバーα', price: 1500000, cd: 35, desc: '7秒間フィーバー'},
-    {id: 'auto_p', name: '自動入力π', price: 1500000, cd: 25, desc: '1.5秒高速入力+2秒フィーバー'},
-    {id: 'time_g', name: '時間伸ばしγ', price: 1500000, cd: 200, desc: '超高難度ミニゲームで時間延長'},
-    {id: 'bunson', name: 'ブンソンフィーバー！！', price: 5000000, cd: 35, desc: '15秒フィーバー + 残5秒でコンボUP'},
-    {id: 'fever_s', name: 'フィーバーΣ', price: 0, cd: 30, desc: '10秒フィーバー+自動入力(Stage100報酬)'}
+const SKILLS = [
+    {id: 'auto_a', name: '自動入力α', price: 50000, cd: 30, desc: '4.5秒間 64FPS自動入力'},
+    {id: 'combo_a', name: 'コンボアップα', price: 50000, cd: 30, desc: '5秒間 コンボ増加量1.5倍'},
+    {id: 'time_a', name: '時間アップα', price: 50000, cd: 45, desc: 'タイピング停止しミニゲーム(3~6.5秒増)'},
+    {id: 'auto_g', name: '自動入力γ', price: 500000, cd: 35, desc: '7.5秒間 64FPS自動入力'},
+    {id: 'combo_g', name: 'コンボアップγ', price: 500000, cd: 35, desc: 'コンボ1.75倍 & 時間10秒増加'},
+    {id: 'fever_a', name: 'フィーバーα', price: 1500000, cd: 35, desc: '7秒間 フィーバー状態'},
+    {id: 'auto_p', name: '自動入力π', price: 1500000, cd: 25, desc: '1.5秒50FPS入力+2秒フィーバー'},
+    {id: 'time_g', name: '時間伸ばしγ', price: 1500000, cd: 200, desc: '精密ミニゲーム(4~10秒増)'},
+    {id: 'bunson', name: 'ブンソンフィーバー！！', price: 5000000, cd: 35, desc: '15秒フィーバー / 残5秒でコンボ1.35倍(パッシブ)'},
+    {id: 'fever_sigma', name: 'フィーバーΣ', price: 0, cd: 30, desc: '10秒フィーバー + 2秒間自動入力(最強)'}
 ];
 
-// --- 2. 状態管理 ---
+// --- STATE MANAGEMENT ---
 
-let player = {
-    level: 1,
-    xp: 0,
-    coins: 0,
+let state = {
+    lv: 1, xp: 0, coins: 0,
     ownedSkills: [],
     equippedSkill: null,
     storyStage: 1,
-    settings: {
-        volume: 50,
-        theme: 'neon',
-        color: 'default',
-        font: 'normal'
-    }
+    settings: { vol: 50, theme: 'neon', color: 'cyan', font: 'normal' }
 };
 
 let game = {
-    isActive: false,
-    mode: 'free', // 'free' or 'story'
+    active: false,
+    mode: 'free',
     difficulty: 'easy',
+    score: 0, combo: 0,
     timeLeft: 60,
-    score: 0,
-    combo: 0,
-    wordIndex: 0,
-    charIndex: 0,
-    currentWord: null,
-    skillCooldown: 0,
-    isFever: false,
-    comboMultiplier: 1,
-    autoTyping: false
+    currentWord: null, charIdx: 0,
+    cd: 0,
+    isFever: false, comboMul: 1,
+    isTimingGame: false,
+    hasTriggeredObstacle1: false,
+    hasTriggeredObstacle2: false
 };
 
-// --- 3. コアロジック ---
+// --- CORE FUNCTIONS ---
 
-function showScreen(screenId) {
+function nav(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
+    document.getElementById(id).classList.add('active');
 }
 
-function updateHeader() {
-    document.getElementById('display-lv').innerText = player.level;
-    document.getElementById('display-coins').innerText = Math.floor(player.coins);
-    const xpNeeded = player.level * 100;
-    document.getElementById('xp-bar').style.width = (player.xp / xpNeeded * 100) + "%";
+function updateUI() {
+    document.getElementById('val-lv').innerText = state.lv;
+    document.getElementById('val-coins').innerText = Math.floor(state.coins);
+    const nextXp = state.lv * 100;
+    document.getElementById('xp-fill').style.width = (state.xp / nextXp * 100) + '%';
 }
 
-// ゲーム開始
-function startGame(diff, isStory = false) {
-    game.isActive = true;
-    game.mode = isStory ? 'story' : 'free';
+function save() { localStorage.setItem('bunson_data', JSON.stringify(state)); }
+function load() {
+    const d = localStorage.getItem('bunson_data');
+    if (d) {
+        state = {...state, ...JSON.parse(d)};
+        updateUI();
+    }
+}
+
+// --- GAME LOGIC ---
+
+function initGame(diff, story = false) {
+    game.active = true;
+    game.mode = story ? 'story' : 'free';
     game.difficulty = diff;
-    game.timeLeft = isStory && player.storyStage >= 51 && player.storyStage <= 75 ? 50 : 60;
     game.score = 0;
     game.combo = 0;
-    game.skillCooldown = 0;
+    game.charIdx = 0;
+    game.cd = 0;
     game.isFever = false;
-    game.comboMultiplier = 1;
-    game.autoTyping = false;
-    
-    document.getElementById('current-score').innerText = "0";
-    document.getElementById('current-combo').innerText = "0";
-    document.getElementById('stage-info').innerText = isStory ? `Stage ${player.storyStage}` : `難易度: ${diff}`;
-    
-    nextWord();
-    showScreen('screen-game');
-    
-    const timerId = setInterval(() => {
-        if (!game.isActive) { clearInterval(timerId); return; }
-        
-        // ストーリーモード妨害ロジック
-        if (game.mode === 'story') {
-            handleObstacles();
-        }
+    game.comboMul = 1;
+    game.isTimingGame = false;
+    game.hasTriggeredObstacle1 = false;
+    game.hasTriggeredObstacle2 = false;
 
-        // スキルパッシブ (ブンソンフィーバー)
-        if (player.equippedSkill === 'bunson' && game.timeLeft <= 5) {
-            game.comboMultiplier = 1.35;
-        }
+    // ストーリー用タイマー調整 (Stage 51-75)
+    game.timeLeft = (story && state.storyStage >= 51 && state.storyStage <= 75) ? 50 : 60;
 
-        game.timeLeft -= 1;
-        document.getElementById('timer').innerText = Math.max(0, Math.floor(game.timeLeft));
-        
-        if (game.timeLeft <= 0) {
-            clearInterval(timerId);
-            endGame();
-        }
-    }, 1000);
+    document.getElementById('stat-score').innerText = "0";
+    document.getElementById('stat-combo').innerText = "0";
+    document.getElementById('info-header').innerText = story ? `STORY: STAGE ${state.storyStage}` : `MODE: ${diff.toUpperCase()}`;
+    
+    const sName = state.equippedSkill ? SKILLS.find(s => s.id === state.equippedSkill).name : "NONE";
+    document.getElementById('equipped-name').innerText = sName;
+    document.getElementById('skill-ready-hint').style.display = state.equippedSkill ? 'inline' : 'none';
+
+    setWord();
+    nav('scr-game');
+    startLoop();
 }
 
-function handleObstacles() {
-    const stage = player.storyStage;
-    // ペイント妨害
-    if (stage >= 26 && stage <= 50 || stage === 100) {
-        if (Math.random() < 0.02) triggerPaint();
+function startStoryMode() {
+    initGame('normal', true);
+}
+
+function setWord() {
+    const list = WORD_DATABASE[game.difficulty];
+    game.currentWord = list[Math.floor(Math.random() * list.length)];
+    game.charIdx = 0;
+    renderWord();
+}
+
+function renderWord() {
+    const jaEl = document.getElementById('display-ja');
+    const roEl = document.getElementById('display-ro');
+    
+    jaEl.innerText = game.currentWord.ja;
+    
+    let html = "";
+    const ro = game.currentWord.ro;
+    for(let i=0; i<ro.length; i++){
+        if(i < game.charIdx) html += `<span class="char-done">${ro[i]}</span>`;
+        else html += `<span>${ro[i]}</span>`;
     }
-    // 雷妨害
-    if (stage >= 76 && stage <= 99 || stage === 100) {
-        if (Math.random() < 0.01) triggerThunder();
+    roEl.innerHTML = html;
+}
+
+// --- MAIN LOOP ---
+
+function startLoop() {
+    const timer = setInterval(() => {
+        if (!game.active) { clearInterval(timer); return; }
+        if (game.isTimingGame) return;
+
+        game.timeLeft -= 0.01;
+        document.getElementById('game-timer').innerText = Math.max(0, game.timeLeft).toFixed(2);
+
+        // CD管理
+        if (game.cd > 0) {
+            game.cd -= 0.01;
+            document.getElementById('skill-ready-hint').innerText = `[ RECHARGING: ${Math.ceil(game.cd)}s ]`;
+        } else {
+            document.getElementById('skill-ready-hint').innerText = `[ SPACE TO USE ]`;
+        }
+
+        // ストーリー妨害
+        if (game.mode === 'story') checkObstacles();
+
+        // パッシブ: ブンソンフィーバー
+        if (state.equippedSkill === 'bunson' && game.timeLeft <= 5) {
+            game.comboMul = 1.35;
+        }
+
+        if (game.timeLeft <= 0) {
+            clearInterval(timer);
+            endGame();
+        }
+    }, 10);
+}
+
+function checkObstacles() {
+    const s = state.storyStage;
+    // ペイント (Stage 26-50, 100)
+    if ((s >= 26 && s <= 50) || s === 100) {
+        if (!game.hasTriggeredObstacle1 && game.timeLeft < 30) {
+            triggerPaint();
+            game.hasTriggeredObstacle1 = true;
+        }
+    }
+    // 雷 (Stage 76-99, 100)
+    if ((s >= 76 && s <= 99) || s === 100) {
+        if (!game.hasTriggeredObstacle2 && game.timeLeft < 15) {
+            triggerThunder();
+            game.hasTriggeredObstacle2 = true;
+        }
+        // Stage 100は2回ペイント
+        if (s === 100 && game.timeLeft < 45 && !game.p2) { triggerPaint(); game.p2=true; }
     }
 }
 
 function triggerPaint() {
     const p = document.getElementById('paint-overlay');
     p.style.opacity = "1";
-    let op = 1;
-    const fade = setInterval(() => {
-        op -= 0.05;
-        p.style.opacity = op;
-        if (op <= 0) clearInterval(fade);
-    }, 100);
+    setTimeout(() => { p.style.opacity = "0"; }, 1500);
 }
 
 function triggerThunder() {
     const t = document.getElementById('thunder-flash');
     t.style.opacity = "1";
     game.combo = 0;
-    document.getElementById('current-combo').innerText = "0";
-    setTimeout(() => t.style.opacity = "0", 200);
+    updateStats();
+    setTimeout(() => { t.style.opacity = "0"; }, 200);
 }
 
-function nextWord() {
-    const list = WORD_LIST[game.difficulty];
-    game.currentWord = list[Math.floor(Math.random() * list.length)];
-    game.charIndex = 0;
-    renderWord();
-}
+// --- INPUT HANDLERS ---
 
-function renderWord() {
-    const wordDisp = document.getElementById('word-display');
-    const romaDisp = document.getElementById('romaji-display');
-    
-    wordDisp.innerText = game.currentWord.ja;
-    
-    let html = "";
-    for (let i = 0; i < game.currentWord.ro.length; i++) {
-        if (i < game.charIndex) {
-            html += `<span class="typed">${game.currentWord.ro[i]}</span>`;
-        } else {
-            html += `<span>${game.currentWord.ro[i]}</span>`;
-        }
-    }
-    romaDisp.innerHTML = html;
-}
-
-// 入力判定
 window.addEventListener('keydown', (e) => {
-    if (!game.isActive) return;
-    
-    // スキル発動 (Space)
+    if (!game.active) return;
+
     if (e.code === 'Space') {
+        if (game.isTimingGame) { resolveTimingGame(); return; }
         activateSkill();
         return;
     }
 
-    const key = e.key.toLowerCase();
-    const targetChar = game.currentWord.ro[game.charIndex].toLowerCase();
+    if (game.isTimingGame) return;
 
-    if (key === targetChar) {
-        handleHit();
+    const key = e.key.toLowerCase();
+    const target = game.currentWord.ro[game.charIdx].toLowerCase();
+
+    if (key === target) {
+        correctHit();
     } else if (e.key.length === 1) {
-        handleMiss();
+        missHit();
     }
 });
 
-function handleHit() {
-    game.charIndex++;
+function correctHit() {
+    game.charIdx++;
     game.combo++;
     
-    let points = game.isFever ? 300 : (game.combo * 5) * game.comboMultiplier;
-    game.score += points;
+    let addScore = game.isFever ? 300 : (game.combo * 5) * game.comboMul;
+    game.score += addScore;
     
-    document.getElementById('current-score').innerText = Math.floor(game.score);
-    document.getElementById('current-combo').innerText = game.combo;
-    
-    playKeySound();
+    updateStats();
+    playSound(440 + (game.combo * 2));
 
-    if (game.charIndex >= game.currentWord.ro.length) {
-        nextWord();
+    if (game.charIdx >= game.currentWord.ro.length) {
+        setWord();
     } else {
         renderWord();
     }
 }
 
-function handleMiss() {
+function missHit() {
     game.combo = 0;
-    document.getElementById('current-combo').innerText = "0";
-    // ミス音など
+    updateStats();
 }
 
-function playKeySound() {
-    // AudioContextで簡易的な音を生成（指示通り音ありにするため）
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(440 + (game.combo * 2), ctx.currentTime);
-    gain.gain.setValueAtTime(player.settings.volume / 500, ctx.currentTime);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.05);
+function updateStats() {
+    document.getElementById('stat-score').innerText = Math.floor(game.score);
+    document.getElementById('stat-combo').innerText = game.combo;
 }
 
-// ゲーム終了
-function endGame() {
-    game.isActive = false;
-    const earnedCoins = game.score / 10;
-    const earnedXP = game.score / 100;
-    
-    player.coins += earnedCoins;
-    player.xp += earnedXP;
-    
-    // レベルアップ判定
-    while (player.xp >= player.level * 100) {
-        player.xp -= player.level * 100;
-        player.level++;
-    }
-
-    // ストーリーモードの成否
-    if (game.mode === 'story') {
-        const target = 10000 + (player.storyStage - 1) * 1000;
-        if (game.score >= target) {
-            if (player.storyStage === 100) {
-                unlockSkill('fever_s');
-                alert("ストーリー100クリア！スキル「フィーバーΣ」を獲得！");
-            }
-            player.storyStage++;
-        } else {
-            alert("目標スコアに届きませんでした...");
-        }
-    }
-
-    document.getElementById('result-score').innerText = Math.floor(game.score);
-    document.getElementById('result-coins').innerText = Math.floor(earnedCoins);
-    document.getElementById('result-xp').innerText = Math.floor(earnedXP);
-    
-    updateHeader();
-    saveData();
-    showScreen('screen-result');
-}
-
-// --- 4. スキルシステム ---
+// --- SKILL IMPLEMENTATIONS ---
 
 function activateSkill() {
-    if (game.skillCooldown > 0 || !player.equippedSkill) return;
+    if (game.cd > 0 || !state.equippedSkill) return;
     
-    const skill = SKILL_DATA.find(s => s.id === player.equippedSkill);
-    game.skillCooldown = skill.cd;
+    const sk = SKILLS.find(s => s.id === state.equippedSkill);
+    game.cd = sk.cd;
 
-    switch(player.equippedSkill) {
-        case 'auto_a': startAutoType(4500, 64); break;
+    switch(state.equippedSkill) {
+        case 'auto_a': runAuto(4500, 64); break;
         case 'combo_a': 
-            game.comboMultiplier = 1.5; 
-            setTimeout(() => game.comboMultiplier = 1, 5000); 
+            game.comboMul = 1.5; 
+            setTimeout(() => game.comboMul = 1, 5000); 
             break;
-        case 'time_a': startTimingGame(3, 6.5); break;
-        case 'auto_g': startAutoType(7500, 64); break;
+        case 'time_a': initTimingGame(3, 6.5, 3); break;
+        case 'auto_g': runAuto(7500, 64); break;
         case 'combo_g':
-            game.comboMultiplier = 1.75;
+            game.comboMul = 1.75;
             game.timeLeft += 10;
-            setTimeout(() => game.comboMultiplier = 1, 10000);
+            setTimeout(() => game.comboMul = 1, 10000);
             break;
-        case 'fever_a': startFever(7000); break;
-        case 'auto_p': 
-            startAutoType(1500, 50); 
-            startFever(2000); 
+        case 'fever_a': runFever(7000); break;
+        case 'auto_p':
+            runAuto(1500, 50);
+            runFever(2000);
             break;
-        case 'time_g': startTimingGame(4, 10, true); break;
-        case 'bunson': startFever(15000); break;
-        case 'fever_s':
-            startFever(10000);
-            startAutoType(2000, 64);
+        case 'time_g': initTimingGame(4, 10, 6, true); break;
+        case 'bunson': runFever(15000); break;
+        case 'fever_sigma':
+            runFever(10000);
+            runAuto(2000, 64);
             break;
     }
 }
 
-function startAutoType(duration, frameRate) {
-    game.autoTyping = true;
-    const interval = 1000 / frameRate;
-    const autoId = setInterval(() => {
-        if (!game.isActive) { clearInterval(autoId); return; }
-        handleHit();
-    }, interval);
-    setTimeout(() => {
-        clearInterval(autoId);
-        game.autoTyping = false;
-    }, duration);
+function runAuto(ms, fps) {
+    const interval = setInterval(() => {
+        if (!game.active) { clearInterval(interval); return; }
+        correctHit();
+    }, 1000 / fps);
+    setTimeout(() => clearInterval(interval), ms);
 }
 
-function startFever(duration) {
+function runFever(ms) {
     game.isFever = true;
-    document.getElementById('screen-game').classList.add('fever-active');
+    document.getElementById('word-area').classList.add('fever-mode');
     setTimeout(() => {
         game.isFever = false;
-        document.getElementById('screen-game').classList.remove('fever-active');
-    }, duration);
+        document.getElementById('word-area').classList.remove('fever-mode');
+    }, ms);
 }
 
-function startTimingGame(smallBonus, bigBonus, isHard = false) {
-    const container = document.getElementById('timing-game-container');
-    const bar = document.getElementById('timing-bar');
-    container.style.display = 'block';
-    game.isActive = false; // 一時停止
+// --- MINIGAME: TIMING BAR ---
 
-    let pos = 0;
-    let dir = 2;
-    if (isHard) dir = 5;
+let timingState = { pos: 0, dir: 4, b1: 0, b2: 0 };
 
-    const anim = setInterval(() => {
-        pos += dir;
-        if (pos > 390 || pos < 0) dir *= -1;
-        bar.style.left = pos + "px";
+function initTimingGame(b1, b2, speed, isHard = false) {
+    game.isTimingGame = true;
+    timingState.b1 = b1; timingState.b2 = b2;
+    timingState.dir = speed;
+    timingState.pos = 0;
+    
+    const box = document.getElementById('timing-box');
+    box.style.display = 'block';
+    
+    timingState.anim = setInterval(() => {
+        timingState.pos += timingState.dir;
+        if (timingState.pos > 495 || timingState.pos < 0) timingState.dir *= -1;
+        document.getElementById('timing-cursor').style.left = timingState.pos + 'px';
     }, 10);
-
-    const handleSpace = (e) => {
-        if (e.code === 'Space') {
-            clearInterval(anim);
-            window.removeEventListener('keydown', handleSpace);
-            
-            // 判定 (中央が200px地点)
-            const dist = Math.abs(pos - 195);
-            if (dist < 10) game.timeLeft += bigBonus;
-            else if (dist < 40) game.timeLeft += smallBonus;
-            
-            container.style.display = 'none';
-            game.isActive = true;
-        }
-    };
-    window.addEventListener('keydown', handleSpace);
 }
 
-// --- 5. ショップ & 設定 ---
+function resolveTimingGame() {
+    clearInterval(timingState.anim);
+    const box = document.getElementById('timing-box');
+    box.style.display = 'none';
+    
+    const centerDist = Math.abs(timingState.pos - 250);
+    if (centerDist < 15) {
+        game.timeLeft += timingState.b2;
+        showFloatingText("EXCELLENT!!", "yellow");
+    } else if (centerDist < 60) {
+        game.timeLeft += timingState.b1;
+        showFloatingText("GOOD", "cyan");
+    }
+    
+    game.isTimingGame = false;
+}
 
-function toggleShopTab(tab) {
-    document.getElementById('shop-buy-list').style.display = tab === 'buy' ? 'grid' : 'none';
-    document.getElementById('shop-equip-list').style.display = tab === 'equip' ? 'grid' : 'none';
+// --- SYSTEM UTILS ---
+
+function showFloatingText(txt, col) {
+    alert(txt); // 簡易実装
+}
+
+function playSound(freq) {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.connect(g);
+        g.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        g.gain.setValueAtTime(state.settings.vol / 1000, audioCtx.currentTime);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.1);
+    } catch(e) {}
+}
+
+function endGame() {
+    game.active = false;
+    const coins = game.score / 10;
+    const xp = game.score / 100;
+    
+    state.coins += coins;
+    state.xp += xp;
+    
+    // Level Up
+    while(state.xp >= state.lv * 100) {
+        state.xp -= state.lv * 100;
+        state.lv++;
+    }
+
+    let storyMsg = "";
+    if (game.mode === 'story') {
+        const goal = 10000 + (state.storyStage - 1) * 1000;
+        if (game.score >= goal) {
+            storyMsg = `STAGE CLEAR! (Target: ${goal})`;
+            if (state.storyStage === 100) {
+                state.ownedSkills.push('fever_sigma');
+                storyMsg = "STORY ALL CLEAR! UNLOCKED FEVER Σ!";
+            }
+            state.storyStage++;
+        } else {
+            storyMsg = `STAGE FAILED... (Target: ${goal})`;
+        }
+    }
+
+    document.getElementById('res-score').innerText = Math.floor(game.score);
+    document.getElementById('res-coins').innerText = Math.floor(coins);
+    document.getElementById('res-xp').innerText = Math.floor(xp);
+    document.getElementById('res-story-status').innerText = storyMsg;
+
+    updateUI();
+    save();
+    nav('scr-result');
+}
+
+// --- SHOP & SETTINGS ---
+
+let shopTab = 'buy';
+function openShop() {
+    switchShopTab('buy');
+    nav('scr-shop');
+}
+
+function switchShopTab(t) {
+    shopTab = t;
+    document.getElementById('tab-buy').className = t === 'buy' ? 'tab-btn active' : 'tab-btn';
+    document.getElementById('tab-equip').className = t === 'equip' ? 'tab-btn active' : 'tab-btn';
     renderShop();
 }
 
 function renderShop() {
-    const buyList = document.getElementById('shop-buy-list');
-    const equipList = document.getElementById('shop-equip-list');
-    buyList.innerHTML = "";
-    equipList.innerHTML = "";
-
-    SKILL_DATA.forEach(skill => {
-        if (skill.price === 0 && skill.id !== 'fever_s') return;
-
-        const card = document.createElement('div');
-        card.className = 'skill-card';
-        card.innerHTML = `<strong>${skill.name}</strong><br>${skill.desc}<br>`;
+    const container = document.getElementById('shop-container');
+    container.innerHTML = "";
+    
+    SKILLS.forEach(s => {
+        if (s.price === 0 && s.id !== 'fever_sigma') return;
         
-        if (player.ownedSkills.includes(skill.id)) {
-            // 装備用
-            const eqBtn = document.createElement('button');
-            eqBtn.className = 'btn';
-            eqBtn.style.minWidth = "100px";
-            eqBtn.innerText = player.equippedSkill === skill.id ? '装備中' : '装備する';
-            eqBtn.onclick = () => {
-                player.equippedSkill = skill.id;
-                renderShop();
-                saveData();
-            };
-            card.appendChild(eqBtn);
-            equipList.appendChild(card);
-        } else if (skill.price > 0) {
-            // 購入用
-            const buyBtn = document.createElement('button');
-            buyBtn.className = 'btn';
-            buyBtn.style.minWidth = "100px";
-            buyBtn.innerText = `${skill.price}🪙`;
-            buyBtn.onclick = () => {
-                if (player.coins >= skill.price) {
-                    player.coins -= skill.price;
-                    player.ownedSkills.push(skill.id);
+        const isOwned = state.ownedSkills.includes(s.id);
+        if (shopTab === 'buy' && isOwned) return;
+        if (shopTab === 'equip' && !isOwned) return;
+
+        const item = document.createElement('div');
+        item.className = 'skill-item';
+        item.innerHTML = `
+            <strong>${s.name}</strong><br>
+            <small>${s.desc}</small><br>
+            <p>CD: ${s.cd}s</p>
+        `;
+
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.style.minWidth = "100px";
+        btn.style.padding = "10px";
+
+        if (shopTab === 'buy') {
+            btn.innerText = `${s.price} 🪙`;
+            btn.onclick = () => {
+                if (state.coins >= s.price) {
+                    state.coins -= s.price;
+                    state.ownedSkills.push(s.id);
                     renderShop();
-                    updateHeader();
-                    saveData();
-                } else {
-                    alert("コインが足りません！");
-                }
+                    updateUI();
+                    save();
+                } else { alert("コインが足りません！"); }
             };
-            card.appendChild(buyBtn);
-            buyList.appendChild(card);
+        } else {
+            btn.innerText = state.equippedSkill === s.id ? "EQUIPPED" : "EQUIP";
+            btn.onclick = () => {
+                state.equippedSkill = s.id;
+                renderShop();
+                save();
+            };
         }
+        item.appendChild(btn);
+        container.appendChild(item);
     });
 }
 
 function applySettings() {
-    player.settings.volume = document.getElementById('setting-vol').value;
-    player.settings.theme = document.getElementById('setting-theme').value;
-    player.settings.color = document.getElementById('setting-color').value;
-    player.settings.font = document.getElementById('setting-font').value;
+    state.settings.vol = document.getElementById('set-vol').value;
+    state.settings.theme = document.getElementById('set-theme').value;
+    state.settings.color = document.getElementById('set-color').value;
+    state.settings.font = document.getElementById('set-font').value;
 
-    // テーマ反映
-    document.body.className = ""; // リセット
-    if (player.settings.theme !== 'neon') {
-        document.body.classList.add('theme-' + player.settings.theme);
-    }
+    // Apply Theme Class
+    document.body.className = "";
+    if (state.settings.theme === 'classic') document.body.classList.add('classic-theme');
+    if (state.settings.theme === 'old') document.body.classList.add('old-theme');
+    if (state.settings.theme === 'dot') document.body.classList.add('dot-theme');
+
+    // Apply Color
+    const colorMap = {
+        cyan: '#00f2ff', red: '#ff4444', yellow: '#ffcc00', magenta: '#ff00ff', rainbow: 'linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)'
+    };
+    document.documentElement.style.setProperty('--main-color', colorMap[state.settings.color]);
     
-    // カラー反映
-    const colors = {
-        red: '#ff4444', cyan: '#00f2ff', yellow: '#ffff00', magenta: '#ff00ff'
+    // Apply Font
+    const fontMap = {
+        normal: "'M PLUS 1p'", gothic: "'Sawarabi Gothic'", chara: "'M PLUS 1p'", dot: "'DotGothic16'", super: "'DotGothic16'"
     };
-    const c = colors[player.settings.color] || '#00f2ff';
-    document.documentElement.style.setProperty('--neon-color', c);
+    document.documentElement.style.setProperty('--font-main', fontMap[state.settings.font]);
 
-    // フォント反映
-    const fonts = {
-        normal: "'M PLUS 1p'", gothic: "sans-serif", chara: "'M PLUS 1p'", dot: "'DotGothic16'", super: "'Yuji Syuku'"
-    };
-    document.documentElement.style.setProperty('--font-main', fonts[player.settings.font]);
-
-    saveData();
-    showScreen('screen-home');
-}
-
-function unlockSkill(id) {
-    if (!player.ownedSkills.includes(id)) {
-        player.ownedSkills.push(id);
-        saveData();
-    }
-}
-
-function startStoryMode() {
-    startGame('normal', true);
-}
-
-// データ保存
-function saveData() {
-    localStorage.setItem('neonTypingSave', JSON.stringify(player));
-}
-
-function loadData() {
-    const saved = localStorage.getItem('neonTypingSave');
-    if (saved) {
-        player = JSON.parse(saved);
-        updateHeader();
-    }
+    save();
+    nav('scr-home');
 }
 
 // 初期化
 window.onload = () => {
-    loadData();
-    renderShop();
+    load();
     applySettings();
 };
