@@ -1,1 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Typing Adventure</title>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&family=DotGothic16&family=Yuji+Syuku&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-color: #00f2ff;
+            --bg-color: #050505;
+            --font-main: 'M PLUS 1p', sans-serif;
+            --main-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color);
+        }
 
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: #fff;
+            font-family: var(--font-main);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* ヘッダー情報 (レベル・コイン) */
+        #header-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+            z-index: 100;
+        }
+
+        .info-item {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            text-shadow: var(--main-shadow);
+        }
+
+        #xp-bar-container {
+            width: 200px;
+            height: 10px;
+            border: 1px solid var(--neon-color);
+            box-shadow: var(--main-shadow);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        #xp-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--neon-color);
+            transition: width 0.3s;
+        }
+
+        /* 画面共通設定 */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100vw;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        h1 {
+            font-size: 4rem;
+            text-shadow: var(--main-shadow);
+            margin-bottom: 50px;
+        }
+
+        /* ボタンデザイン */
+        .btn {
+            background: transparent;
+            border: 2px solid var(--neon-color);
+            color: var(--neon-color);
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 50px;
+            text-shadow: var(--main-shadow);
+            box-shadow: inset 0 0 5px var(--neon-color), var(--main-shadow);
+            transition: 0.3s;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: var(--neon-color);
+            color: #000;
+        }
+
+        /* ゲーム画面用 */
+        #game-area {
+            text-align: center;
+        }
+
+        #word-display {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: var(--main-shadow);
+        }
+
+        #romaji-display {
+            font-size: 2rem;
+            letter-spacing: 5px;
+            color: #888;
+        }
+
+        .typed { color: var(--neon-color); text-shadow: var(--main-shadow); }
+
+        #stats-display {
+            display: flex;
+            gap: 50px;
+            margin-top: 30px;
+            font-size: 1.5rem;
+        }
+
+        /* 妨害演出 */
+        #paint-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #ff00ff 20%, transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 200;
+        }
+
+        #thunder-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 200;
+        }
+
+        /* スキルショップ */
+        .shop-tabs { display: flex; gap: 20px; margin-bottom: 20px; }
+        .shop-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .skill-card {
+            border: 1px solid var(--neon-color);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        /* レインボー演出 (フィーバー) */
+        @keyframes rainbow {
+            0% { color: red; text-shadow: 0 0 10px red; }
+            20% { color: yellow; text-shadow: 0 0 10px yellow; }
+            40% { color: green; text-shadow: 0 0 10px green; }
+            60% { color: cyan; text-shadow: 0 0 10px cyan; }
+            80% { color: blue; text-shadow: 0 0 10px blue; }
+            100% { color: magenta; text-shadow: 0 0 10px magenta; }
+        }
+        .fever-active {
+            animation: rainbow 0.5s linear infinite;
+        }
+
+        /* タイミングゲーム用バー */
+        #timing-game-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 60px;
+            border: 2px solid #fff;
+            background: #222;
+            z-index: 1000;
+        }
+        #timing-bar {
+            position: absolute;
+            left: 0;
+            width: 10px;
+            height: 100%;
+            background: var(--neon-color);
+        }
+        .target-zone { position: absolute; height: 100%; background: rgba(0, 255, 0, 0.3); }
+        .center-zone { position: absolute; height: 100%; background: rgba(0, 255, 0, 0.7); }
+
+        /* デザインテーマ適用用クラス */
+        .theme-classic { --neon-color: #ffd700; border-radius: 0 !important; }
+        .theme-dot { font-family: 'DotGothic16', sans-serif !important; }
+        .theme-old { --bg-color: #1a1a1a; --neon-color: #555; filter: grayscale(1); }
+    </style>
+</head>
+<body>
+
+    <div id="header-info">
+        <div class="info-item">Lv: <span id="display-lv">1</span></div>
+        <div id="xp-bar-container"><div id="xp-bar"></div></div>
+        <div class="info-item">🪙 <span id="display-coins">0</span></div>
+    </div>
+
+    <div id="screen-home" class="screen active">
+        <h1>NEON TYPING</h1>
+        <button class="btn" onclick="showScreen('screen-diff')">プレイ</button>
+        <button class="btn" onclick="startStoryMode()">ストーリーモード</button>
+        <button class="btn" onclick="showScreen('screen-ranking')">ランキングモード</button>
+        <button class="btn" onclick="showScreen('screen-shop')">スキルショップ</button>
+        <button class="btn" onclick="showScreen('screen-settings')">設定</button>
+    </div>
+
+    <div id="screen-diff" class="screen">
+        <h2>難易度を選択</h2>
+        <button class="btn" onclick="startGame('easy')">初級</button>
+        <button class="btn" onclick="startGame('normal')">中級</button>
+        <button class="btn" onclick="startGame('hard')">上級</button>
+        <button class="btn" onclick="showScreen('screen-home')">戻る</button>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <div id="stage-info" style="font-size: 1.5rem; margin-bottom: 20px;"></div>
+        <div id="timer" style="font-size: 2rem; color: #ff0000;">60</div>
+        <div id="game-area">
+            <div id="word-display">さくら</div>
+            <div id="romaji-display"></div>
+        </div>
+        <div id="stats-display">
+            <div>SCORE: <span id="current-score">0</span></div>
+            <div>COMBO: <span id="current-combo">0</span></div>
+        </div>
+        <div id="skill-ready-msg" style="margin-top: 20px; color: yellow;">Skill Ready! [Space]</div>
+    </div>
+
+    <div id="screen-result" class="screen">
+        <h2>FINISHED!</h2>
+        <div style="font-size: 1.5rem; line-height: 2;">
+            SCORE: <span id="result-score">0</span><br>
+            COINS: +<span id="result-coins">0</span><br>
+            XP: +<span id="result-xp">0</span>
+        </div>
+        <button class="btn" onclick="showScreen('screen-home')">メインメニューへ</button>
+    </div>
+
+    <div id="screen-shop" class="screen">
+        <h2>SKILL SHOP</h2>
+        <div class="shop-tabs">
+            <button class="btn" style="min-width: 150px;" onclick="toggleShopTab('buy')">購入</button>
+            <button class="btn" style="min-width: 150px;" onclick="toggleShopTab('equip')">装備</button>
+        </div>
+        <div id="shop-buy-list" class="shop-list"></div>
+        <div id="shop-equip-list" class="shop-list" style="display:none;"></div>
+        <button class="btn" onclick="showScreen('screen-home')">戻る</button>
+    </div>
+
+    <div id="screen-settings" class="screen">
+        <h2>SETTINGS</h2>
+        <div>音量: <input type="range" id="setting-vol" min="10" max="100" value="50"></div>
+        <div style="margin-top: 20px;">
+            デザイン: 
+            <select id="setting-theme">
+                <option value="neon">ネオン</option>
+                <option value="normal">ノーマル</option>
+                <option value="classic">クラシック</option>
+                <option value="old">オールドクラシック</option>
+                <option value="dot">ドット</option>
+            </select>
+        </div>
+        <div style="margin-top: 20px;">
+            カラー: 
+            <select id="setting-color">
+                <option value="default">デフォルト</option>
+                <option value="red">レッド</option>
+                <option value="cyan">シアン</option>
+                <option value="yellow">イエロー</option>
+                <option value="magenta">マゼンタ</option>
+                <option value="rainbow">レインボー</option>
+            </select>
+        </div>
+        <div style="margin-top: 20px;">
+            フォント: 
+            <select id="setting-font">
+                <option value="normal">ノーマル</option>
+                <option value="gothic">ゴシック体</option>
+                <option value="chara">チャラい</option>
+                <option value="dot">ドット</option>
+                <option value="super">スーパークラシック</option>
+            </select>
+        </div>
+        <button class="btn" onclick="applySettings()" style="margin-top:30px;">保存して戻る</button>
+    </div>
+
+    <div id="timing-game-container">
+        <div id="timing-instruction" style="position: absolute; top: -30px; width: 100%; text-align: center;">SPACEで止める！</div>
+        <div id="timing-bar"></div>
+    </div>
+
+    <div id="paint-overlay"></div>
+    <div id="thunder-flash"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
