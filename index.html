@@ -95,6 +95,10 @@
         button:disabled { opacity: 0.5; pointer-events: none; }
         .skill-icon-btn { position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue)); border: none; border-radius: 60px; padding: 14px 30px; color: white; font-weight: bold; cursor: pointer; z-index: 300; box-shadow: 0 0 20px magenta; font-size: 1.1rem; }
         .story-target-bar { width: 80%; max-width: 500px; margin: 10px auto; text-align: center; font-size: 1.3rem; color: var(--neon-gold); background: rgba(0,0,0,0.5); padding: 10px; border-radius: 40px; }
+        .story-progress-container { width: 80%; max-width: 600px; margin: 15px auto; }
+        .progress-label { text-align: center; margin-bottom: 8px; color: #fff; font-size: 1rem; }
+        .progress-bar-bg { width: 100%; height: 20px; background: #333; border-radius: 20px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-green)); width: 0%; transition: width 0.2s; border-radius: 20px; }
         h2 { text-align: center; margin: 20px 0; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); font-size: 2rem; }
         .shop-item-card { background: rgba(0,0,0,0.5); border: 1px solid var(--neon-blue); border-radius: 20px; padding: 15px; margin-bottom: 12px; }
         .shop-item-name { font-size: 1.3rem; font-weight: bold; color: var(--neon-gold); }
@@ -116,7 +120,7 @@
 </div>
 <div id="sidePanel" class="side-panel"><div id="panelContent"></div><button class="neon-btn" id="closePanel" style="margin-top:20px;">閉じる</button></div>
 <div id="overlay" class="overlay-dark"></div>
-<button id="globalSkillBtn" class="skill-icon-btn">✨ スキル発動</button>
+<button id="globalSkillBtn" class="skill-icon-btn" style="display:none;">✨ スキル発動</button>
 
 <script>
     // 単語データ
@@ -126,6 +130,7 @@
         hard: ["よろしくおねがいします","おつかれさまでした","ありがとうございます","しょうしょうおまちください","ごめんなさい","いらっしゃいませ","いただきます","ごちそうさまでした","お会いできてうれしいです","またあしたあいましょう","ゆっくりはなしてください","もういちどおしえてください","こまっている人をたすけます","いっしょうけんめいがんばる","きょうはいい天気ですね"]
     };
     
+    // ローマ字マップ（1文字単位で分割用）
     const ROMA_MAP = {
         'さくら':'sa ku ra','ねこ':'ne ko','いぬ':'i nu','ごはん':'go ha n','みず':'mi zu','おちゃ':'o cha','えき':'e ki','うみ':'u mi','ゆめ':'yu me','とり':'to ri',
         'あめ':'a me','くも':'ku mo','はな':'ha na','そら':'so ra','つき':'tsu ki','ほし':'ho shi','やま':'ya ma','かわ':'ka wa','ほん':'ho n','ゆき':'yu ki',
@@ -204,6 +209,16 @@
         }
     }
     
+    function updateProgressBar(currentScore) {
+        const fill = document.getElementById("progressFill");
+        const label = document.getElementById("progressLabel");
+        if(fill && label && storyTargetScore) {
+            let percent = Math.min(100, (currentScore / storyTargetScore) * 100);
+            fill.style.width = percent + "%";
+            label.innerText = `${currentScore} / ${storyTargetScore}`;
+        }
+    }
+    
     function renderRomajiDisplay() {
         const container = document.getElementById("romajiContainer");
         if(!container) return;
@@ -229,7 +244,7 @@
     function processInput(inputChar) {
         if(!gameActive) return false;
         let targetChar = currentRomajiArray[currentRomaIndex];
-        if(inputChar.toLowerCase() === targetChar.toLowerCase()) {
+        if(targetChar && inputChar.toLowerCase() === targetChar.toLowerCase()) {
             currentRomaIndex++;
             renderRomajiDisplay();
             playSound("correct");
@@ -241,15 +256,17 @@
                 if(activeFever) { score += 300; showToast("🔥 FEVER +300 🔥"); }
                 document.getElementById("scoreVal").innerText = score;
                 document.getElementById("comboVal").innerText = combo;
+                if(currentGameMode === "story") updateProgressBar(score);
                 nextWord();
             }
             return true;
-        } else {
+        } else if(targetChar) {
             combo = 0;
             document.getElementById("comboVal").innerText = combo;
             playSound("miss");
             return false;
         }
+        return false;
     }
     
     function startGame(difficulty, isStory = false, stageId = 1) {
@@ -261,8 +278,11 @@
         currentRomajiArray = getRomajiArray(currentWord);
         currentRomaIndex = 0;
         score = 0; combo = 0; timeLeft = 60; gameActive = true; activeFever = false; activeComboMult = 1;
-        if(isStory) { storyTargetScore = 10000 + (stageId-1)*1000; currentGameMode = "story"; currentStoryStage = stageId; }
-        else currentGameMode = "normal";
+        if(isStory) { 
+            storyTargetScore = 10000 + (stageId-1)*1000; 
+            currentGameMode = "story"; 
+            currentStoryStage = stageId; 
+        } else currentGameMode = "normal";
         renderGameScreen();
         gameInterval = setInterval(() => {
             if(!gameActive) return;
@@ -276,25 +296,34 @@
             }
         }, 1000);
         if(isStory && stageId >= 26) applyStoryInterference(stageId);
+        document.getElementById("globalSkillBtn").style.display = "block";
     }
     
     function renderGameScreen() {
         const main = document.getElementById("appMain");
+        let storyProgressHtml = "";
+        if(currentGameMode === "story") {
+            storyProgressHtml = `
+                <div class="story-progress-container">
+                    <div class="progress-label">目標スコア: <span id="progressLabel">0 / ${storyTargetScore}</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+                </div>
+            `;
+        }
         main.innerHTML = `
             <div class="game-container">
                 <div class="score-board"><span>🎯 SCORE: <span id="scoreVal">0</span></span><span>⚡ COMBO: <span id="comboVal">0</span></span></div>
                 <div class="timer-big">⏱️ <span id="timerVal">${timeLeft}</span>s</div>
+                ${storyProgressHtml}
                 <div class="question-word" id="questionWord">${currentWord}</div>
                 <div class="romaji-container" id="romajiContainer"></div>
-                <div class="typing-instruction">ローマ字を1文字ずつ入力してください (a~z)</div>
+                <div class="typing-instruction">ローマ字を1文字ずつ入力してください (a~z) 例: syo → s → y → o</div>
                 <div class="flex-row" style="margin-top:20px;"><button id="exitGame" class="neon-btn">🏠 中断</button></div>
-                ${currentGameMode === "story" ? `<div class="story-target-bar">🎯 目標スコア: ${storyTargetScore}</div>` : ''}
             </div>
         `;
         renderRomajiDisplay();
         document.getElementById("exitGame").onclick = () => endGame(true);
         
-        // キーボード入力イベント
         const keyHandler = (e) => {
             if(!gameActive) return;
             if(e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
@@ -315,7 +344,7 @@
         let cdInterval = setInterval(() => { if(skillCooldown>0) skillCooldown--; else clearInterval(cdInterval); }, 1000);
         if(sk.effect === "auto") {
             let dur = sk.duration;
-            let intervalTime = 500; // 0.5秒で1文字の速さ
+            let intervalTime = 500;
             autoTimer = setInterval(() => {
                 if(!gameActive) return;
                 let targetChar = currentRomajiArray[currentRomaIndex];
@@ -390,7 +419,11 @@
         if(window._typingKeyHandler) window.removeEventListener("keydown", window._typingKeyHandler);
         gameActive = false;
         let finalScore = score;
-        if(abort) { showHome(); return; }
+        if(abort) { 
+            document.getElementById("globalSkillBtn").style.display = "none";
+            showHome(); 
+            return; 
+        }
         let rewards = addRewards(finalScore);
         if(currentGameMode === "story") {
             if(finalScore >= storyTargetScore) {
@@ -407,6 +440,7 @@
                 }
             } else { alert(`目標${storyTargetScore}に未達。再挑戦可能`); }
         }
+        document.getElementById("globalSkillBtn").style.display = "none";
         showResult(finalScore, rewards.earnCoins, rewards.earnXP);
     }
     
@@ -433,6 +467,7 @@
         document.querySelectorAll(".menu-card").forEach(card => {
             card.onclick = () => { const act = card.dataset.action; if(act === "play") showDifficulty(); else if(act === "story") showStoryMap(); else if(act === "rank") showRanking(); else if(act === "shop") showSkillShop(); else if(act === "settings") showSettings(); };
         });
+        document.getElementById("globalSkillBtn").style.display = "none";
     }
     
     function showDifficulty() {
@@ -551,8 +586,9 @@
         let savedSettings = localStorage.getItem("ramo_settings");
         if(savedSettings) { settings = JSON.parse(savedSettings); document.body.className = `theme-${settings.theme === "ノーマル"?"default":settings.theme === "ネオン"?"neon":settings.theme === "クラシック"?"classic":settings.theme === "オールドクラシック"?"oldclassic":"dot"} color-${settings.colorTheme === "デフォルト"?"default":settings.colorTheme.toLowerCase()} font-${settings.font === "ノーマル"?"default":settings.font === "ゴシック体"?"gothic":settings.font === "チャラい"?"chalai":settings.font === "ドット"?"dot":"superclassic"}`; }
         updateUIStats();
-        if(!player.unlockedSkills.includes("auto_alpha")) player.unlockedSkills.push("auto_alpha");
-        if(!player.equippedSkill) player.equippedSkill = "auto_alpha";
+        // 初期スキルは何も持っていない
+        player.unlockedSkills = [];
+        player.equippedSkill = null;
         showHome();
         document.getElementById("globalSkillBtn").onclick = () => { if(gameActive && skillCooldown<=0 && player.equippedSkill) useSkill(player.equippedSkill); else showToast("スキル未装備orクールダウン"); };
     }
