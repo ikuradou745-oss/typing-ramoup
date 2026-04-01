@@ -524,7 +524,7 @@
         }
 
         /* ==========================================
-           ガチャリザルト・モーダル
+           モーダル・オーバーレイ全般
            ========================================== */
         .gacha-result-overlay, .modal {
             position: fixed;
@@ -563,7 +563,7 @@
             width: 100%;
         }
         
-        /* スクロールバーのカスタマイズ */
+        /* スクロールバー */
         ::-webkit-scrollbar { width: 12px; }
         ::-webkit-scrollbar-track { background: #1a1a2e; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #4a90e2; border-radius: 10px; }
@@ -576,7 +576,7 @@
     <div class="header-info" id="global-header">
         <div>📦 パック: <span id="display-packs" style="font-weight: bold; color: #00ffcc; font-size: 24px;">0</span></div>
         <div>💾 セーブ: <span id="save-status" style="color: yellow;">同期中...</span></div>
-        <button class="settings-btn" onclick="document.getElementById('settings-modal').classList.add('active')">⚙️</button>
+        <button class="settings-btn" onclick="document.getElementById('settings-modal').classList.add('active')" title="設定">⚙️</button>
     </div>
 
     <div id="home-screen" class="screen active">
@@ -636,9 +636,7 @@
         </div>
 
         <div class="battle-log" id="battle-log"></div>
-
         <div class="hand-container" id="battle-hand"></div>
-
         <button class="btn-dark" style="margin-top: 30px; padding: 10px 50px;" onclick="BattleController.flee()">🏃 逃げる（ホームへ）</button>
     </div>
 
@@ -646,11 +644,11 @@
         <h2>🎲 カードを引く</h2>
         <p style="font-size: 24px; margin-bottom: 30px; color: #00ffcc; font-weight: bold;">所持パック: <span id="gacha-pack-count">0</span> パック</p>
         
-        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 800px;">
-            <button class="btn-primary" onclick="GachaController.drawCards(1)">📦 1パック引く</button>
-            <button class="btn-success" onclick="GachaController.drawCards(3)">📦 3パック引く</button>
-            <button class="btn-warning" onclick="GachaController.drawCards(10)">📦 10パック引く</button>
-            <button class="btn-purple" onclick="GachaController.drawCards(100)">💎 100パック引く</button>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 900px;">
+            <button class="btn-primary" onclick="GachaController.drawCards(1)">📦 1パック引く (5枚)</button>
+            <button class="btn-success" onclick="GachaController.drawCards(3)">📦 3パック引く (15枚)</button>
+            <button class="btn-warning" onclick="GachaController.drawCards(10)">📦 10パック引く (50枚)</button>
+            <button class="btn-purple" onclick="GachaController.drawCards(100)">💎 100パック (500枚)</button>
             <button class="btn-gold" onclick="GachaController.drawAll()">🌟 全て引く</button>
         </div>
 
@@ -712,8 +710,7 @@
         <h2>🛡️ ベストを装備</h2>
         <p style="color: #ccc; margin-bottom: 20px; font-size: 18px;">
             5つの異なるカードを装備します。<br>
-            <span style="color: #ff4444; font-weight: bold;">※ ぴったり5枚装備しないと、バトルでは全持ち物からランダムにデッキが組まれます。</span><br>
-            （装備完了後は、バトル中に35%の確率で装備カードが手札に出現します）
+            <span style="color: #ff4444; font-weight: bold;">※ ぴったり5枚装備しないと、バトルでは全持ち物からランダムに手札が組まれます。</span>
         </p>
 
         <div id="equip-warning" class="equip-warning">
@@ -752,9 +749,9 @@
     </div>
 
     <div id="settings-modal" class="modal">
-        <div class="modal-content" style="max-width: 450px;">
+        <div class="modal-content" style="max-width: 500px;">
             <h2 style="font-size: 40px;">⚙️ 設定</h2>
-            <p style="margin: 20px 0; color: #ccc; font-size: 18px;">進行状況や持ち物カードなど、すべてのデータを削除して最初からやり直します。</p>
+            <p style="margin: 20px 0; color: #ccc; font-size: 18px;">所持カードやパック数などの全データを削除して、ゲームを最初からやり直します。</p>
             <button class="btn-danger" onclick="GameDataManager.resetData()" style="width: 100%; margin-bottom: 20px;">🗑️ データを全削除（リセット）</button>
             <button class="btn-dark" onclick="document.getElementById('settings-modal').classList.remove('active')" style="width: 100%;">閉じる</button>
         </div>
@@ -762,6 +759,7 @@
 
 
     <script type="module">
+        // --- Firebase 初期化 ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
@@ -779,13 +777,14 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        // ユーザーID管理
         let userId = localStorage.getItem('typerpg_userId');
         if (!userId) {
             userId = 'user_' + Math.random().toString(36).substr(2, 9) + Date.now();
             localStorage.setItem('typerpg_userId', userId);
         }
 
-        // --- オーディオコントローラー（音の追加） ---
+        // --- サウンド（音響）管理 ---
         window.AudioController = {
             ctx: null,
             init: function() {
@@ -793,6 +792,7 @@
                     const AudioContext = window.AudioContext || window.webkitAudioContext;
                     this.ctx = new AudioContext();
                 }
+                if (this.ctx.state === 'suspended') this.ctx.resume();
             },
             playTone: function(freq, type, duration, vol=0.1) {
                 if (!this.ctx || this.ctx.state !== 'running') return;
@@ -825,7 +825,7 @@
             }
         };
 
-        // --- マスターデータ定義 ---
+        // --- マスターデータ（全カード定義） ---
         const ALL_CARDS = [
             { id: "c1", name: "パンチ", type: "attack", rarity: "Common", baseEffect: 30, desc: "敵に30ダメージ" },
             { id: "c2", name: "キック", type: "attack", rarity: "Common", baseEffect: 40, desc: "敵に40ダメージ" },
@@ -858,15 +858,9 @@
         ];
 
         const RARITY_WEIGHTS = [
-            { rarity: "Common", chance: 40.0 },
-            { rarity: "Uncommon", chance: 30.0 },
-            { rarity: "Rare", chance: 15.0 },
-            { rarity: "Legend", chance: 8.0 },
-            { rarity: "Mythic", chance: 4.0 },
-            { rarity: "Godly", chance: 2.0 },
-            { rarity: "Volcano", chance: 0.8 },
-            { rarity: "Secret", chance: 0.15 },
-            { rarity: "Ultimate", chance: 0.04 },
+            { rarity: "Common", chance: 40.0 }, { rarity: "Uncommon", chance: 30.0 }, { rarity: "Rare", chance: 15.0 },
+            { rarity: "Legend", chance: 8.0 }, { rarity: "Mythic", chance: 4.0 }, { rarity: "Godly", chance: 2.0 },
+            { rarity: "Volcano", chance: 0.8 }, { rarity: "Secret", chance: 0.15 }, { rarity: "Ultimate", chance: 0.04 },
             { rarity: "OG", chance: 0.01 }
         ];
 
@@ -881,6 +875,7 @@
             { ja: "えきすぱーと", en: "ekisupa-to" }, { ja: "げんかいとっぱ", en: "genkaitoppa" }, { ja: "さいきょうのせんし", en: "saikyounosenshi" }
         ];
 
+        // --- グローバルステート ---
         window.playerData = { packs: 3, inventory: {}, equipped: [] };
         window.UIState = { invRarity: 'All', invType: 'All', equipRarity: 'All' };
         window.battleState = {
@@ -889,7 +884,7 @@
             typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false
         };
 
-        // --- データ管理（バグ修正・リセット機能追加） ---
+        // --- データ管理（セーブ・ロード・リセット） ---
         window.GameDataManager = {
             saveData: function() {
                 const statusEl = document.getElementById('save-status');
@@ -898,17 +893,14 @@
 
                 if (!window.playerData.inventory) window.playerData.inventory = {};
 
-                set(ref(database, 'users/' + userId), window.playerData)
-                    .then(() => {
-                        statusEl.textContent = '同期済';
-                        statusEl.style.color = '#00ffcc';
-                        UIController.updateGlobalHeader();
-                    })
-                    .catch((error) => {
-                        console.error("Save failed:", error);
-                        statusEl.textContent = 'エラー';
-                        statusEl.style.color = '#ff3333';
-                    });
+                set(ref(database, 'users/' + userId), window.playerData).then(() => {
+                    statusEl.textContent = '同期済';
+                    statusEl.style.color = '#00ffcc';
+                    UIController.updateGlobalHeader();
+                }).catch((error) => {
+                    statusEl.textContent = 'エラー';
+                    statusEl.style.color = '#ff3333';
+                });
             },
             loadData: function() {
                 const statusEl = document.getElementById('save-status');
@@ -929,18 +921,16 @@
                     statusEl.textContent = '同期済';
                     statusEl.style.color = '#00ffcc';
                     UIController.updateGlobalHeader();
-                }).catch((error) => {
-                    console.error("Load failed:", error);
+                }).catch(() => {
                     statusEl.textContent = 'オフライン';
                     statusEl.style.color = '#888';
                 });
             },
-            // 新規追加: データの全リセット機能
             resetData: function() {
                 if (confirm("⚠️ 本当に全データを削除してリセットしますか？\n※この操作は取り消せません！")) {
                     window.playerData = { packs: 3, inventory: {}, equipped: [] };
                     this.saveData();
-                    alert("データをリセットしました。画面を再読み込みします。");
+                    alert("データをリセットしました。初期状態に戻ります。");
                     location.reload();
                 }
             }
@@ -951,8 +941,9 @@
             updateGlobalHeader: function() { document.getElementById('display-packs').textContent = window.playerData.packs; },
             getCardById: function(id) { return ALL_CARDS.find(c => c.id === id); },
             createCardHTML: function(card, count = 0, onClickAction = "") {
-                if (!card) return ''; // 安全装置
-                const countBadge = count > 1 ? `<div class="card-count">*${count}</div>` : '';
+                if (!card) return ''; // バグ防止
+                // 所持数を表示するバッジ (0以上の場合は常に表示)
+                const countBadge = count > 0 ? `<div class="card-count">x${count}</div>` : '';
                 return `
                     <div class="card rarity-${card.rarity}" ${onClickAction ? `onclick="${onClickAction}"` : ''}>
                         ${countBadge}
@@ -990,7 +981,7 @@
 
                 for (const [cardId, count] of Object.entries(window.playerData.inventory)) {
                     const card = this.getCardById(cardId);
-                    if (!card) { delete window.playerData.inventory[cardId]; continue; } // バグデータ修復
+                    if (!card) { delete window.playerData.inventory[cardId]; continue; } // 古いバグデータの除去
                     if (rarityFilter !== 'All' && card.rarity !== rarityFilter) continue;
                     if (typeFilter !== 'All' && card.type !== typeFilter) continue;
                     grid.innerHTML += this.createCardHTML(card, count);
@@ -1006,7 +997,7 @@
                     const equippedId = window.playerData.equipped[i];
                     if (equippedId) {
                         const card = this.getCardById(equippedId);
-                        if (!card) { window.playerData.equipped[i] = null; continue; } // バグデータ修復
+                        if (!card) { window.playerData.equipped[i] = null; continue; }
                         equippedContainer.innerHTML += this.createCardHTML(card, 0, `EquipController.unequipCard('${equippedId}')`);
                     } else {
                         equippedContainer.innerHTML += `<div class="equipped-slot">スロット ${i+1}<br><span style="font-size:14px;font-weight:normal;">(空き)</span></div>`;
@@ -1043,6 +1034,7 @@
             }
         };
 
+        // --- 装備管理 ---
         window.EquipController = {
             equipCard: function(cardId) {
                 if (window.playerData.equipped.length >= 5) return alert("⚠️ 装備できるのは最大5つまでです。先に外してください。");
@@ -1058,19 +1050,23 @@
             }
         };
 
+        // --- ガチャ管理（1パック＝5枚の仕様に変更） ---
         window.GachaController = {
-            drawCards: function(amount) {
-                if (window.playerData.packs < amount) return alert("⚠️ パックが足りません！");
-                window.playerData.packs -= amount;
+            drawCards: function(packAmount) {
+                if (window.playerData.packs < packAmount) return alert("⚠️ パックが足りません！");
+                window.playerData.packs -= packAmount;
+                
+                const cardAmount = packAmount * 5; // 1パックにつき5枚
                 const results = [];
                 if (!window.playerData.inventory) window.playerData.inventory = {};
 
-                for(let i=0; i<amount; i++) {
+                for(let i=0; i<cardAmount; i++) {
                     const card = this.rollSingleCard();
                     results.push(card);
                     if (window.playerData.inventory[card.id] === undefined) window.playerData.inventory[card.id] = 0;
                     window.playerData.inventory[card.id]++;
                 }
+                
                 AudioController.playGacha();
                 GameDataManager.saveData();
                 UIController.updateGachaScreen();
@@ -1107,13 +1103,11 @@
             }
         };
 
-        // --- バトルロジック（バグの完全修正版） ---
+        // --- バトルロジック（バグ完全修正版） ---
         window.BattleController = {
             startBattle: function(difficulty) {
-                // 前回動いていたタイマーを確実に消去
-                if (window.battleState.timerInterval) {
-                    clearInterval(window.battleState.timerInterval);
-                }
+                // 前回稼働していたタイマーを確実に停止
+                if (window.battleState.timerInterval) clearInterval(window.battleState.timerInterval);
 
                 GameController.switchScreen('battle-screen');
 
@@ -1145,31 +1139,36 @@
                     }
                 }, 1000);
 
-                // 初期手札を確実に5枚ドローするよう呼び出し
+                // 初期手札を確実に5枚生成
                 this.fillHand();
                 this.resetTypingUI();
             },
-            // 【修正点】手札が必ず5枚になるように自動補充する機能
+            
+            // 手札が常に5枚になるように補充する安全な関数
             fillHand: function() {
                 const currentCount = window.battleState.hand.length;
                 if (currentCount >= 5) return;
                 const drawCount = 5 - currentCount;
                 
-                let pool = [];
-                const isEquipDeckValid = (window.playerData.equipped && window.playerData.equipped.length === 5);
+                // 有効な所持カード・装備カードのみを抽出（不正なIDによるエラー防止）
+                let validInventoryKeys = Object.keys(window.playerData.inventory || {}).filter(id => UIController.getCardById(id));
+                let validEquipKeys = (window.playerData.equipped || []).filter(id => UIController.getCardById(id));
                 
+                const isEquipDeckValid = validEquipKeys.length === 5;
+                let pool = [];
+
                 if (isEquipDeckValid) {
-                    pool = window.playerData.equipped;
-                } else {
-                    pool = Object.keys(window.playerData.inventory || {});
+                    pool = validEquipKeys;
+                } else if (validInventoryKeys.length > 0) {
+                    pool = validInventoryKeys; // 装備が無効なら全持ち物から
                 }
 
-                if (pool.length === 0) pool = [ALL_CARDS[0].id]; // 完全な手ぶらの救済措置
+                // 持ち物が完全にゼロの場合の救済措置（パンチのみ）
+                if (pool.length === 0) pool = [ALL_CARDS[0].id];
 
                 for (let i = 0; i < drawCount; i++) {
                     const randomId = pool[Math.floor(Math.random() * pool.length)];
-                    let cardToPush = UIController.getCardById(randomId);
-                    if (!cardToPush) cardToPush = ALL_CARDS[0]; // データ破損時の安全対策
+                    let cardToPush = UIController.getCardById(randomId) || ALL_CARDS[0];
                     window.battleState.hand.push(cardToPush);
                 }
                 this.renderHand();
@@ -1183,11 +1182,10 @@
             },
             selectCard: function(index) {
                 if (!window.battleState.isActive || window.battleState.activeCard) return;
-                window.battleState.activeCard = window.battleState.hand[index];
                 
-                // カードを手札から消し、常に5枚になるように即座に補充
-                window.battleState.hand.splice(index, 1);
-                this.fillHand(); 
+                window.battleState.activeCard = window.battleState.hand[index];
+                window.battleState.hand.splice(index, 1); // 選択したカードを手札から消す
+                this.fillHand(); // 即座に1枚補充して常に5枚を維持
 
                 const word = TYPING_WORDS[Math.floor(Math.random() * TYPING_WORDS.length)];
                 window.battleState.currentWord = word;
@@ -1279,8 +1277,8 @@
                 } else if (card.type === 'assist') {
                     AudioController.playHeal();
                     if (card.name.includes("リセット") || card.name.includes("ドロー") || card.name.includes("入れ替え")) {
-                        window.battleState.hand = []; // 手札を全消去して引き直し
-                        this.fillHand();
+                        window.battleState.hand = []; 
+                        this.fillHand(); // 手札を全引き直し
                         logMsg += `手札を 🔄全て引き直した！`;
                     } else if (card.name === "時止め") {
                         window.battleState.enemyFrozen = true;
@@ -1345,7 +1343,6 @@
                 const logDiv = document.getElementById('battle-log');
                 logDiv.innerHTML = `<p>${msg}</p>` + logDiv.innerHTML;
             },
-            // 【修正点】タイマーとバトル終了制御を安全化
             endBattle: function(isWin, reason) {
                 window.battleState.isActive = false;
                 if (window.battleState.timerInterval) {
@@ -1406,10 +1403,10 @@
             }
         });
 
-        // どこかをクリックしたらオーディオを初期化（ブラウザの仕様によりクリックが必須）
+        // ボタンクリック時に音を鳴らす＆オーディオ有効化
         document.body.addEventListener('click', (e) => {
             AudioController.init();
-            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.closest('.card')) {
                 AudioController.playClick();
             }
         });
