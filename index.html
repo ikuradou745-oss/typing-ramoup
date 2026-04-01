@@ -2,643 +2,1278 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>⚡ NEON TYPING - ネオンタイピングゲーム</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>デッキカードタイピング RPG</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
-        :root {
-            --bg-dark: #0a0f1e;
-            --neon-blue: #0ff;
-            --neon-green: #0f6;
-            --neon-pink: #f0f;
-            --neon-gold: #ffcc44;
-            --text-light: #f0f0f0;
-            --card-bg: rgba(10, 20, 30, 0.85);
+        /* 全体のスタイルとリセット */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
         }
         body {
-            font-family: 'Segoe UI', 'Poppins', 'Hiragino Maru Gothic', monospace;
-            background: radial-gradient(circle at 20% 30%, #0a0f2a, #020408);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a2e;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.1s, opacity 0.2s;
+            color: white;
+            background-color: #16213e;
+            border: 2px solid #0f3460;
+        }
+        button:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        button:disabled {
+            background-color: #555;
+            border-color: #333;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 画面コンテナ */
+        .screen {
+            display: none;
             min-height: 100vh;
+            padding: 20px;
+            flex-direction: column;
+            align-items: center;
+        }
+        .screen.active {
+            display: flex;
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* レアリティ別の色定義 */
+        .rarity-Common { background: #808080; color: white; }
+        .rarity-Uncommon { background: #008000; color: white; }
+        .rarity-Rare { background: #0000FF; color: white; }
+        .rarity-Legend { background: #FFFF00; color: black; }
+        .rarity-Mythic { background: #FF0000; color: white; }
+        .rarity-Godly { background: linear-gradient(135deg, #0000FF, #FFFF00); color: white; }
+        .rarity-Volcano { background: linear-gradient(135deg, #FF0000, #FFA500); color: white; }
+        .rarity-Secret { background: linear-gradient(135deg, #000000, #FFFFFF); color: #FF0000; }
+        .rarity-Ultimate { background: linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet); color: white; }
+        .rarity-OG { background: linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet, gold, black, white); color: white; border: 3px solid gold;}
+
+        /* カードのスタイル */
+        .card {
+            width: 140px;
+            height: 200px;
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: transform 0.2s;
+            position: relative;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            z-index: 10;
+        }
+        .card-name {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .card-type {
+            font-size: 11px;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        .card-desc {
+            font-size: 11px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+        }
+        .card-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #e94560;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: all 0.2s;
+            font-weight: bold;
+            border: 2px solid white;
+            z-index: 5;
+        }
+
+        /* ヘッダー情報（パック数など） */
+        .header-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            border: 1px solid #0f3460;
+        }
+
+        /* ホーム画面 */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 50px;
+            width: 80%;
+            max-width: 600px;
+        }
+        .menu-grid button {
+            height: 100px;
+            font-size: 24px;
+        }
+
+        /* バトル画面 */
+        #battle-screen {
+            justify-content: space-between;
+        }
+        .battle-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 50px;
+            margin-bottom: 20px;
+        }
+        .status-box {
+            background: rgba(0,0,0,0.7);
+            padding: 20px;
+            border-radius: 15px;
+            width: 300px;
+            text-align: center;
+            border: 2px solid #e94560;
+        }
+        .hp-bar-container {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .hp-bar {
+            height: 100%;
+            background: #e94560;
+            width: 100%;
+            transition: width 0.3s;
+        }
+        .player-hp-bar {
+            background: #4caf50;
+        }
+        
+        .timer-container {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffd700;
+            margin: 10px 0;
+        }
+
+        .typing-area {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #0f3460;
+            border-radius: 15px;
+            padding: 30px;
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+        .japanese-text {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .romaji-text {
+            font-size: 48px;
+            letter-spacing: 5px;
+            font-family: monospace;
+            color: #555; /* 未入力部分 */
+        }
+        .romaji-text span.typed {
+            color: #00ffcc; /* 入力済み部分（明るい色） */
+            text-shadow: 0 0 10px #00ffcc;
+        }
+        .romaji-text span.error {
+            color: #ff3333;
+            text-shadow: 0 0 10px #ff3333;
+        }
+
+        .hand-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .battle-log {
+            margin-top: 10px;
+            height: 100px;
+            width: 80%;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #aaa;
+        }
+        .battle-log p {
+            margin: 2px 0;
+        }
+
+        /* ポップアップエフェクト */
+        .effect-popup {
+            position: absolute;
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffea00;
+            text-shadow: 2px 2px 5px black, 0 0 10px red;
+            pointer-events: none;
+            animation: floatUp 1.5s forwards ease-out;
+            z-index: 100;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1); }
+        }
+
+        /* 持ち物・装備・ガチャ画面共通 */
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 20px;
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+        }
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .filter-bar select, .filter-bar button {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+        
+        /* 装備画面特有 */
+        .equipped-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            min-height: 220px;
+            padding: 15px;
+            background: rgba(255,215,0,0.1);
+            border: 2px dashed gold;
+            border-radius: 15px;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+        .equipped-slot {
+            width: 140px;
+            height: 200px;
+            border: 2px solid #555;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #555;
+            font-size: 24px;
+        }
+
+        /* ガチャリザルト */
+        .gacha-result-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            overflow-y: auto;
             padding: 20px;
         }
-        body.theme-neon { --neon-blue: #0ff; --neon-green: #0f0; --neon-pink: #ff44ff; background: #000; }
-        body.theme-classic { --neon-blue: #4a90e2; --neon-green: #50c878; --neon-pink: #ff6b6b; background: #1a2a3a; }
-        body.theme-oldclassic { --neon-blue: #8b5a2b; --neon-green: #6b8e23; --neon-pink: #cd5c5c; background: #2f4f4f; }
-        body.theme-dot { background-image: radial-gradient(#0ff 1px, transparent 1px); background-size: 6px 6px; }
-        body.color-red { --neon-blue: #ff5555; --neon-green: #ff7777; --neon-pink: #ff3333; }
-        body.color-cyan { --neon-blue: #0ff; --neon-green: #0ff; --neon-pink: #0ff; }
-        body.color-yellow { --neon-blue: #ffcc44; --neon-green: #ffaa33; --neon-pink: #ffaa44; }
-        body.color-magenta { --neon-blue: #ff44ff; --neon-green: #ff44ff; --neon-pink: #ff44ff; }
-        body.color-rainbow { --neon-blue: #ff00cc; --neon-green: #ffcc00; --neon-pink: #00ffcc; }
-        body.font-gothic { font-family: 'Motoya Gothic', 'Hiragino Kaku Gothic', sans-serif; }
-        body.font-chalai { font-family: 'Comic Neue', 'Comic Sans MS', cursive; }
-        body.font-dot { font-family: 'Courier New', 'MS Gothic', monospace; letter-spacing: 2px; }
-        body.font-superclassic { font-family: 'Times New Roman', 'YuMincho', serif; }
-        
-        .game-wrapper { width: 1400px; max-width: 98vw; background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); border-radius: 60px; padding: 24px; border: 2px solid var(--neon-blue); box-shadow: 0 0 40px rgba(0,255,255,0.3); }
-        .status-header { display: flex; justify-content: flex-end; gap: 30px; padding: 12px 28px; background: rgba(0,0,0,0.7); border-radius: 60px; margin-bottom: 20px; align-items: center; }
-        .level-area { display: flex; flex-direction: column; align-items: flex-end; }
-        .level-text { font-size: 1.2rem; color: var(--neon-gold); font-weight: bold; }
-        .xp-bar-bg { width: 160px; height: 8px; background: #333; border-radius: 10px; margin-top: 5px; overflow: hidden; }
-        .xp-fill { background: linear-gradient(90deg, var(--neon-blue), var(--neon-green)); height: 100%; width: 0%; transition: width 0.2s; }
-        .coin-area { display: flex; align-items: center; gap: 8px; font-size: 1.6rem; font-weight: bold; color: var(--neon-gold); background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 40px; }
-        .menu-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; margin: 50px 0; }
-        .menu-card { background: var(--card-bg); border: 2px solid var(--neon-blue); border-radius: 36px; width: 180px; padding: 30px 12px; text-align: center; cursor: pointer; transition: 0.2s; backdrop-filter: blur(4px); }
-        .menu-card:hover { transform: translateY(-8px); box-shadow: 0 0 25px var(--neon-blue); border-color: var(--neon-pink); }
-        .menu-icon { font-size: 3.5rem; display: block; margin-bottom: 12px; }
-        .menu-card div:last-child { font-size: 1.2rem; font-weight: bold; color: var(--neon-blue); }
-        .neon-btn { background: rgba(0,0,0,0.6); border: 2px solid var(--neon-blue); color: var(--neon-blue); padding: 12px 28px; border-radius: 60px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1rem; }
-        .neon-btn:hover { background: var(--neon-blue); color: black; box-shadow: 0 0 20px cyan; transform: scale(1.02); }
-        .flex-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; align-items: center; margin: 20px 0; }
-        .question-word { font-size: 4.5rem; text-align: center; background: rgba(0,0,0,0.6); padding: 35px; border-radius: 70px; margin: 20px auto; word-break: break-all; color: var(--neon-blue); text-shadow: 0 0 12px var(--neon-pink); font-weight: bold; letter-spacing: 4px; }
-        .romaji-container { font-size: 2.5rem; text-align: center; font-family: monospace; letter-spacing: 6px; background: rgba(0,0,0,0.5); padding: 20px 40px; border-radius: 60px; display: inline-block; margin: 20px auto; }
-        .romaji-char { display: inline-block; margin: 0 4px; transition: all 0.1s; }
-        .romaji-char.correct { color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green); transform: scale(1.1); }
-        .romaji-char.current { color: var(--neon-gold); text-shadow: 0 0 20px gold; border-bottom: 3px solid var(--neon-gold); }
-        .romaji-char.remaining { color: #888; }
-        .score-board { display: flex; justify-content: center; gap: 60px; font-size: 2rem; margin: 20px; background: rgba(0,0,0,0.4); padding: 15px 30px; border-radius: 60px; }
-        .score-board span { font-weight: bold; }
-        .timer-big { font-size: 3rem; font-weight: bold; background: #000000aa; display: inline-block; padding: 8px 32px; border-radius: 60px; margin: 10px 0; }
-        .side-panel { position: fixed; top: 0; right: -500px; width: 500px; height: 100%; background: rgba(0,0,0,0.98); border-left: 3px solid var(--neon-blue); transition: 0.3s; z-index: 1000; padding: 30px; overflow-y: auto; }
-        .side-panel.open { right: 0; }
-        .tab-bar { display: flex; gap: 20px; border-bottom: 2px solid var(--neon-blue); margin-bottom: 25px; padding-bottom: 10px; }
-        .tab-btn { background: none; border: none; color: gray; padding: 10px 20px; cursor: pointer; font-size: 1.3rem; font-weight: bold; transition: 0.2s; }
-        .tab-btn.active { color: var(--neon-blue); border-bottom: 3px solid var(--neon-blue); }
-        .overlay-dark { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 999; display: none; }
-        .interference-effect { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events: none; z-index: 2000; mix-blend-mode: screen; transition: opacity 1.5s; }
-        .paint-splat { background: radial-gradient(circle, rgba(255,0,200,0.9), rgba(0,255,255,0.7)); width:100%; height:100%; }
-        .thunder-flash { background: repeating-linear-gradient(45deg, yellow, orange, red); animation: flicker 0.1s infinite; }
-        @keyframes flicker { 0% { opacity: 0.8; } 100% { opacity: 0.3; } }
-        .fever-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle, rgba(255,0,255,0.4), rgba(0,255,255,0.4)); pointer-events: none; z-index: 500; animation: rainbow 0.5s infinite; }
-        @keyframes rainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
-        .skill-toast { position: fixed; bottom: 30%; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, gold, orange); color: black; padding: 16px 32px; border-radius: 60px; font-weight: bold; font-size: 1.5rem; z-index: 3000; animation: fadeUp 0.6s; white-space: nowrap; box-shadow: 0 0 30px gold; }
-        @keyframes fadeUp { from { opacity: 0; bottom: 20%; } to { opacity: 1; bottom: 30%; } }
-        .story-map-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px; max-width: 950px; max-height: 500px; overflow-y: auto; padding: 20px; background: rgba(0,0,0,0.5); border-radius: 40px; margin: 20px auto; }
-        .stage-node { aspect-ratio: 1/1; background: rgba(0,255,255,0.15); border: 2px solid var(--neon-blue); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.1s; color: white; }
-        .stage-node.clear { background: rgba(0,255,100,0.4); border-color: var(--neon-green); color: var(--neon-green); }
-        .stage-node.locked { opacity: 0.4; cursor: not-allowed; background: #333; }
-        .stage-node.current { border-color: var(--neon-gold); box-shadow: 0 0 20px gold; transform: scale(1.05); color: gold; }
-        .ranking-list { max-height: 500px; overflow-y: auto; background: rgba(0,0,0,0.6); border-radius: 28px; padding: 20px; width: 100%; max-width: 500px; margin: 20px auto; }
-        .ranking-item { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 1.2rem; }
-        .settings-group { background: rgba(0,0,0,0.5); border-radius: 32px; padding: 25px; margin: 15px 0; border: 1px solid var(--neon-blue); }
-        .settings-group label { display: block; margin-bottom: 10px; font-size: 1.1rem; color: var(--neon-blue); }
-        .settings-group select, .settings-group input { padding: 10px; border-radius: 30px; background: #222; color: white; border: 1px solid var(--neon-blue); margin-left: 15px; }
-        .mini-game-bar { width: 500px; height: 80px; background: #222; border-radius: 80px; position: relative; margin: 40px auto; cursor: pointer; }
-        .bar-fill { width: 10%; height: 100%; background: linear-gradient(90deg, cyan, blue); border-radius: 80px; transition: width 0.02s linear; }
-        .marker { position: absolute; top: -15px; width: 6px; height: 110px; background: white; left: 0; box-shadow: 0 0 12px white; }
-        .game-container { display: flex; flex-direction: column; align-items: center; width: 100%; min-height: 550px; }
-        .hidden { display: none !important; }
-        button:disabled { opacity: 0.5; pointer-events: none; }
-        .skill-icon-btn { position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue)); border: none; border-radius: 60px; padding: 14px 30px; color: white; font-weight: bold; cursor: pointer; z-index: 300; box-shadow: 0 0 20px magenta; font-size: 1.1rem; }
-        .story-target-bar { width: 80%; max-width: 500px; margin: 10px auto; text-align: center; font-size: 1.3rem; color: var(--neon-gold); background: rgba(0,0,0,0.5); padding: 10px; border-radius: 40px; }
-        .story-progress-container { width: 80%; max-width: 600px; margin: 15px auto; }
-        .progress-label { text-align: center; margin-bottom: 8px; color: #fff; font-size: 1rem; }
-        .progress-bar-bg { width: 100%; height: 20px; background: #333; border-radius: 20px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-green)); width: 0%; transition: width 0.2s; border-radius: 20px; }
-        h2 { text-align: center; margin: 20px 0; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); font-size: 2rem; }
-        .shop-item-card { background: rgba(0,0,0,0.5); border: 1px solid var(--neon-blue); border-radius: 20px; padding: 15px; margin-bottom: 12px; }
-        .shop-item-name { font-size: 1.3rem; font-weight: bold; color: var(--neon-gold); }
-        .shop-item-desc { font-size: 0.9rem; color: #ccc; margin: 8px 0; }
-        .shop-item-price { color: var(--neon-green); font-weight: bold; }
-        .typing-instruction { font-size: 1rem; color: var(--neon-blue); margin-top: 10px; opacity: 0.8; }
+        .gacha-result-overlay.active {
+            display: flex;
+        }
+        .gacha-result-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            max-width: 900px;
+        }
+
+        /* モーダル */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: #16213e;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #e94560;
+        }
+        .modal-content button {
+            margin: 10px;
+        }
     </style>
 </head>
 <body>
-<div class="game-wrapper">
-    <div class="status-header">
-        <div class="level-area">
-            <div class="level-text">Lv.<span id="levelVal">1</span> <span style="font-size:12px;">⭐ XP</span></div>
-            <div class="xp-bar-bg"><div class="xp-fill" id="xpFill"></div></div>
-        </div>
-        <div class="coin-area">🪙 <span id="coinVal">0</span></div>
-    </div>
-    <div id="appMain"></div>
-</div>
-<div id="sidePanel" class="side-panel"><div id="panelContent"></div><button class="neon-btn" id="closePanel" style="margin-top:20px;">閉じる</button></div>
-<div id="overlay" class="overlay-dark"></div>
-<button id="globalSkillBtn" class="skill-icon-btn" style="display:none;">✨ スキル発動</button>
 
-<script>
-    // 単語データ
-    const WORD_SETS = {
-        easy: ["さくら","ねこ","いぬ","ごはん","みず","おちゃ","えき","うみ","ゆめ","とり","あめ","くも","はな","そら","つき","ほし","やま","かわ","ほん","ゆき"],
-        medium: ["おたんじょうび","しんかんせん","ゆうびんきょく","ありがとう","おめでとう","いってきます","ただいま","おやすみなさい","ともだち","がっこう","せんせい","あさごはん","にほんご","べんきょう","にちようび"],
-        hard: ["よろしくおねがいします","おつかれさまでした","ありがとうございます","しょうしょうおまちください","ゆっくりはなしてください"]
-    };
-    
-    // ローマ字マップ（1文字単位で分割用）
-    // 一文字ずつ空白を入れる
-    const ROMA_MAP = {
-       'さくら':'s a k u r a',
-'ねこ':'n e k o',
-'いぬ':'i n u',
-'ごはん':'g o h a n',
-'みず':'m i z u',
-'おちゃ':'o c h a',
-'えき':'e k i',
-'うみ':'u m i',
-'ゆめ':'y u m e',
-'とり':'t o r i',
-'あめ':'a m e',
-'くも':'k u m o',
-'はな':'h a n a',
-'そら':'s o r a',
-'つき':'t s u k i',
-'ほし':'h o s h i',
-'やま':'y a m a',
-'かわ':'k a w a',
-'ほん':'h o n',
-'ゆき':'y u k i',
-'おたんじょうび':'o t a n j o u b i',
-'しんかんせん':'s h i n k a n s e n',
-'ゆうびんきょく':'y u u b i n k y o k u',
-'ありがとう':'a r i g a t o u',
-'おめでとう':'o m e d e t o u',
-'いってきます':'i t t e k i m a s u',
-'ただいま':'t a d a i m a',
-'おやすみなさい':'o y a s u m i n a s a i',
-'ともだち':'t o m o d a c h i',
-'がっこう':'g a k k o u',
-'せんせい':'s e n s e i',
-'あさごはん':'a s a g o h a n',
-'にほんご':'n i h o n g o',
-'べんきょう':'b e n k y o u',
-'よろしくおねがいします':'y o r o s i k u o n e g a i s i m a s u',
-'おつかれさまでした':'o t u k a r e s a m a d e s i t a',
-'ありがとうございます':'a r i g a t o u g o z a i m a s u',
-'しょうしょうおまちください':'s y o u s y o u o m a t i k u d a s a i',
-'ゆっくりはなしてください':'y u k k u r i h a n a s i t e k u d a s a i',
-'にちようび':'n i c h i y o u b i'
-    };
-    function getRomajiArray(word) { 
-        let roma = ROMA_MAP[word] || word.split('').map(c=>c).join(' ');
-        return roma.split(' ');
-    }
-    
-    let player = { level: 1, xp: 0, coins: 0, equippedSkill: null, unlockedSkills: [] };
-    const SKILLS = {
-        auto_alpha: { name:"自動入力α", price:50000, cd:30, effect:"auto", duration:4.5, desc:"4.5秒間 約0.5秒/文字で自動入力" },
-        combo_alpha: { name:"コンボアップα", price:50000, cd:30, effect:"comboMult", duration:5, mult:1.5, desc:"5秒間コンボ1.5倍" },
-        time_alpha: { name:"時間アップα", price:50000, cd:45, effect:"timeGame", desc:"ミニゲームで+3~6.5秒" },
-        auto_gamma: { name:"自動入力γ", price:500000, cd:35, effect:"auto", duration:7.5, desc:"7.5秒間自動入力" },
-        combo_gamma: { name:"コンボアップγ", price:500000, cd:35, effect:"comboMult", duration:10, mult:1.75, desc:"10秒間1.75倍" },
-        fever_alpha: { name:"フィーバーα", price:1500000, cd:35, effect:"fever", duration:7, desc:"7秒間フィーバー(1文字+300点)" },
-        auto_pi: { name:"自動入力π", price:1500000, cd:25, effect:"hybrid", autoDur:1.5, feverDur:2, desc:"1.5秒自動+2秒フィーバー" },
-        time_gamma: { name:"時間伸ばしγ", price:1500000, cd:200, effect:"preciseGame", desc:"精密ゲームで+4~10秒" },
-        bunson_fever: { name:"ブンソンフィーバー！！", price:5000000, cd:35, effect:"fever", duration:15, passive:true, desc:"15秒フィーバー+残り5秒でコンボ1.35倍" }
-    };
-    
-    let storyProgress = 1, storyUnlocked = 1, storyTargetScore = 10000;
-    let gameActive = false, gameInterval = null, currentWordList = [], currentWord = "", currentRomajiArray = [], currentRomaIndex = 0;
-    let score = 0, combo = 0, timeLeft = 60;
-    let skillCooldown = 0, activeFever = false, activeComboMult = 1, autoTimer = null, currentDifficulty = null, currentStoryStage = 1, currentGameMode = null;
-    let settings = { volume: 70, theme: "ネオン", colorTheme: "デフォルト", font: "ノーマル" };
-    
-    function playSound(type) {
-        if(settings.volume === 0) return;
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.frequency.value = type === "correct" ? 880 : 440;
-        gain.gain.value = settings.volume/100 * 0.15;
-        osc.start(); gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.3);
-        osc.stop(ctx.currentTime+0.2);
-    }
-    
-    function updateUIStats() {
-        document.getElementById("levelVal").innerText = player.level;
-        document.getElementById("coinVal").innerText = Math.floor(player.coins);
-        let needXP = player.level * 100;
-        let percent = (player.xp / needXP) * 100;
-        document.getElementById("xpFill").style.width = Math.min(100, percent) + "%";
-    }
-    
-    function addRewards(finalScore) {
-        let earnCoins = Math.floor(finalScore / 10);
-        let earnXP = Math.floor(finalScore / 100);
-        player.coins += earnCoins;
-        player.xp += earnXP;
-        while(player.xp >= player.level * 100) { player.xp -= player.level * 100; player.level++; }
-        updateUIStats();
-        return { earnCoins, earnXP };
-    }
-    
-    function applyStoryInterference(stage) {
-        if(!gameActive) return;
-        if(stage >= 26 && stage <= 50) {
-            setTimeout(() => { if(gameActive) { const div = document.createElement("div"); div.className="interference-effect paint-splat"; document.body.appendChild(div); setTimeout(()=>div.remove(),1500); showToast("🎨 ペイント妨害！"); } }, 800);
-        } else if(stage >= 51 && stage <= 75) {
-            timeLeft = Math.max(0, timeLeft - 10);
-            document.getElementById("timerVal") && (document.getElementById("timerVal").innerText = timeLeft);
-            showToast("⚠️ タイマー10秒減少！");
-        } else if(stage >= 76 && stage <= 99) {
-            setTimeout(() => { if(gameActive) { combo = 0; document.getElementById("comboVal").innerText=combo; const flash=document.createElement("div"); flash.className="interference-effect thunder-flash"; document.body.appendChild(flash); setTimeout(()=>flash.remove(),600); showToast("⚡ 雷！コンボリセット！"); } }, 1500);
-        } else if(stage === 100) {
-            setTimeout(()=>{ const p=document.createElement("div"); p.className="interference-effect paint-splat"; document.body.appendChild(p); setTimeout(()=>p.remove(),1500); }, 500);
-            setTimeout(()=>{ const p2=document.createElement("div"); p2.className="interference-effect paint-splat"; document.body.appendChild(p2); setTimeout(()=>p2.remove(),1500); }, 3000);
-            setTimeout(()=>{ combo=0; const t=document.createElement("div"); t.className="interference-effect thunder-flash"; document.body.appendChild(t); setTimeout(()=>t.remove(),600); showToast("⚡ 強力な雷！コンボリセット！"); }, 5500);
-        }
-    }
-    
-    function updateProgressBar(currentScore) {
-        const fill = document.getElementById("progressFill");
-        const label = document.getElementById("progressLabel");
-        if(fill && label && storyTargetScore) {
-            let percent = Math.min(100, (currentScore / storyTargetScore) * 100);
-            fill.style.width = percent + "%";
-            label.innerText = `${currentScore} / ${storyTargetScore}`;
-        }
-    }
-    
-    function renderRomajiDisplay() {
-        const container = document.getElementById("romajiContainer");
-        if(!container) return;
-        let html = "";
-        for(let i = 0; i < currentRomajiArray.length; i++) {
-            let charClass = "romaji-char";
-            if(i < currentRomaIndex) charClass += " correct";
-            else if(i === currentRomaIndex) charClass += " current";
-            else charClass += " remaining";
-            html += `<span class="${charClass}">${currentRomajiArray[i]}</span>`;
-        }
-        container.innerHTML = html;
-    }
-    
-    function nextWord() {
-        currentWord = currentWordList[Math.floor(Math.random() * currentWordList.length)];
-        currentRomajiArray = getRomajiArray(currentWord);
-        currentRomaIndex = 0;
-        document.getElementById("questionWord").innerText = currentWord;
-        renderRomajiDisplay();
-    }
-    
-    function processInput(inputChar) {
-        if(!gameActive) return false;
-        let targetChar = currentRomajiArray[currentRomaIndex];
-        if(targetChar && inputChar.toLowerCase() === targetChar.toLowerCase()) {
-            currentRomaIndex++;
-            renderRomajiDisplay();
-            playSound("correct");
-            
-            if(currentRomaIndex >= currentRomajiArray.length) {
-                let addScore = Math.floor(combo * 5) * activeComboMult;
-                score += addScore;
-                combo++;
-                if(activeFever) { score += 300; showToast("🔥 FEVER +300 🔥"); }
-                document.getElementById("scoreVal").innerText = score;
-                document.getElementById("comboVal").innerText = combo;
-                if(currentGameMode === "story") updateProgressBar(score);
-                nextWord();
-            }
-            return true;
-        } else if(targetChar) {
-            combo = 0;
-            document.getElementById("comboVal").innerText = combo;
-            playSound("miss");
-            return false;
-        }
-        return false;
-    }
-    
-    function startGame(difficulty, isStory = false, stageId = 1) {
-        if(gameInterval) clearInterval(gameInterval);
-        if(autoTimer) clearInterval(autoTimer);
-        currentDifficulty = difficulty;
-        currentWordList = [...WORD_SETS[difficulty]];
-        currentWord = currentWordList[Math.floor(Math.random() * currentWordList.length)];
-        currentRomajiArray = getRomajiArray(currentWord);
-        currentRomaIndex = 0;
-        score = 0; combo = 0; timeLeft = 60; gameActive = true; activeFever = false; activeComboMult = 1;
-        if(isStory) { 
-            storyTargetScore = 10000 + (stageId-1)*1000; 
-            currentGameMode = "story"; 
-            currentStoryStage = stageId; 
-        } else currentGameMode = "normal";
-        renderGameScreen();
-        gameInterval = setInterval(() => {
-            if(!gameActive) return;
-            if(timeLeft <= 0) { endGame(); return; }
-            timeLeft--;
-            let timerEl = document.getElementById("timerVal");
-            if(timerEl) timerEl.innerText = timeLeft;
-            if(player.equippedSkill === "bunson_fever" && timeLeft === 5 && activeComboMult === 1) {
-                activeComboMult = 1.35;
-                showToast("🔥 パッシブ発動！コンボ1.35倍 🔥");
-            }
-        }, 1000);
-        if(isStory && stageId >= 26) applyStoryInterference(stageId);
-        document.getElementById("globalSkillBtn").style.display = "block";
-    }
-    
-    function renderGameScreen() {
-        const main = document.getElementById("appMain");
-        let storyProgressHtml = "";
-        if(currentGameMode === "story") {
-            storyProgressHtml = `
-                <div class="story-progress-container">
-                    <div class="progress-label">目標スコア: <span id="progressLabel">0 / ${storyTargetScore}</span></div>
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
-                </div>
-            `;
-        }
-        main.innerHTML = `
-            <div class="game-container">
-                <div class="score-board"><span>🎯 SCORE: <span id="scoreVal">0</span></span><span>⚡ COMBO: <span id="comboVal">0</span></span></div>
-                <div class="timer-big">⏱️ <span id="timerVal">${timeLeft}</span>s</div>
-                ${storyProgressHtml}
-                <div class="question-word" id="questionWord">${currentWord}</div>
-                <div class="romaji-container" id="romajiContainer"></div>
-                <div class="typing-instruction">ローマ字を1文字ずつ入力してください (a~z) 例: syo → s → y → o</div>
-                <div class="flex-row" style="margin-top:20px;"><button id="exitGame" class="neon-btn">🏠 中断</button></div>
-            </div>
-        `;
-        renderRomajiDisplay();
-        document.getElementById("exitGame").onclick = () => endGame(true);
+    <div class="header-info" id="global-header">
+        パック: <span id="display-packs">0</span> | セーブ状態: <span id="save-status" style="color: yellow;">同期中...</span>
+    </div>
+
+    <div id="home-screen" class="screen active">
+        <h1 style="font-size: 48px; margin-top: 50px; color: #e94560;">デッキカードタイピング</h1>
+        <div class="menu-grid">
+            <button onclick="GameController.showDifficultySelect()">カードモード（バトル）</button>
+            <button onclick="GameController.switchScreen('gacha-screen'); UIController.updateGachaScreen();">カードを引く</button>
+            <button onclick="GameController.switchScreen('inventory-screen'); UIController.renderInventory();">持ち物</button>
+            <button onclick="GameController.switchScreen('equip-screen'); UIController.renderEquipScreen();">ベストを装備</button>
+        </div>
+    </div>
+
+    <div id="difficulty-modal" class="modal">
+        <div class="modal-content">
+            <h2>難易度を選択</h2>
+            <p>※60秒間（またはターン制）のボスバトルが始まります</p>
+            <br>
+            <button style="background: #4caf50;" onclick="BattleController.startBattle('easy')">簡単 (ボスHP: 350)</button><br>
+            <button style="background: #ff9800;" onclick="BattleController.startBattle('medium')">中級 (ボスHP: 1000)</button><br>
+            <button style="background: #f44336;" onclick="BattleController.startBattle('hard')">難しい (ボスHP: 3000)</button><br>
+            <button style="background: #800080;" onclick="BattleController.startBattle('extreme')">鬼むず (ボスHP: 10000)</button><br>
+            <br>
+            <button onclick="document.getElementById('difficulty-modal').classList.remove('active')">キャンセル</button>
+        </div>
+    </div>
+
+    <div id="battle-screen" class="screen">
+        <div class="timer-container">残り時間: <span id="battle-timer">60</span>秒</div>
         
-        const keyHandler = (e) => {
-            if(!gameActive) return;
-            if(e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
-                e.preventDefault();
-                processInput(e.key);
+        <div class="battle-header">
+            <div class="status-box">
+                <h3>あなた</h3>
+                <div style="font-size: 24px;">HP: <span id="player-hp">1000</span> / <span id="player-max-hp">1000</span></div>
+                <div class="hp-bar-container">
+                    <div class="hp-bar player-hp-bar" id="player-hp-bar"></div>
+                </div>
+                <div id="player-buffs" style="color: #00ffcc; margin-top: 10px; font-weight: bold; height: 20px;"></div>
+            </div>
+            
+            <div class="status-box">
+                <h3 id="boss-name">ボス</h3>
+                <div style="font-size: 24px;">HP: <span id="boss-hp">350</span> / <span id="boss-max-hp">350</span></div>
+                <div class="hp-bar-container">
+                    <div class="hp-bar" id="boss-hp-bar"></div>
+                </div>
+                <div id="boss-status" style="color: #ffcc00; margin-top: 10px; font-weight: bold; height: 20px;"></div>
+            </div>
+        </div>
+
+        <div class="typing-area" id="typing-area">
+            <div id="typing-message" style="font-size: 24px; color: #aaa;">下のカードから1つ選んでください</div>
+            <div class="japanese-text" id="typing-ja"></div>
+            <div class="romaji-text" id="typing-en"></div>
+        </div>
+
+        <div class="battle-log" id="battle-log"></div>
+
+        <div class="hand-container" id="battle-hand">
+            </div>
+
+        <button style="margin-top: 10px; background: #888;" onclick="BattleController.flee()">逃げる（ホームに戻る）</button>
+    </div>
+
+    <div id="gacha-screen" class="screen">
+        <h2>カードを引く</h2>
+        <p style="margin-bottom: 20px; color: #aaa;">所持パック: <span id="gacha-pack-count">0</span></p>
+        
+        <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+            <button onclick="GachaController.drawCards(1)">1パック引く</button>
+            <button onclick="GachaController.drawCards(3)">3パック引く</button>
+            <button onclick="GachaController.drawCards(10)">10パック引く</button>
+            <button onclick="GachaController.drawCards(100)">100パック引く</button>
+            <button onclick="GachaController.drawAll()">全て引く</button>
+        </div>
+
+        <div style="margin-top: 30px; text-align: left; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px;">
+            <h3>排出確率</h3>
+            <p>コモン: 40% | アンコモン: 30% | レア: 15% | レジェンド: 8%</p>
+            <p>ミシック: 4% | ゴッドリー: 2% | ボルケーノ: 0.8% | シークレット: 0.15%</p>
+            <p>アルティメット: 0.04% | OG: 0.01%</p>
+        </div>
+
+        <button style="margin-top: 30px; background: #555;" onclick="GameController.switchScreen('home-screen')">戻る</button>
+    </div>
+
+    <div id="gacha-result" class="gacha-result-overlay">
+        <h2 style="font-size: 40px; margin-bottom: 20px; color: #fff; text-shadow: 0 0 20px gold;">獲得カード</h2>
+        <div class="gacha-result-cards" id="gacha-result-cards"></div>
+        <button onclick="document.getElementById('gacha-result').classList.remove('active')" style="font-size: 24px; padding: 15px 40px;">閉じる</button>
+    </div>
+
+    <div id="inventory-screen" class="screen">
+        <h2>持ち物</h2>
+        <div class="filter-bar">
+            <select id="inv-rarity-filter" onchange="UIController.renderInventory()">
+                <option value="All">すべてのレアリティ</option>
+                <option value="Common">コモン</option>
+                <option value="Uncommon">アンコモン</option>
+                <option value="Rare">レア</option>
+                <option value="Legend">レジェンド</option>
+                <option value="Mythic">ミシック</option>
+                <option value="Godly">ゴッドリー</option>
+                <option value="Volcano">ボルケーノ</option>
+                <option value="Secret">シークレット</option>
+                <option value="Ultimate">アルティメット</option>
+                <option value="OG">OG</option>
+            </select>
+            <select id="inv-type-filter" onchange="UIController.renderInventory()">
+                <option value="All">すべてのタイプ</option>
+                <option value="attack">攻撃系</option>
+                <option value="heal">回復系</option>
+                <option value="assist">アシスト系（バフ・リセット等）</option>
+            </select>
+        </div>
+        <div class="card-grid" id="inventory-grid"></div>
+        <button style="margin-top: 20px; background: #555;" onclick="GameController.switchScreen('home-screen')">ホームに戻る</button>
+    </div>
+
+    <div id="equip-screen" class="screen">
+        <h2>ベストを装備</h2>
+        <p style="color: #ccc; margin-bottom: 10px;">5つの異なるカードを装備できます。装備したカードはバトル中に35%の確率で出現します。</p>
+        
+        <div class="equipped-container" id="equipped-cards-container">
+            </div>
+
+        <h3>所持カードから選ぶ</h3>
+        <div class="filter-bar">
+            <select id="equip-rarity-filter" onchange="UIController.renderEquipScreen()">
+                <option value="All">すべてのレアリティ</option>
+                <option value="Common">コモン</option>
+                <option value="Uncommon">アンコモン</option>
+                <option value="Rare">レア</option>
+                <option value="Legend">レジェンド</option>
+                <option value="Mythic">ミシック</option>
+                <option value="Godly">ゴッドリー</option>
+                <option value="Volcano">ボルケーノ</option>
+                <option value="Secret">シークレット</option>
+                <option value="Ultimate">アルティメット</option>
+                <option value="OG">OG</option>
+            </select>
+        </div>
+        <div class="card-grid" id="equip-inventory-grid"></div>
+        
+        <button style="margin-top: 20px; background: #555;" onclick="GameController.switchScreen('home-screen')">ホームに戻る</button>
+    </div>
+
+    <div id="battle-result-modal" class="modal">
+        <div class="modal-content" style="width: 400px;">
+            <h2 id="result-title" style="font-size: 36px;"></h2>
+            <p id="result-desc" style="font-size: 20px; margin: 20px 0;"></p>
+            <button onclick="GameController.switchScreen('home-screen'); document.getElementById('battle-result-modal').classList.remove('active');" style="font-size: 20px;">ホームへ</button>
+        </div>
+    </div>
+
+
+    <script type="module">
+        // ==========================================
+        // Firebase の初期化と設定
+        // ==========================================
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDcds20u1-6-nk7710P4xddsa-m1wDL0TQ",
+            authDomain: "iikotowaruikoto-d5aa7.firebaseapp.com",
+            databaseURL: "https://iikotowaruikoto-d5aa7-default-rtdb.firebaseio.com",
+            projectId: "iikotowaruikoto-d5aa7",
+            storageBucket: "iikotowaruikoto-d5aa7.firebasestorage.app",
+            messagingSenderId: "455780219216",
+            appId: "1:455780219216:web:225461fcf24c1a46f69455",
+            measurementId: "G-YQD459DBSG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // ユーザーIDの生成と取得（ローカルストレージを使用して永続化）
+        let userId = localStorage.getItem('typerpg_userId');
+        if (!userId) {
+            userId = 'user_' + Math.random().toString(36).substr(2, 9) + Date.now();
+            localStorage.setItem('typerpg_userId', userId);
+        }
+
+        // ==========================================
+        // ゲームデータ定義
+        // ==========================================
+
+        // カードデータベース（全種類を網羅）
+        const ALL_CARDS = [
+            // コモン (40%)
+            { id: "c1", name: "パンチ", type: "attack", rarity: "Common", baseEffect: 30, desc: "敵に30ダメージ" },
+            { id: "c2", name: "キック", type: "attack", rarity: "Common", baseEffect: 40, desc: "敵に40ダメージ" },
+            { id: "c3", name: "絆創膏", type: "heal", rarity: "Common", baseEffect: 30, desc: "HPを30回復" },
+            { id: "c4", name: "手札入れ替え", type: "assist", rarity: "Common", baseEffect: 2, desc: "カードを2枚リセット" },
+            
+            // アンコモン (30%)
+            { id: "u1", name: "スラッシュ", type: "attack", rarity: "Uncommon", baseEffect: 60, desc: "敵に60ダメージ" },
+            { id: "u2", name: "ファイア", type: "attack", rarity: "Uncommon", baseEffect: 80, desc: "敵に80ダメージ" },
+            { id: "u3", name: "ポーション", type: "heal", rarity: "Uncommon", baseEffect: 80, desc: "HPを80回復" },
+            { id: "u4", name: "集中", type: "assist", rarity: "Uncommon", baseEffect: 1.5, desc: "次ターンのダメージ1.5倍" },
+            { id: "u5", name: "ドロー", type: "assist", rarity: "Uncommon", baseEffect: 4, desc: "カードを4枚リセット" },
+
+            // レア (15%)
+            { id: "r1", name: "サンダー", type: "attack", rarity: "Rare", baseEffect: 150, desc: "敵に150ダメージ" },
+            { id: "r2", name: "アイススピア", type: "attack", rarity: "Rare", baseEffect: 130, desc: "敵に130ダメージ" },
+            { id: "r3", name: "ハイポーション", type: "heal", rarity: "Rare", baseEffect: 200, desc: "HPを200回復" },
+            { id: "r4", name: "気合い", type: "assist", rarity: "Rare", baseEffect: 2.0, desc: "次ターンのダメージ2倍" },
+            { id: "r5", name: "フルリロード", type: "assist", rarity: "Rare", baseEffect: 5, desc: "カードを5枚リセット" },
+
+            // レジェンド (8%)
+            { id: "l1", name: "メテオ", type: "attack", rarity: "Legend", baseEffect: 350, desc: "敵に350ダメージ" },
+            { id: "l2", name: "エクスカリバー", type: "attack", rarity: "Legend", baseEffect: 400, desc: "敵に400ダメージ" },
+            { id: "l3", name: "エリクサー", type: "heal", rarity: "Legend", baseEffect: 500, desc: "HPを500回復" },
+            { id: "l4", name: "覚醒", type: "assist", rarity: "Legend", baseEffect: 3.0, desc: "次ターンのダメージ3倍" },
+
+            // ミシック (4%)
+            { id: "m1", name: "神の裁き", type: "attack", rarity: "Mythic", baseEffect: 800, desc: "敵に800ダメージ" },
+            { id: "m2", name: "完全回復", type: "heal", rarity: "Mythic", baseEffect: 1000, desc: "HPを1000回復" },
+            { id: "m3", name: "時止め", type: "assist", rarity: "Mythic", baseEffect: 1, desc: "敵のターンを1回スキップ" },
+
+            // ゴッドリー (2%)
+            { id: "g1", name: "崩星咆哮砲", type: "attack", rarity: "Godly", baseEffect: 1500, desc: "敵に1500ダメージ" },
+            { id: "g2", name: "神の加護", type: "assist", rarity: "Godly", baseEffect: 5.0, desc: "次ターンのダメージ5倍" },
+
+            // ボルケーノ (0.8%)
+            { id: "v1", name: "超新星爆発", type: "attack", rarity: "Volcano", baseEffect: 3000, desc: "敵に3000ダメージ" },
+            
+            // シークレット (0.15%)
+            { id: "s1", name: "虚無への誘い", type: "attack", rarity: "Secret", baseEffect: 6000, desc: "敵に6000ダメージ" },
+            { id: "s2", name: "無限の命", type: "heal", rarity: "Secret", baseEffect: 9999, desc: "HPを全回復" },
+
+            // アルティメット (0.04%)
+            { id: "ul1", name: "終焉の光", type: "attack", rarity: "Ultimate", baseEffect: 12000, desc: "敵に12000ダメージ" },
+
+            // OG (0.01%)
+            { id: "og1", name: "管理者権限", type: "attack", rarity: "OG", baseEffect: 99999, desc: "敵を消し飛ばす" }
+        ];
+
+        // レアリティの確率設定
+        const RARITY_WEIGHTS = [
+            { rarity: "Common", chance: 40.0 },
+            { rarity: "Uncommon", chance: 30.0 },
+            { rarity: "Rare", chance: 15.0 },
+            { rarity: "Legend", chance: 8.0 },
+            { rarity: "Mythic", chance: 4.0 },
+            { rarity: "Godly", chance: 2.0 },
+            { rarity: "Volcano", chance: 0.8 },
+            { rarity: "Secret", chance: 0.15 },
+            { rarity: "Ultimate", chance: 0.04 },
+            { rarity: "OG", chance: 0.01 }
+        ];
+
+        // タイピング問題集（日本語とローマ字の完全マッピング）
+        const TYPING_WORDS = [
+            { ja: "あいうえお", en: "aiueo" },
+            { ja: "こうげき", en: "kougeki" },
+            { ja: "かいふく", en: "kaifuku" },
+            { ja: "ぼうぎょ", en: "bougyo" },
+            { ja: "ひっさつわざ", en: "hissatsuwaza" },
+            { ja: "すきるをはつどう", en: "sukiruwohatsudou" },
+            { ja: "たいぴんぐばとる", en: "taipingubatoru" },
+            { ja: "でっきをくむ", en: "dekkiwokumu" },
+            { ja: "かーどをひく", en: "ka-dowohiku" },
+            { ja: "れじぇんどかーど", en: "rejendoka-do" },
+            { ja: "きゅうきょくのちから", en: "kyuukyokunochikara" },
+            { ja: "あきらめないこころ", en: "akirumenaikokoro" },
+            { ja: "すーぱーこんぼ", en: "su-pa-konbo" },
+            { ja: "ぜったいぜつめい", en: "zettaizetsumei" },
+            { ja: "きしかいせい", en: "kishikaisei" },
+            { ja: "うんめいのどろー", en: "unmeinodoro-" },
+            { ja: "ますたー", en: "masuta-" },
+            { ja: "えきすぱーと", en: "ekisupa-to" },
+            { ja: "げんかいとっぱ", en: "genkaitoppa" },
+            { ja: "さいきょうのせんし", en: "saikyounosenshi" }
+        ];
+
+        // プレイヤーステート
+        window.playerData = {
+            packs: 3, // 初期は3パック
+            inventory: {}, // { cardId: count }
+            equipped: [] // [cardId, cardId, ...] 最大5つ
+        };
+
+        // バトルステート
+        window.battleState = {
+            isActive: false,
+            timeLeft: 60,
+            timerInterval: null,
+            difficulty: '',
+            boss: { hp: 0, maxHp: 0, attack: 0, name: "" },
+            playerHp: 1000,
+            playerMaxHp: 1000,
+            hand: [],
+            activeCard: null,
+            currentWord: null,
+            typedIndex: 0,
+            mistakes: 0,
+            typingStartTime: 0,
+            nextTurnMultiplier: 1.0,
+            enemyFrozen: false
+        };
+
+        // ==========================================
+        // データ保存・読み込み管理 (GameDataManager)
+        // ==========================================
+        const GameDataManager = {
+            saveData: function() {
+                const statusEl = document.getElementById('save-status');
+                statusEl.textContent = '保存中...';
+                statusEl.style.color = 'orange';
+
+                set(ref(database, 'users/' + userId), window.playerData)
+                    .then(() => {
+                        statusEl.textContent = '保存完了';
+                        statusEl.style.color = 'lime';
+                        UIController.updateGlobalHeader();
+                    })
+                    .catch((error) => {
+                        console.error("Save failed:", error);
+                        statusEl.textContent = 'エラー';
+                        statusEl.style.color = 'red';
+                    });
+            },
+            loadData: function() {
+                const statusEl = document.getElementById('save-status');
+                statusEl.textContent = '読み込み中...';
+                
+                get(ref(database, 'users/' + userId)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        window.playerData.packs = data.packs || 0;
+                        window.playerData.inventory = data.inventory || {};
+                        window.playerData.equipped = data.equipped || [];
+                    }
+                    statusEl.textContent = '同期済';
+                    statusEl.style.color = 'lime';
+                    UIController.updateGlobalHeader();
+                }).catch((error) => {
+                    console.error("Load failed:", error);
+                    statusEl.textContent = 'オフライン';
+                    statusEl.style.color = 'gray';
+                });
             }
         };
-        window.removeEventListener("keydown", window._typingKeyHandler);
-        window._typingKeyHandler = keyHandler;
-        window.addEventListener("keydown", window._typingKeyHandler);
-    }
-    
-    function useSkill(skillId) {
-        let sk = SKILLS[skillId];
-        if(!sk) return;
-        if(skillCooldown > 0) { showToast(`クールダウン残り${skillCooldown}秒`); return; }
-        skillCooldown = sk.cd;
-        let cdInterval = setInterval(() => { if(skillCooldown>0) skillCooldown--; else clearInterval(cdInterval); }, 1000);
-        if(sk.effect === "auto") {
-            let dur = sk.duration;
-            let intervalTime = 500;
-            autoTimer = setInterval(() => {
-                if(!gameActive) return;
-                let targetChar = currentRomajiArray[currentRomaIndex];
-                if(targetChar) processInput(targetChar);
-            }, intervalTime);
-            setTimeout(() => clearInterval(autoTimer), dur*1000);
-            showToast(`${sk.name} 発動！ ${dur}秒間自動入力`);
-        }
-        if(sk.effect === "hybrid") {
-            let dur = sk.autoDur;
-            autoTimer = setInterval(() => {
-                if(!gameActive) return;
-                let targetChar = currentRomajiArray[currentRomaIndex];
-                if(targetChar) processInput(targetChar);
-            }, 500);
-            setTimeout(() => clearInterval(autoTimer), dur*1000);
-            startFever(sk.feverDur);
-        }
-        if(sk.effect === "fever") startFever(sk.duration);
-        if(sk.effect === "comboMult") { activeComboMult = sk.mult; setTimeout(() => { activeComboMult = 1; }, sk.duration*1000); showToast(`${sk.name} 発動！${sk.duration}秒間コンボ${sk.mult}倍`); }
-        if(sk.effect === "timeGame") startTimeMinigame();
-        if(sk.effect === "preciseGame") startPrecisionMinigame();
-    }
-    
-    function startFever(seconds) {
-        activeFever = true;
-        const overlayDiv = document.createElement("div"); overlayDiv.className = "fever-overlay"; document.body.appendChild(overlayDiv);
-        showToast(`🔥 フィーバー発動！ ${seconds}秒間+300点/文字 🔥`);
-        setTimeout(() => { activeFever = false; overlayDiv.remove(); }, seconds*1000);
-    }
-    
-    function startTimeMinigame() {
-        gameActive = false;
-        const container = document.createElement("div"); container.style.position="fixed"; container.style.top="0"; container.style.left="0"; container.style.width="100%"; container.style.height="100%"; container.style.background="rgba(0,0,0,0.85)"; container.style.zIndex="9999"; container.style.display="flex"; container.style.flexDirection="column"; container.style.alignItems="center"; container.style.justifyContent="center";
-        const barDiv = document.createElement("div"); barDiv.className="mini-game-bar"; const fill = document.createElement("div"); fill.className="bar-fill"; fill.style.width="10%"; barDiv.appendChild(fill); const marker = document.createElement("div"); marker.className="marker"; marker.style.left="10%"; barDiv.appendChild(marker);
-        let pos = 10, dir = 1; let moveInt = setInterval(() => { pos += dir*2.2; if(pos>=98) dir=-1; if(pos<=2) dir=1; fill.style.width = pos + "%"; marker.style.left = pos + "%"; }, 20);
-        const stopBtn = document.createElement("button"); stopBtn.innerText = "ストップ！"; stopBtn.className="neon-btn";
-        stopBtn.onclick = () => {
-            clearInterval(moveInt);
-            let add = 0;
-            if(pos >= 40 && pos <= 60) add = 6.5;
-            else if(pos >= 20 && pos <= 80) add = 3;
-            if(add > 0) { timeLeft += add; showToast(`+${add}秒獲得！`); document.getElementById("timerVal") && (document.getElementById("timerVal").innerText = timeLeft); }
-            container.remove();
-            gameActive = true;
-        };
-        container.appendChild(barDiv); container.appendChild(stopBtn); document.body.appendChild(container);
-    }
-    
-    function startPrecisionMinigame() {
-        gameActive = false;
-        const container = document.createElement("div"); container.style.position="fixed"; container.style.top="0"; container.style.left="0"; container.style.width="100%"; container.style.height="100%"; container.style.background="rgba(0,0,0,0.9)"; container.style.zIndex="9999"; container.style.display="flex"; container.style.flexDirection="column"; container.style.alignItems="center"; container.style.justifyContent="center";
-        const barDiv = document.createElement("div"); barDiv.className="mini-game-bar"; barDiv.style.width="600px"; const fill = document.createElement("div"); fill.className="bar-fill"; fill.style.width="10%"; barDiv.appendChild(fill); const marker = document.createElement("div"); marker.className="marker"; marker.style.left="10%"; barDiv.appendChild(marker);
-        let pos = 10, dir = 1; let interval = setInterval(() => { pos += dir*3.2; if(pos>=98) dir=-1; if(pos<=2) dir=1; fill.style.width = pos + "%"; marker.style.left = pos + "%"; }, 18);
-        const stopBtn = document.createElement("button"); stopBtn.innerText = "精密ストップ！"; stopBtn.className="neon-btn";
-        stopBtn.onclick = () => {
-            clearInterval(interval);
-            let add = 0;
-            if(pos >= 48 && pos <= 52) add = 10;
-            else if(pos >= 45 && pos <= 55) add = 7.5;
-            else if(pos >= 35 && pos <= 65) add = 4;
-            if(add>0) { timeLeft += add; showToast(`精密成功！ +${add}秒`); document.getElementById("timerVal") && (document.getElementById("timerVal").innerText = timeLeft); }
-            container.remove();
-            gameActive = true;
-        };
-        container.appendChild(barDiv); container.appendChild(stopBtn); document.body.appendChild(container);
-    }
-    
-    function endGame(abort=false) {
-        if(gameInterval) clearInterval(gameInterval);
-        if(autoTimer) clearInterval(autoTimer);
-        if(window._typingKeyHandler) window.removeEventListener("keydown", window._typingKeyHandler);
-        gameActive = false;
-        let finalScore = score;
-        if(abort) { 
-            document.getElementById("globalSkillBtn").style.display = "none";
-            showHome(); 
-            return; 
-        }
-        let rewards = addRewards(finalScore);
-        if(currentGameMode === "story") {
-            if(finalScore >= storyTargetScore) {
-                if(currentStoryStage >= 100) {
-                    if(!player.unlockedSkills.includes("bunson_fever")) {
-                        player.unlockedSkills.push("bunson_fever");
-                        showToast("🎉 ストーリー完全制覇！ ブンソンフィーバー！！ 入手！");
-                    }
-                    alert("🎉 ストーリー100ステージ完全制覇！ スキル『ブンソンフィーバー！！』を獲得しました！");
-                } else {
-                    storyProgress = currentStoryStage + 1;
-                    storyUnlocked = storyProgress;
-                    alert(`ステージ${currentStoryStage}クリア！ 次のステージ: ${storyProgress}`);
+
+        // ==========================================
+        // UI・画面遷移管理 (UIController)
+        // ==========================================
+        const UIController = {
+            updateGlobalHeader: function() {
+                document.getElementById('display-packs').textContent = window.playerData.packs;
+            },
+            getCardById: function(id) {
+                return ALL_CARDS.find(c => c.id === id);
+            },
+            createCardHTML: function(card, count = 0, onClickAction = "") {
+                const countBadge = count > 1 ? `<div class="card-count">*${count}</div>` : '';
+                return `
+                    <div class="card rarity-${card.rarity}" ${onClickAction ? `onclick="${onClickAction}"` : ''} style="${onClickAction ? 'cursor:pointer;' : ''}">
+                        ${countBadge}
+                        <div class="card-name">${card.name}</div>
+                        <div class="card-type">${this.getTypeName(card.type)}</div>
+                        <div class="card-desc">${card.desc}</div>
+                    </div>
+                `;
+            },
+            getTypeName: function(type) {
+                if(type === 'attack') return '攻撃';
+                if(type === 'heal') return '回復';
+                if(type === 'assist') return 'アシスト';
+                return type;
+            },
+            renderInventory: function() {
+                const rarityFilter = document.getElementById('inv-rarity-filter').value;
+                const typeFilter = document.getElementById('inv-type-filter').value;
+                const grid = document.getElementById('inventory-grid');
+                grid.innerHTML = '';
+
+                let hasCards = false;
+
+                for (const [cardId, count] of Object.entries(window.playerData.inventory)) {
+                    const card = this.getCardById(cardId);
+                    if (!card) continue;
+                    
+                    if (rarityFilter !== 'All' && card.rarity !== rarityFilter) continue;
+                    if (typeFilter !== 'All' && card.type !== typeFilter) continue;
+
+                    grid.innerHTML += this.createCardHTML(card, count);
+                    hasCards = true;
                 }
-            } else { alert(`目標${storyTargetScore}に未達。再挑戦可能`); }
-        }
-        document.getElementById("globalSkillBtn").style.display = "none";
-        showResult(finalScore, rewards.earnCoins, rewards.earnXP);
-    }
-    
-    function showResult(scoreFinal, coinsG, xpG) {
-        const main = document.getElementById("appMain");
-        main.innerHTML = `<div class="game-container"><h2>🎉 リザルト 🎉</h2><div style="font-size:48px; font-weight:bold; margin:20px;">${scoreFinal} pts</div><div style="font-size:1.5rem;">💰 +${coinsG} コイン &nbsp;⭐ +${xpG} XP</div><button id="backHomeBtn" class="neon-btn" style="margin-top:30px;">メインメニューへ</button></div>`;
-        document.getElementById("backHomeBtn").onclick = () => showHome();
-        updateUIStats();
-        let scores = JSON.parse(localStorage.getItem("typing_highscores")) || [];
-        scores.push({score: scoreFinal, date: Date.now()});
-        scores.sort((a,b)=>b.score - a.score);
-        localStorage.setItem("typing_highscores", JSON.stringify(scores.slice(0,20)));
-    }
-    
-    function showHome() {
-        const main = document.getElementById("appMain");
-        main.innerHTML = `<div class="menu-grid">
-            <div class="menu-card" data-action="play"><div class="menu-icon">⌨️</div><div>プレイ</div></div>
-            <div class="menu-card" data-action="story"><div class="menu-icon">📖</div><div>ストーリー</div></div>
-            <div class="menu-card" data-action="rank"><div class="menu-icon">🏆</div><div>ランキング</div></div>
-            <div class="menu-card" data-action="shop"><div class="menu-icon">🛒</div><div>スキルショップ</div></div>
-            <div class="menu-card" data-action="settings"><div class="menu-icon">⚙️</div><div>設定</div></div>
-        </div>`;
-        document.querySelectorAll(".menu-card").forEach(card => {
-            card.onclick = () => { const act = card.dataset.action; if(act === "play") showDifficulty(); else if(act === "story") showStoryMap(); else if(act === "rank") showRanking(); else if(act === "shop") showSkillShop(); else if(act === "settings") showSettings(); };
+
+                if (!hasCards) {
+                    grid.innerHTML = '<p style="color:#aaa; width:100%; text-align:center;">条件に一致するカードがありません。</p>';
+                }
+            },
+            renderEquipScreen: function() {
+                // 装備中エリアの描画
+                const equippedContainer = document.getElementById('equipped-cards-container');
+                equippedContainer.innerHTML = '';
+                
+                for(let i=0; i<5; i++) {
+                    const equippedId = window.playerData.equipped[i];
+                    if (equippedId) {
+                        const card = this.getCardById(equippedId);
+                        equippedContainer.innerHTML += this.createCardHTML(card, 0, `EquipController.unequipCard('${equippedId}')`);
+                    } else {
+                        equippedContainer.innerHTML += `<div class="equipped-slot">空き</div>`;
+                    }
+                }
+
+                // 所持カード（選択可能）エリアの描画
+                const rarityFilter = document.getElementById('equip-rarity-filter').value;
+                const grid = document.getElementById('equip-inventory-grid');
+                grid.innerHTML = '';
+
+                for (const [cardId, count] of Object.entries(window.playerData.inventory)) {
+                    if (window.playerData.equipped.includes(cardId)) continue; // 既に装備中は非表示
+
+                    const card = this.getCardById(cardId);
+                    if (!card) continue;
+                    if (rarityFilter !== 'All' && card.rarity !== rarityFilter) continue;
+
+                    grid.innerHTML += this.createCardHTML(card, count, `EquipController.equipCard('${cardId}')`);
+                }
+            },
+            updateGachaScreen: function() {
+                document.getElementById('gacha-pack-count').textContent = window.playerData.packs;
+            },
+            showEffectPopup: function(text, x, y, color = "#ffea00") {
+                const popup = document.createElement('div');
+                popup.className = 'effect-popup';
+                popup.textContent = text;
+                popup.style.left = x + 'px';
+                popup.style.top = y + 'px';
+                popup.style.color = color;
+                document.body.appendChild(popup);
+                setTimeout(() => popup.remove(), 1500);
+            }
+        };
+
+        // ==========================================
+        // 装備管理 (EquipController)
+        // ==========================================
+        window.EquipController = {
+            equipCard: function(cardId) {
+                if (window.playerData.equipped.length >= 5) {
+                    alert("装備できるのは5つまでです。先に外してください。");
+                    return;
+                }
+                if (window.playerData.equipped.includes(cardId)) {
+                    alert("同じカードは複数装備できません。");
+                    return;
+                }
+                window.playerData.equipped.push(cardId);
+                GameDataManager.saveData();
+                UIController.renderEquipScreen();
+            },
+            unequipCard: function(cardId) {
+                window.playerData.equipped = window.playerData.equipped.filter(id => id !== cardId);
+                GameDataManager.saveData();
+                UIController.renderEquipScreen();
+            }
+        };
+
+        // ==========================================
+        // ガチャ管理 (GachaController)
+        // ==========================================
+        window.GachaController = {
+            drawCards: function(amount) {
+                if (window.playerData.packs < amount) {
+                    alert("パックが足りません！");
+                    return;
+                }
+
+                window.playerData.packs -= amount;
+                
+                const results = [];
+                for(let i=0; i<amount; i++) {
+                    const card = this.rollSingleCard();
+                    results.push(card);
+                    // インベントリに追加
+                    if (!window.playerData.inventory[card.id]) {
+                        window.playerData.inventory[card.id] = 0;
+                    }
+                    window.playerData.inventory[card.id]++;
+                }
+
+                GameDataManager.saveData();
+                UIController.updateGachaScreen();
+                this.showResult(results);
+            },
+            drawAll: function() {
+                const amount = window.playerData.packs;
+                if (amount <= 0) {
+                    alert("パックがありません！");
+                    return;
+                }
+                this.drawCards(amount);
+            },
+            rollSingleCard: function() {
+                const rand = Math.random() * 100;
+                let cumulative = 0;
+                let selectedRarity = "Common";
+
+                for (const rw of RARITY_WEIGHTS) {
+                    cumulative += rw.chance;
+                    if (rand <= cumulative) {
+                        selectedRarity = rw.rarity;
+                        break;
+                    }
+                }
+
+                // そのレアリティのカードからランダムに1つ選ぶ
+                const cardsOfRarity = ALL_CARDS.filter(c => c.rarity === selectedRarity);
+                const randomCard = cardsOfRarity[Math.floor(Math.random() * cardsOfRarity.length)];
+                return randomCard;
+            },
+            showResult: function(cards) {
+                const resultDiv = document.getElementById('gacha-result-cards');
+                resultDiv.innerHTML = '';
+
+                // 大量に引いた場合はまとめる
+                if (cards.length > 20) {
+                    const counts = {};
+                    cards.forEach(c => {
+                        counts[c.id] = (counts[c.id] || 0) + 1;
+                    });
+                    for (const [id, count] of Object.entries(counts)) {
+                        const c = UIController.getCardById(id);
+                        resultDiv.innerHTML += UIController.createCardHTML(c, count);
+                    }
+                } else {
+                    cards.forEach(c => {
+                        resultDiv.innerHTML += UIController.createCardHTML(c);
+                    });
+                }
+
+                document.getElementById('gacha-result').classList.add('active');
+            }
+        };
+
+        // ==========================================
+        // バトル管理 (BattleController)
+        // ==========================================
+        window.BattleController = {
+            startBattle: function(difficulty) {
+                document.getElementById('difficulty-modal').classList.remove('active');
+                GameController.switchScreen('battle-screen');
+
+                window.battleState = {
+                    isActive: true,
+                    timeLeft: 60,
+                    timerInterval: null,
+                    difficulty: difficulty,
+                    playerHp: 1000,
+                    playerMaxHp: 1000,
+                    hand: [],
+                    activeCard: null,
+                    currentWord: null,
+                    typedIndex: 0,
+                    mistakes: 0,
+                    typingStartTime: 0,
+                    nextTurnMultiplier: 1.0,
+                    enemyFrozen: false
+                };
+
+                // ボスの設定
+                const boss = window.battleState.boss;
+                switch(difficulty) {
+                    case 'easy': boss.maxHp = 350; boss.hp = 350; boss.attack = 30; boss.name = "スライム (簡単)"; break;
+                    case 'medium': boss.maxHp = 1000; boss.hp = 1000; boss.attack = 80; boss.name = "オーク (中級)"; break;
+                    case 'hard': boss.maxHp = 3000; boss.hp = 3000; boss.attack = 200; boss.name = "ドラゴン (難しい)"; break;
+                    case 'extreme': boss.maxHp = 10000; boss.hp = 10000; boss.attack = 500; boss.name = "魔王 (鬼むず)"; break;
+                }
+
+                document.getElementById('boss-name').textContent = boss.name;
+                document.getElementById('battle-log').innerHTML = '<p>バトル開始！</p>';
+                this.updateHPUI();
+
+                // タイマー開始
+                document.getElementById('battle-timer').textContent = window.battleState.timeLeft;
+                window.battleState.timerInterval = setInterval(() => {
+                    if (!window.battleState.isActive) return;
+                    window.battleState.timeLeft--;
+                    document.getElementById('battle-timer').textContent = window.battleState.timeLeft;
+                    if (window.battleState.timeLeft <= 0) {
+                        this.endBattle(false, "タイムアップ！");
+                    }
+                }, 1000);
+
+                this.drawHand(5);
+                this.resetTypingUI();
+            },
+            drawHand: function(count) {
+                window.battleState.hand = [];
+                for(let i=0; i<count; i++) {
+                    // 35%の確率で装備カードから抽選（装備がある場合）
+                    if (window.playerData.equipped.length > 0 && Math.random() < 0.35) {
+                        const randomEquipId = window.playerData.equipped[Math.floor(Math.random() * window.playerData.equipped.length)];
+                        window.battleState.hand.push(UIController.getCardById(randomEquipId));
+                    } else {
+                        // それ以外は所持カードからランダム（所持ゼロならコモンのパンチ）
+                        const ownedKeys = Object.keys(window.playerData.inventory);
+                        if (ownedKeys.length > 0) {
+                            const randomOwnedId = ownedKeys[Math.floor(Math.random() * ownedKeys.length)];
+                            window.battleState.hand.push(UIController.getCardById(randomOwnedId));
+                        } else {
+                            window.battleState.hand.push(ALL_CARDS[0]); // パンチ
+                        }
+                    }
+                }
+                this.renderHand();
+            },
+            renderHand: function() {
+                const handDiv = document.getElementById('battle-hand');
+                handDiv.innerHTML = '';
+                window.battleState.hand.forEach((card, index) => {
+                    handDiv.innerHTML += UIController.createCardHTML(card, 0, `BattleController.selectCard(${index})`);
+                });
+            },
+            selectCard: function(index) {
+                if (!window.battleState.isActive || window.battleState.activeCard) return;
+
+                window.battleState.activeCard = window.battleState.hand[index];
+                
+                // カードを手札から削除
+                window.battleState.hand.splice(index, 1);
+                this.renderHand();
+
+                // タイピング問題を設定
+                const word = TYPING_WORDS[Math.floor(Math.random() * TYPING_WORDS.length)];
+                window.battleState.currentWord = word;
+                window.battleState.typedIndex = 0;
+                window.battleState.mistakes = 0;
+                window.battleState.typingStartTime = performance.now();
+
+                this.updateTypingUI();
+                document.getElementById('typing-message').textContent = `「${window.battleState.activeCard.name}」発動！タイピングせよ！`;
+            },
+            updateTypingUI: function() {
+                const word = window.battleState.currentWord;
+                if (!word) return;
+
+                document.getElementById('typing-ja').textContent = word.ja;
+                
+                const typedPart = word.en.substring(0, window.battleState.typedIndex);
+                const remainingPart = word.en.substring(window.battleState.typedIndex);
+
+                document.getElementById('typing-en').innerHTML = `<span class="typed">${typedPart}</span><span>${remainingPart}</span>`;
+            },
+            resetTypingUI: function() {
+                document.getElementById('typing-message').textContent = "下のカードから1つ選んでください";
+                document.getElementById('typing-ja').textContent = "";
+                document.getElementById('typing-en').innerHTML = "";
+            },
+            handleTyping: function(key) {
+                if (!window.battleState.isActive || !window.battleState.activeCard || !window.battleState.currentWord) return;
+
+                const targetChar = window.battleState.currentWord.en[window.battleState.typedIndex];
+
+                if (key.toLowerCase() === targetChar.toLowerCase()) {
+                    window.battleState.typedIndex++;
+                    this.updateTypingUI();
+
+                    // 完了チェック
+                    if (window.battleState.typedIndex >= window.battleState.currentWord.en.length) {
+                        this.executeCardEffect();
+                    }
+                } else {
+                    // ミス
+                    window.battleState.mistakes++;
+                    const enDiv = document.getElementById('typing-en');
+                    enDiv.classList.add('error');
+                    setTimeout(() => enDiv.classList.remove('error'), 100);
+                }
+            },
+            executeCardEffect: function() {
+                const timeTaken = performance.now() - window.battleState.typingStartTime;
+                const card = window.battleState.activeCard;
+                const mistakes = window.battleState.mistakes;
+
+                let effectValue = card.baseEffect;
+                let logMsg = `【${card.name}】発動！ `;
+                
+                // ポップアップ位置計算用
+                const typingAreaRect = document.getElementById('typing-area').getBoundingClientRect();
+                const popupX = typingAreaRect.left + typingAreaRect.width / 2 - 50;
+                const popupY = typingAreaRect.top + 50;
+
+                // ボーナスとペナルティの計算
+                if (mistakes === 0) {
+                    // パーフェクトボーナス
+                    if (card.type === 'assist' && card.baseEffect < 10) {
+                        effectValue += 1; // 倍率系や枚数系は+1
+                    } else {
+                        effectValue += 5; // ダメージ回復は+5
+                    }
+                    UIController.showEffectPopup("パーフェクト！", popupX, popupY, "#00ffcc");
+                    logMsg += "パーフェクト！ ";
+
+                    // 神速ボーナス (1秒以内)
+                    if (timeTaken <= 1000) {
+                        if (card.type === 'assist' && card.baseEffect < 10) {
+                            effectValue += 1;
+                        } else {
+                            effectValue += 10;
+                        }
+                        setTimeout(() => UIController.showEffectPopup("神速！", popupX, popupY - 40, "#ff00ff"), 300);
+                        logMsg += "神速ボーナス！ ";
+                    }
+                } else {
+                    // ミスペナルティ
+                    UIController.showEffectPopup("威力ダウン...", popupX, popupY, "#ff3333");
+                    logMsg += `(ミス${mistakes}回で威力ダウン) `;
+                    if (card.type === 'assist' && card.baseEffect < 10) {
+                        effectValue -= 0.1 * mistakes; // 倍率低下
+                        if (effectValue < 1) effectValue = 1; // 最低1
+                    } else if (card.type === 'assist') {
+                         effectValue -= 1 * mistakes; // 枚数低下
+                         if (effectValue < 1) effectValue = 1;
+                    } else {
+                        effectValue -= 1 * mistakes; // ダメージ低下
+                        if (effectValue < 1) effectValue = 1;
+                    }
+                }
+
+                // 効果の適用
+                effectValue = Math.round(effectValue * 10) / 10; // 小数点第一位まで
+                let finalDamage = 0;
+
+                if (card.type === 'attack') {
+                    finalDamage = Math.floor(effectValue * window.battleState.nextTurnMultiplier);
+                    window.battleState.boss.hp -= finalDamage;
+                    if(window.battleState.boss.hp < 0) window.battleState.boss.hp = 0;
+                    logMsg += `敵に ${finalDamage} のダメージ！`;
+                    window.battleState.nextTurnMultiplier = 1.0; // 倍率リセット
+                    document.getElementById('player-buffs').textContent = "";
+                } else if (card.type === 'heal') {
+                    window.battleState.playerHp += effectValue;
+                    if(window.battleState.playerHp > window.battleState.playerMaxHp) window.battleState.playerHp = window.battleState.playerMaxHp;
+                    logMsg += `HPが ${effectValue} 回復した！`;
+                } else if (card.type === 'assist') {
+                    if (card.name.includes("リセット") || card.name.includes("ドロー") || card.name.includes("入れ替え")) {
+                        this.drawHand(Math.floor(effectValue));
+                        logMsg += `手札を ${Math.floor(effectValue)} 枚引き直した！`;
+                    } else if (card.name === "時止め") {
+                        window.battleState.enemyFrozen = true;
+                        logMsg += `敵のターンを1回スキップ！`;
+                    } else {
+                        // 倍率バフ
+                        window.battleState.nextTurnMultiplier = effectValue;
+                        logMsg += `次の攻撃ダメージが ${effectValue} 倍になった！`;
+                        document.getElementById('player-buffs').textContent = `攻撃 ${effectValue} 倍！`;
+                    }
+                }
+
+                this.logBattle(logMsg);
+                this.updateHPUI();
+                this.resetTypingUI();
+                window.battleState.activeCard = null;
+
+                // 勝利判定
+                if (window.battleState.boss.hp <= 0) {
+                    this.endBattle(true, "ボスの撃破に成功した！");
+                    return;
+                }
+
+                // 敵のターンへ
+                setTimeout(() => this.enemyTurn(), 1000);
+            },
+            enemyTurn: function() {
+                if (!window.battleState.isActive) return;
+
+                if (window.battleState.enemyFrozen) {
+                    this.logBattle("【敵のターン】敵は時を止められて動けない！");
+                    window.battleState.enemyFrozen = false;
+                    this.checkHand();
+                    return;
+                }
+
+                const boss = window.battleState.boss;
+                // 敵の行動パターン (20%の確率で特殊行動)
+                if (Math.random() < 0.2) {
+                    // 特殊: 回復
+                    const healAmount = Math.floor(boss.maxHp * 0.1);
+                    boss.hp += healAmount;
+                    if(boss.hp > boss.maxHp) boss.hp = boss.maxHp;
+                    this.logBattle(`【敵のターン】ボスは特殊技を使った！ HPを ${healAmount} 回復した。`);
+                } else {
+                    // 通常攻撃
+                    window.battleState.playerHp -= boss.attack;
+                    if (window.battleState.playerHp < 0) window.battleState.playerHp = 0;
+                    this.logBattle(`【敵のターン】ボスの攻撃！ あなたは ${boss.attack} のダメージを受けた。`);
+                }
+
+                this.updateHPUI();
+
+                // 敗北判定
+                if (window.battleState.playerHp <= 0) {
+                    this.endBattle(false, "HPが0になってしまった...");
+                    return;
+                }
+
+                this.checkHand();
+            },
+            checkHand: function() {
+                // 手札が0枚なら自動補充
+                if (window.battleState.hand.length === 0) {
+                    this.logBattle("手札がなくなったため、5枚ドローした。");
+                    this.drawHand(5);
+                }
+            },
+            updateHPUI: function() {
+                document.getElementById('player-hp').textContent = Math.floor(window.battleState.playerHp);
+                document.getElementById('boss-hp').textContent = Math.floor(window.battleState.boss.hp);
+                
+                const pPct = (window.battleState.playerHp / window.battleState.playerMaxHp) * 100;
+                const bPct = (window.battleState.boss.hp / window.battleState.boss.maxHp) * 100;
+                
+                document.getElementById('player-hp-bar').style.width = pPct + '%';
+                document.getElementById('boss-hp-bar').style.width = bPct + '%';
+            },
+            logBattle: function(msg) {
+                const logDiv = document.getElementById('battle-log');
+                logDiv.innerHTML = `<p>${msg}</p>` + logDiv.innerHTML;
+            },
+            endBattle: function(isWin, reason) {
+                window.battleState.isActive = false;
+                clearInterval(window.battleState.timerInterval);
+
+                const modal = document.getElementById('battle-result-modal');
+                const title = document.getElementById('result-title');
+                const desc = document.getElementById('result-desc');
+
+                if (isWin) {
+                    let reward = 0;
+                    switch(window.battleState.difficulty) {
+                        case 'easy': reward = 1; break;
+                        case 'medium': reward = 3; break;
+                        case 'hard': reward = 5; break;
+                        case 'extreme': reward = 10; break;
+                    }
+                    title.textContent = "YOU WIN!";
+                    title.style.color = "gold";
+                    desc.textContent = `${reason} 報酬として ${reward} パック獲得しました！`;
+                    window.playerData.packs += reward;
+                    GameDataManager.saveData();
+                } else {
+                    title.textContent = "YOU LOSE...";
+                    title.style.color = "red";
+                    desc.textContent = `${reason}`;
+                }
+
+                modal.classList.add('active');
+            },
+            flee: function() {
+                if (confirm("逃げますか？（ホームに戻ります）")) {
+                    window.battleState.isActive = false;
+                    clearInterval(window.battleState.timerInterval);
+                    GameController.switchScreen('home-screen');
+                }
+            }
+        };
+
+        // ==========================================
+        // グローバルイベント・制御 (GameController)
+        // ==========================================
+        window.GameController = {
+            switchScreen: function(screenId) {
+                document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+                document.getElementById(screenId).classList.add('active');
+            },
+            showDifficultySelect: function() {
+                document.getElementById('difficulty-modal').classList.add('active');
+            }
+        };
+
+        // キーボード入力リスナー（タイピング用）
+        document.addEventListener('keydown', (e) => {
+            // アルファベットのみ処理
+            if (/^[a-zA-Z-]$/.test(e.key)) {
+                BattleController.handleTyping(e.key);
+            }
         });
-        document.getElementById("globalSkillBtn").style.display = "none";
-    }
-    
-    function showDifficulty() {
-        const main = document.getElementById("appMain");
-        main.innerHTML = `<div><h2>⚔️ 難易度選択</h2><div class="flex-row"><button class="neon-btn" data-diff="easy">🍃 簡単</button><button class="neon-btn" data-diff="medium">🌙 中級</button><button class="neon-btn" data-diff="hard">🔥 上級</button><button class="neon-btn" id="backHomeDiff">戻る</button></div></div>`;
-        document.querySelectorAll("[data-diff]").forEach(btn => { btn.onclick = () => startGame(btn.dataset.diff, false); });
-        document.getElementById("backHomeDiff").onclick = showHome;
-    }
-    
-    function showStoryMap() {
-        const main = document.getElementById("appMain");
-        let stagesHtml = `<div><h2>📖 ストーリーモード</h2><div class="story-map-grid">`;
-        for(let i=1;i<=100;i++) {
-            let cls = "stage-node";
-            if(i <= storyUnlocked) cls += " clear";
-            if(i === storyProgress) cls += " current";
-            if(i > storyUnlocked) cls += " locked";
-            stagesHtml += `<div class="${cls}" data-stage="${i}">${i}</div>`;
-        }
-        stagesHtml += `</div><div class="flex-row"><button id="storyPlayBtn" class="neon-btn">▶ 現在ステージをプレイ</button><button id="backStory" class="neon-btn">戻る</button></div></div>`;
-        main.innerHTML = stagesHtml;
-        document.getElementById("storyPlayBtn").onclick = () => { let diff = storyProgress<=30?"easy":(storyProgress<=70?"medium":"hard"); startGame(diff, true, storyProgress); };
-        document.getElementById("backStory").onclick = showHome;
-    }
-    
-    function showRanking() {
-        let scores = JSON.parse(localStorage.getItem("typing_highscores")) || [];
-        scores.sort((a,b)=>b.score - a.score);
-        let html = `<div><h2>🏆 ランキング</h2><div class="ranking-list">`;
-        if(scores.length === 0) html += `<div class="ranking-item">まだ記録がありません</div>`;
-        else scores.slice(0,10).forEach((s,i) => { html += `<div class="ranking-item"><span>${i+1}位</span><span>${s.score} pts</span></div>`; });
-        html += `</div><div class="flex-row"><button class="neon-btn" id="rankBack">戻る</button></div></div>`;
-        document.getElementById("appMain").innerHTML = html;
-        document.getElementById("rankBack").onclick = showHome;
-    }
-    
-    function showSkillShop() {
-        const panel = document.getElementById("sidePanel");
-        const overlay = document.getElementById("overlay");
-        function renderShop() {
-            let content = `<div><h2>🛒 スキルショップ</h2><div class="tab-bar"><button class="tab-btn active" data-tab="buy">購入</button><button class="tab-btn" data-tab="equip">装備</button></div><div id="shopTabContent"></div></div>`;
-            document.getElementById("panelContent").innerHTML = content;
-            let currentTab = "buy";
-            function loadTab(tab) {
-                const tabDiv = document.getElementById("shopTabContent");
-                if(tab === "buy") {
-                    let html = `<div>`;
-                    for(let [id,sk] of Object.entries(SKILLS)) {
-                        let owned = player.unlockedSkills.includes(id);
-                        html += `<div class="shop-item-card"><div class="shop-item-name">${sk.name}</div><div class="shop-item-desc">${sk.desc}</div><div class="shop-item-price">💰 ${sk.price.toLocaleString()} コイン</div>${owned?"<span style='color:var(--neon-green);'>✅ 所有済み</span>":`<button class="neon-btn buy-skill" data-id="${id}" style="margin-top:8px;">購入</button>`}</div>`;
-                    }
-                    html += `</div>`;
-                    tabDiv.innerHTML = html;
-                    document.querySelectorAll(".buy-skill").forEach(btn => {
-                        btn.onclick = () => { let sid = btn.dataset.id; let sk = SKILLS[sid]; if(player.coins >= sk.price && !player.unlockedSkills.includes(sid)) { player.coins -= sk.price; player.unlockedSkills.push(sid); updateUIStats(); renderShop(); showToast(`${sk.name}を購入！`); } else alert("コイン不足または既所有"); };
-                    });
-                } else {
-                    let html = `<div><div class="shop-item-card">装備中スキル: <span style="color:var(--neon-gold);">${player.equippedSkill ? SKILLS[player.equippedSkill]?.name : "なし"}</span></div><hr>`;
-                    player.unlockedSkills.forEach(sid => {
-                        html += `<div class="shop-item-card" style="display:flex; justify-content:space-between; align-items:center;"><span>${SKILLS[sid].name}</span><button class="neon-btn equip-skill" data-id="${sid}">装備</button></div>`;
-                    });
-                    html += `</div>`;
-                    tabDiv.innerHTML = html;
-                    document.querySelectorAll(".equip-skill").forEach(btn => {
-                        btn.onclick = () => { player.equippedSkill = btn.dataset.id; showToast(`${SKILLS[btn.dataset.id].name}を装備`); renderShop(); };
-                    });
-                }
-            }
-            loadTab(currentTab);
-            document.querySelectorAll(".tab-btn").forEach(btn => {
-                btn.onclick = () => { currentTab = btn.dataset.tab; loadTab(currentTab); document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); };
-            });
-        }
-        renderShop();
-        panel.classList.add("open"); overlay.style.display = "block";
-        document.getElementById("closePanel").onclick = () => { panel.classList.remove("open"); overlay.style.display = "none"; showHome(); };
-    }
-    
-    function showSettings() {
-        const main = document.getElementById("appMain");
-        main.innerHTML = `<div><h2>⚙️ 設定</h2><div class="settings-group"><label>🔊 音量 <input type="range" id="volSlider" min="0" max="100" value="${settings.volume}"></label></div>
-        <div class="settings-group"><label>🎨 テーマ: <select id="themeSelect"><option>ネオン</option><option>ノーマル</option><option>クラシック</option><option>オールドクラシック</option><option>ドット</option></select></label></div>
-        <div class="settings-group"><label>🌈 カラー: <select id="colorSelect"><option>デフォルト</option><option>レッド</option><option>シアン</option><option>イエロー</option><option>マゼンタ</option><option>レインボー</option></select></label></div>
-        <div class="settings-group"><label>✍️ フォント: <select id="fontSelect"><option>ノーマル</option><option>ゴシック体</option><option>チャラい</option><option>ドット</option><option>スーパークラシック</option></select></label></div>
-        <div class="flex-row"><button class="neon-btn" id="saveSettingsBtn">保存</button><button class="neon-btn" id="backSetting">戻る</button></div></div>`;
-        document.getElementById("themeSelect").value = settings.theme;
-        document.getElementById("colorSelect").value = settings.colorTheme;
-        document.getElementById("fontSelect").value = settings.font;
-        document.getElementById("saveSettingsBtn").onclick = () => {
-            settings.volume = parseInt(document.getElementById("volSlider").value);
-            settings.theme = document.getElementById("themeSelect").value;
-            settings.colorTheme = document.getElementById("colorSelect").value;
-            settings.font = document.getElementById("fontSelect").value;
-            document.body.className = `theme-${settings.theme === "ノーマル"?"default":settings.theme === "ネオン"?"neon":settings.theme === "クラシック"?"classic":settings.theme === "オールドクラシック"?"oldclassic":"dot"} color-${settings.colorTheme === "デフォルト"?"default":settings.colorTheme.toLowerCase()} font-${settings.font === "ノーマル"?"default":settings.font === "ゴシック体"?"gothic":settings.font === "チャラい"?"chalai":settings.font === "ドット"?"dot":"superclassic"}`;
-            localStorage.setItem("ramo_settings", JSON.stringify(settings));
-            alert("設定保存しました");
+
+        // ==========================================
+        // アプリケーション起動時の処理
+        // ==========================================
+        window.onload = function() {
+            // Firebaseからデータをロード
+            GameDataManager.loadData();
+            // ホーム画面を初期化
+            UIController.updateGlobalHeader();
         };
-        document.getElementById("backSetting").onclick = showHome;
-    }
-    
-    function showToast(msg) { const t=document.createElement("div"); t.className="skill-toast"; t.innerText=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),1500); }
-    
-    function init() {
-        let savedCoins = localStorage.getItem("ramo_coins");
-        if(savedCoins) player.coins = parseInt(savedCoins);
-        let savedLevel = localStorage.getItem("ramo_level");
-        if(savedLevel) player.level = parseInt(savedLevel);
-        let savedXP = localStorage.getItem("ramo_xp");
-        if(savedXP) player.xp = parseInt(savedXP);
-        let savedUnlocked = localStorage.getItem("ramo_unlocked_skills");
-        if(savedUnlocked) player.unlockedSkills = JSON.parse(savedUnlocked);
-        let savedEquipped = localStorage.getItem("ramo_equipped_skill");
-        if(savedEquipped) player.equippedSkill = savedEquipped;
-        let savedStory = localStorage.getItem("ramo_story_progress");
-        if(savedStory) { storyProgress = parseInt(savedStory); storyUnlocked = storyProgress; }
-        let savedSettings = localStorage.getItem("ramo_settings");
-        if(savedSettings) { settings = JSON.parse(savedSettings); document.body.className = `theme-${settings.theme === "ノーマル"?"default":settings.theme === "ネオン"?"neon":settings.theme === "クラシック"?"classic":settings.theme === "オールドクラシック"?"oldclassic":"dot"} color-${settings.colorTheme === "デフォルト"?"default":settings.colorTheme.toLowerCase()} font-${settings.font === "ノーマル"?"default":settings.font === "ゴシック体"?"gothic":settings.font === "チャラい"?"chalai":settings.font === "ドット"?"dot":"superclassic"}`; }
-        updateUIStats();
-        // 初期スキルは何も持っていない
-        player.unlockedSkills = [];
-        player.equippedSkill = null;
-        showHome();
-        document.getElementById("globalSkillBtn").onclick = () => { if(gameActive && skillCooldown<=0 && player.equippedSkill) useSkill(player.equippedSkill); else showToast("スキル未装備orクールダウン"); };
-    }
-    
-    window.addEventListener("beforeunload", () => {
-        localStorage.setItem("ramo_coins", player.coins);
-        localStorage.setItem("ramo_level", player.level);
-        localStorage.setItem("ramo_xp", player.xp);
-        localStorage.setItem("ramo_unlocked_skills", JSON.stringify(player.unlockedSkills));
-        localStorage.setItem("ramo_equipped_skill", player.equippedSkill);
-        localStorage.setItem("ramo_story_progress", storyProgress);
-    });
-    
-    init();
-</script>
+
+    </script>
 </body>
 </html>
