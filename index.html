@@ -1090,14 +1090,11 @@
             showResult: function(cards) {
                 const resultDiv = document.getElementById('gacha-result-cards');
                 resultDiv.innerHTML = '';
-                if (cards.length > 20) {
-                    const counts = {};
-                    cards.forEach(c => counts[c.id] = (counts[c.id] || 0) + 1);
-                    for (const [id, count] of Object.entries(counts)) {
-                        resultDiv.innerHTML += UIController.createCardHTML(UIController.getCardById(id), count);
-                    }
-                } else {
-                    cards.forEach(c => resultDiv.innerHTML += UIController.createCardHTML(c));
+                // 揃ったカードをカウントして「x枚」とまとめて表示
+                const counts = {};
+                cards.forEach(c => counts[c.id] = (counts[c.id] || 0) + 1);
+                for (const [id, count] of Object.entries(counts)) {
+                    resultDiv.innerHTML += UIController.createCardHTML(UIController.getCardById(id), count);
                 }
                 document.getElementById('gacha-result').classList.add('active');
             }
@@ -1111,8 +1108,10 @@
 
                 GameController.switchScreen('battle-screen');
 
+                // ここがバグの原因でした！ボス情報の初期化（boss: {hp...}）を追加修正しました。
                 window.battleState = {
                     isActive: true, timeLeft: 60, timerInterval: null, difficulty: difficulty,
+                    boss: { hp: 0, maxHp: 0, attack: 0, name: "" }, // ← 【重要】この行が抜けていたためエラーで止まっていました
                     playerHp: 1000, playerMaxHp: 1000, hand: [], activeCard: null, currentWord: null,
                     typedIndex: 0, mistakes: 0, typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false
                 };
