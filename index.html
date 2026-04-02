@@ -413,18 +413,6 @@
             text-shadow: 1px 1px 2px black;
         }
         
-        .timer-container {
-            font-size: 48px;
-            font-weight: bold;
-            color: #ffd700;
-            margin: 0 0 20px 0;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-            background: rgba(0,0,0,0.5);
-            padding: 10px 40px;
-            border-radius: 50px;
-            border: 2px solid #ffd700;
-        }
-
         .typing-area {
             background: linear-gradient(180deg, rgba(15, 52, 96, 0.9), rgba(22, 33, 62, 0.9));
             border: 4px solid #4a90e2;
@@ -592,7 +580,7 @@
 
     <div id="difficulty-screen" class="screen">
         <h2>⚔️ 難易度を選択してバトル開始！</h2>
-        <p style="font-size: 20px; margin-bottom: 40px; color: #aaa;">※60秒間のボスバトル。装備が5枚未満の場合は全持ち物からランダムで手札が組まれます。</p>
+        <p style="font-size: 20px; margin-bottom: 40px; color: #aaa;">※自分のHPが0になるまで戦い続ける無制限バトル！</p>
         
         <div class="menu-grid" style="grid-template-columns: 1fr; max-width: 500px; gap: 20px;">
             <button class="btn-success" onclick="BattleController.startBattle('easy')">🟢 簡単 (ボスHP: 350)</button>
@@ -605,15 +593,13 @@
     </div>
 
     <div id="battle-screen" class="screen">
-        <div class="timer-container">⏳ 残り時間: <span id="battle-timer">60</span>秒</div>
-        
         <div class="battle-header">
             <div class="status-box player-status-box">
                 <h3>🧑 あなた</h3>
-                <div style="font-size: 24px;">HP: <span id="player-hp">1000</span> / <span id="player-max-hp">1000</span></div>
+                <div style="font-size: 24px;">HP: <span id="player-hp">350</span> / <span id="player-max-hp">350</span></div>
                 <div class="hp-bar-container">
                     <div class="hp-bar player-hp-bar" id="player-hp-bar"></div>
-                    <div class="hp-text"><span id="player-hp-text">1000 / 1000</span></div>
+                    <div class="hp-text"><span id="player-hp-text">350 / 350</span></div>
                 </div>
                 <div id="player-buffs" style="color: #00ffcc; margin-top: 15px; font-weight: bold; height: 24px; font-size: 20px;"></div>
             </div>
@@ -637,7 +623,7 @@
 
         <div class="battle-log" id="battle-log"></div>
         <div class="hand-container" id="battle-hand"></div>
-        <button class="btn-dark" style="margin-top: 30px; padding: 10px 50px;" onclick="BattleController.flee()">🏃 逃げる（ホームへ）</button>
+        <button class="btn-dark" style="margin-top: 30px; padding: 10px 50px;" onclick="BattleController.flee()">🏃 逃げる（敗北扱い）</button>
     </div>
 
     <div id="gacha-screen" class="screen">
@@ -895,24 +881,33 @@
             { rarity: "OG", chance: 0.01 }
         ];
 
+        // 「ん＝nn」「つ＝tu」のルールに統一。さらにランダムな単語を多数追加
         const TYPING_WORDS = [
             { ja: "あいうえお", en: "aiueo" }, { ja: "こうげき", en: "kougeki" }, { ja: "かいふく", en: "kaifuku" }, 
-            { ja: "ぼうぎょ", en: "bougyo" }, { ja: "ひっさつわざ", en: "hissatuwaza" }, { ja: "すきるをはつどう", en: "sukiruwohatsudou" }, 
-            { ja: "たいぴんぐばとる", en: "taipingubatoru" }, { ja: "でっきをくむ", en: "dekkiwokumu" }, { ja: "かーどをひく", en: "ka-dowohiku" }, 
-            { ja: "れじぇんどかーど", en: "rejendoka-do" }, { ja: "きゅうきょくのちから", en: "kyuukyokunochikara" }, 
-            { ja: "あきらめないこころ", en: "akirumenaikokoro" }, { ja: "すーぱーこんぼ", en: "su-pa-konbo" }, 
+            { ja: "ぼうぎょ", en: "bougyo" }, { ja: "ひっさつわざ", en: "hissatuwaza" }, { ja: "すきるをはつどう", en: "sukiruwohatudou" }, 
+            { ja: "たいぴんぐばとる", en: "taipinngubatoru" }, { ja: "でっきをくむ", en: "dekkiwokumu" }, { ja: "かーどをひく", en: "ka-dowohiku" }, 
+            { ja: "れじぇんどかーど", en: "rejenndoka-do" }, { ja: "きゅうきょくのちから", en: "kyuukyokunochikara" }, 
+            { ja: "あきらめないこころ", en: "akirumenaikokoro" }, { ja: "すーぱーこんぼ", en: "su-pa-konnbo" }, 
             { ja: "ぜったいぜつめい", en: "zettaizetumei" }, { ja: "きしかいせい", en: "kishikaisei" }, 
-            { ja: "うんめいのどろー", en: "unmeinodoro-" }, { ja: "ますたー", en: "masuta-" }, 
-            { ja: "えきすぱーと", en: "ekisupa-to" }, { ja: "げんかいとっぱ", en: "genkaitoppa" }, { ja: "さいきょうのせんし", en: "saikyounosenshi" },
-            { ja: "つめたいこおり", en: "tumetaikouri" }, { ja: "つつむ", en: "tutumu" }, { ja: "てつのけん", en: "tetunoken" }, { ja: "つよいちから", en: "tuyoichikara" }
+            { ja: "うんめいのどろー", en: "unnmeinodoro-" }, { ja: "ますたー", en: "masuta-" }, 
+            { ja: "えきすぱーと", en: "ekisupa-to" }, { ja: "げんかいとっぱ", en: "gennkaitoppa" }, { ja: "さいきょうのせんし", en: "saikyounosennshi" },
+            { ja: "つめたいこおり", en: "tumetaikoori" }, { ja: "つつむ", en: "tutumu" }, { ja: "てつのけん", en: "tetunokenn" }, { ja: "つよいちから", en: "tuyoichikara" },
+            { ja: "ほのおのまほう", en: "honoonomahou" }, { ja: "みずのてっぽう", en: "mizunoteppou" }, { ja: "かぜのやいば", en: "kazenoyaiba" },
+            { ja: "だいちのいかり", en: "daichinoikari" }, { ja: "ひかりのたて", en: "hikarinotate" }, { ja: "やみのまじゅつ", en: "yaminomajutu" },
+            { ja: "しんぴのちから", en: "shinnpinochikara" }, { ja: "でんせつのつるぎ", en: "dennsetunoturugi" }, { ja: "むげんのたいりょく", en: "mugennnotairyoku" },
+            { ja: "きゅうきょくおうぎ", en: "kyuukyokuougi" }, { ja: "てんぺんちい", en: "tennpenntii" }, { ja: "せいなるいのり", en: "seinaruinori" },
+            { ja: "じゃあくなのろい", en: "jaakunanoroi" }, { ja: "じくうのゆがみ", en: "jikuunoyugami" }, { ja: "はめつのあしおと", en: "hametunoashioto" },
+            { ja: "きせきのふっかつ", en: "kisekinofukkatu" }, { ja: "えいえんのいのち", en: "eiennnoinochi" }, { ja: "ばくはつするまりょく", en: "bakuhatusurumaryoku" },
+            { ja: "しんじるこころ", en: "shinnjirukokoro" }, { ja: "さいごのいちげき", en: "saigonoichigeki" }, { ja: "ふくしゅうのとき", en: "fukushuunotoki" },
+            { ja: "てんくうのしろ", en: "tennkuunoshiro" }, { ja: "めいかいのおう", en: "meikainoou" }
         ];
 
         // --- グローバルステート ---
         window.playerData = { packs: 3, inventory: {}, equipped: [] };
         window.UIState = { invRarity: 'All', invType: 'All', equipRarity: 'All' };
         window.battleState = {
-            isActive: false, timeLeft: 60, timerInterval: null, difficulty: '', boss: { hp: 0, maxHp: 0, attack: 0, name: "" },
-            playerHp: 1000, playerMaxHp: 1000, hand: [], activeCard: null, currentWord: null, typedIndex: 0, mistakes: 0, 
+            isActive: false, difficulty: '', boss: { hp: 0, maxHp: 0, attack: 0, name: "" },
+            playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null, typedIndex: 0, mistakes: 0, 
             typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false
         };
 
@@ -1082,7 +1077,7 @@
             }
         };
 
-        // --- ガチャ管理（1パック＝5枚の仕様に変更） ---
+        // --- ガチャ管理（1パック＝5枚） ---
         window.GachaController = {
             drawCards: function(packAmount) {
                 if (window.playerData.packs < packAmount) return alert("⚠️ パックが足りません！");
@@ -1132,18 +1127,15 @@
             }
         };
 
-        // --- バトルロジック（バグ完全修正版） ---
+        // --- バトルロジック（タイマー撤廃・手札バランス機能搭載） ---
         window.BattleController = {
             startBattle: function(difficulty) {
-                // 前回稼働していたタイマーを確実に停止
-                if (window.battleState.timerInterval) clearInterval(window.battleState.timerInterval);
-
                 GameController.switchScreen('battle-screen');
 
                 window.battleState = {
-                    isActive: true, timeLeft: 60, timerInterval: null, difficulty: difficulty,
+                    isActive: true, difficulty: difficulty,
                     boss: { hp: 0, maxHp: 0, attack: 0, name: "" }, // ボス情報の初期化
-                    playerHp: 1000, playerMaxHp: 1000, hand: [], activeCard: null, currentWord: null,
+                    playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null, // HPを350に変更
                     typedIndex: 0, mistakes: 0, typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false
                 };
 
@@ -1159,22 +1151,13 @@
                 document.getElementById('battle-log').innerHTML = '<p>⚔️ バトル開始！</p>';
                 this.updateHPUI();
 
-                document.getElementById('battle-timer').textContent = window.battleState.timeLeft;
-                window.battleState.timerInterval = setInterval(() => {
-                    if (!window.battleState.isActive) return;
-                    window.battleState.timeLeft--;
-                    document.getElementById('battle-timer').textContent = window.battleState.timeLeft;
-                    if (window.battleState.timeLeft <= 0) {
-                        this.endBattle(false, "タイムアップ！");
-                    }
-                }, 1000);
-
                 // 初期手札を確実に5枚生成
                 this.fillHand();
                 this.resetTypingUI();
             },
             
-            // 手札が常に5枚になるように補充する安全な関数
+            // 手札が常に5枚になるように補充する。
+            // また、攻撃・回復・アシストが最低1枚は混ざるように調整する
             fillHand: function() {
                 const currentCount = window.battleState.hand.length;
                 if (currentCount >= 5) return;
@@ -1185,7 +1168,7 @@
                 
                 const isEquipDeckValid = validEquipKeys.length === 5;
 
-                // レアリティの確率に基づいてカードを引く関数（レアリティが低いほど出やすい）
+                // レアリティの確率に基づいてカードを引くヘルパー関数
                 const getRandomCardWeighted = (cardIdList) => {
                     let totalWeight = 0;
                     const weightedCards = cardIdList.map(id => {
@@ -1204,21 +1187,57 @@
                     return weightedCards[0].card;
                 };
 
-                for (let i = 0; i < drawCount; i++) {
-                    let cardToPush = null;
-                    
-                    // 35%の確率でベスト装備の5枚から引く（装備が有効な場合のみ）
-                    if (isEquipDeckValid && Math.random() < 0.35) {
-                        const randomId = validEquipKeys[Math.floor(Math.random() * validEquipKeys.length)];
-                        cardToPush = UIController.getCardById(randomId);
+                // 指定されたタイプを優先して1枚引くヘルパー関数
+                const drawOneCard = (forcedType = null) => {
+                    let poolInv = validInventoryKeys;
+                    let poolEq = validEquipKeys;
+
+                    // 指定タイプがあれば、そのタイプだけに絞り込む
+                    if (forcedType) {
+                        poolInv = validInventoryKeys.filter(id => UIController.getCardById(id).type === forcedType);
+                        poolEq = validEquipKeys.filter(id => UIController.getCardById(id).type === forcedType);
+                    }
+
+                    // もし絞り込んだ結果どちらも0枚なら、ユーザーはそのタイプのカードを持っていないので全体プールに戻す
+                    if (poolInv.length === 0 && poolEq.length === 0) {
+                        poolInv = validInventoryKeys;
+                        poolEq = validEquipKeys;
+                    }
+
+                    // 35%の確率でベスト装備から引く（装備が有効な場合）
+                    if (isEquipDeckValid && poolEq.length > 0 && Math.random() < 0.35) {
+                        return UIController.getCardById(poolEq[Math.floor(Math.random() * poolEq.length)]);
                     } 
-                    // 装備が発動しなかった、または無効な場合は所持カード全体からレアリティに基づいて引く
-                    else if (validInventoryKeys.length > 0) {
-                        cardToPush = getRandomCardWeighted(validInventoryKeys);
+                    // 装備が発動しなかった、または無効な場合は所持カードからレアリティに基づいて引く
+                    else if (poolInv.length > 0) {
+                        return getRandomCardWeighted(poolInv);
                     } 
-                    // 所持カードが1枚もない場合の完全な救済措置
+                    // 何も持っていない場合の究極の救済措置
                     else {
-                        cardToPush = ALL_CARDS[0]; 
+                        return ALL_CARDS[0]; 
+                    }
+                };
+
+                for (let i = 0; i < drawCount; i++) {
+                    const currentTypes = window.battleState.hand.map(c => c.type);
+                    
+                    // プレイヤーがそもそもそのタイプのカードを持っているか確認
+                    const hasAttack = validInventoryKeys.some(id => UIController.getCardById(id).type === 'attack');
+                    const hasHeal = validInventoryKeys.some(id => UIController.getCardById(id).type === 'heal');
+                    const hasAssist = validInventoryKeys.some(id => UIController.getCardById(id).type === 'assist');
+
+                    let cardToPush = null;
+
+                    // 攻撃・回復・アシストが手札に無い場合は、持っていれば優先してそれを引く
+                    if (!currentTypes.includes('attack') && hasAttack) {
+                        cardToPush = drawOneCard('attack');
+                    } else if (!currentTypes.includes('heal') && hasHeal) {
+                        cardToPush = drawOneCard('heal');
+                    } else if (!currentTypes.includes('assist') && hasAssist) {
+                        cardToPush = drawOneCard('assist');
+                    } else {
+                        // 3種類とも揃っている場合は通常通りランダムドロー
+                        cardToPush = drawOneCard(null);
                     }
                     
                     window.battleState.hand.push(cardToPush);
@@ -1239,6 +1258,7 @@
                 window.battleState.hand.splice(index, 1); // 選択したカードを手札から消す
                 this.fillHand(); // 即座に1枚補充して常に5枚を維持
 
+                // タイピングの単語はカードに依存せず完全ランダム
                 const word = TYPING_WORDS[Math.floor(Math.random() * TYPING_WORDS.length)];
                 window.battleState.currentWord = word;
                 window.battleState.typedIndex = 0;
@@ -1397,10 +1417,6 @@
             },
             endBattle: function(isWin, reason) {
                 window.battleState.isActive = false;
-                if (window.battleState.timerInterval) {
-                    clearInterval(window.battleState.timerInterval);
-                    window.battleState.timerInterval = null;
-                }
 
                 const modal = document.getElementById('battle-result-modal');
                 const title = document.getElementById('result-title');
@@ -1430,12 +1446,8 @@
                 modal.classList.add('active');
             },
             flee: function() {
-                if (confirm("⚠️ 本当に逃げますか？（ホームに戻ります）")) {
+                if (confirm("⚠️ 本当に逃げますか？（敗北扱いになりホームに戻ります）")) {
                     window.battleState.isActive = false;
-                    if (window.battleState.timerInterval) {
-                        clearInterval(window.battleState.timerInterval);
-                        window.battleState.timerInterval = null;
-                    }
                     GameController.switchScreen('home-screen');
                 }
             }
