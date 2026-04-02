@@ -8,7 +8,12 @@
         /* ==========================================
            全体のリセットと基本スタイル
            ========================================== */
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -21,39 +26,129 @@
             flex-direction: column;
         }
 
+        /* ヘッダー情報（パック数・セーブ状態・設定ボタン） */
         .header-info {
-            position: absolute; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.8);
-            padding: 10px 20px; border-radius: 50px; font-size: 18px; border: 2px solid #0f3460;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 100; display: flex; align-items: center; gap: 15px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 18px;
+            border: 2px solid #0f3460;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .settings-btn {
-            background: rgba(255, 255, 255, 0.1); border: 2px solid #aaa; border-radius: 50%;
-            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.3s ease; color: white; padding: 0; font-size: 24px; box-shadow: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #aaa;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            padding: 0;
+            font-size: 24px;
+            box-shadow: none;
         }
-        .settings-btn:hover { transform: rotate(90deg) scale(1.1); background: rgba(255, 255, 255, 0.3); border-color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.5); }
+        .settings-btn:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+            border-color: #fff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.5);
+        }
 
+        /* ==========================================
+           画面レイアウト（全画面使用・中央配置）
+           ========================================== */
         .screen {
-            display: none; width: 100%; flex-grow: 1; min-height: 100vh; padding: 40px;
-            flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.3s ease-in-out;
+            display: none;
+            width: 100%;
+            flex-grow: 1;
+            min-height: 100vh;
+            padding: 40px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-in-out;
         }
-        .screen.active { display: flex; }
+        .screen.active {
+            display: flex;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
 
-        h1 { font-size: 64px; margin-bottom: 40px; text-align: center; color: #e94560; text-shadow: 0 0 20px rgba(233, 69, 96, 0.5), 2px 2px 4px #000; letter-spacing: 2px; }
-        h2 { font-size: 42px; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
-        h3 { font-size: 28px; margin-bottom: 15px; text-align: center; }
+        h1 {
+            font-size: 64px;
+            margin-bottom: 40px;
+            text-align: center;
+            color: #e94560;
+            text-shadow: 0 0 20px rgba(233, 69, 96, 0.5), 2px 2px 4px #000;
+            letter-spacing: 2px;
+        }
 
+        h2 {
+            font-size: 42px;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* ==========================================
+           ボタンのスタイル（色、枠、ホバーエフェクト）
+           ========================================== */
         button {
-            cursor: pointer; border: none; border-radius: 12px; padding: 15px 30px; font-size: 22px; font-weight: bold;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: white; display: flex; align-items: center;
-            justify-content: center; gap: 10px; box-shadow: 0 6px 0 rgba(0,0,0,0.4), 0 10px 20px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 22px;
+            font-weight: bold;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.4), 0 10px 20px rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
-        button:hover { transform: translateY(-4px); box-shadow: 0 10px 0 rgba(0,0,0,0.4), 0 15px 25px rgba(0,0,0,0.4); filter: brightness(1.1); }
-        button:active { transform: translateY(6px); box-shadow: 0 0 0 rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.3); }
-        button:disabled { background: #555 !important; box-shadow: 0 6px 0 #333 !important; cursor: not-allowed; transform: none !important; filter: grayscale(100%); opacity: 0.7; }
+        
+        button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 0 rgba(0,0,0,0.4), 0 15px 25px rgba(0,0,0,0.4);
+            filter: brightness(1.1);
+        }
+        
+        button:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.3);
+        }
+
+        button:disabled {
+            background: #555 !important;
+            box-shadow: 0 6px 0 #333 !important;
+            cursor: not-allowed;
+            transform: none !important;
+            filter: grayscale(100%);
+        }
 
         .btn-primary { background: linear-gradient(135deg, #e94560, #ff2e63); border: 2px solid #ff2e63; }
         .btn-secondary { background: linear-gradient(135deg, #0f3460, #16213e); border: 2px solid #4a90e2; }
@@ -64,14 +159,68 @@
         .btn-dark { background: linear-gradient(135deg, #424242, #212121); border: 2px solid #757575; }
         .btn-gold { background: linear-gradient(135deg, #ffd700, #ff8c00); border: 2px solid #fffacd; color: #000; text-shadow: none; }
 
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; width: 100%; max-width: 900px; }
-        .menu-grid button { height: 120px; font-size: 28px; }
+        /* ==========================================
+           メニューグリッド (ホーム画面等)
+           ========================================== */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+            max-width: 800px;
+        }
+        .menu-grid button {
+            height: 120px;
+            font-size: 28px;
+        }
 
-        .tab-bar-container { width: 100%; max-width: 1200px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center; }
-        .tab-bar { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 15px; border: 1px solid #333; }
-        .tab-bar button { padding: 10px 20px; font-size: 16px; border-radius: 50px; background: #2a2a4a; box-shadow: none; border: 2px solid transparent; height: auto; }
-        .tab-bar button.active { background: #e94560; border-color: #ff2e63; box-shadow: 0 0 15px rgba(233, 69, 96, 0.5); }
+        /* ==========================================
+           タブバーのスタイル
+           ========================================== */
+        .tab-bar-container {
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+        .tab-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid #333;
+        }
+        .tab-bar button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 50px;
+            background: #2a2a4a;
+            box-shadow: none;
+            border: 2px solid transparent;
+            height: auto;
+        }
+        .tab-bar button:hover {
+            background: #3a3a6a;
+            transform: scale(1.05);
+        }
+        .tab-bar button:active {
+            transform: scale(0.95);
+        }
+        .tab-bar button.active {
+            background: #e94560;
+            border-color: #ff2e63;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+        }
 
+        /* ==========================================
+           カードのスタイルとレアリティ色
+           ========================================== */
         .rarity-Common { background: linear-gradient(135deg, #808080, #555555); color: white; border: 2px solid #aaaaaa; }
         .rarity-Uncommon { background: linear-gradient(135deg, #4caf50, #2e7d32); color: white; border: 2px solid #81c784; }
         .rarity-Rare { background: linear-gradient(135deg, #2196f3, #1565c0); color: white; border: 2px solid #64b5f6; }
@@ -84,68 +233,325 @@
         .rarity-OG { background: linear-gradient(135deg, gold, black, white, gold); color: white; border: 4px solid gold; box-shadow: 0 0 30px gold; font-weight: 900; }
 
         .card {
-            width: 160px; height: 230px; border-radius: 15px; padding: 15px; display: flex; flex-direction: column;
-            justify-content: space-between; align-items: center; text-align: center; box-shadow: 0 8px 16px rgba(0,0,0,0.8);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; cursor: pointer;
+            width: 160px;
+            height: 230px;
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.8);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            cursor: pointer;
         }
-        .card:hover { transform: translateY(-15px) scale(1.05); z-index: 10; box-shadow: 0 15px 30px rgba(0,0,0,0.9); }
-        .card.disabled { opacity: 0.4; pointer-events: none; filter: grayscale(80%); } 
-        .card-name { font-size: 16px; font-weight: bold; margin-bottom: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
-        .card-type { font-size: 12px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); }
-        .card-desc { font-size: 12px; flex-grow: 1; display: flex; align-items: center; justify-content: center; text-shadow: 1px 1px 1px rgba(0,0,0,0.5); }
+        .card:hover {
+            transform: translateY(-15px) scale(1.05);
+            z-index: 10;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.9);
+        }
+        .card-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+        .card-type {
+            font-size: 12px;
+            background: rgba(0,0,0,0.6);
+            padding: 4px 8px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .card-desc {
+            font-size: 12px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+        }
         .card-count {
-            position: absolute; top: -10px; right: -10px; background: #e94560; color: white; border-radius: 50%;
-            width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; font-weight: bold;
-            border: 3px solid #1a1a2e; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.5); font-size: 14px;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #e94560;
+            color: white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            border: 3px solid #1a1a2e;
+            z-index: 5;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            font-size: 14px;
         }
 
-        .card-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; width: 100%; max-width: 1200px; max-height: 60vh; overflow-y: auto; padding: 30px; background: rgba(0,0,0,0.4); border-radius: 20px; border: 2px solid #0f3460; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+        /* 持ち物・装備・ガチャ画面共通のグリッド */
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 30px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            border: 2px solid #0f3460;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
 
-        .equipped-container { display: flex; gap: 20px; margin-bottom: 30px; min-height: 260px; padding: 20px; background: rgba(255,215,0,0.05); border: 3px dashed gold; border-radius: 20px; width: 100%; max-width: 1000px; justify-content: center; align-items: center; box-shadow: inset 0 0 30px rgba(255,215,0,0.1); }
-        .equipped-slot { width: 160px; height: 230px; border: 3px solid rgba(255,215,0,0.3); border-radius: 15px; display: flex; justify-content: center; align-items: center; color: rgba(255,215,0,0.5); font-size: 24px; font-weight: bold; background: rgba(0,0,0,0.5); }
-        .equip-warning { color: #ff9800; font-size: 20px; font-weight: bold; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255, 152, 0, 0.5); background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; border: 1px solid #ff9800; display: none; }
+        /* ==========================================
+           ベスト装備画面特有
+           ========================================== */
+        .equipped-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            min-height: 260px;
+            padding: 20px;
+            background: rgba(255,215,0,0.05);
+            border: 3px dashed gold;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 1000px;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 30px rgba(255,215,0,0.1);
+        }
+        .equipped-slot {
+            width: 160px;
+            height: 230px;
+            border: 3px solid rgba(255,215,0,0.3);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgba(255,215,0,0.5);
+            font-size: 24px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.5);
+        }
+        .equip-warning {
+            color: #ff9800;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+            background: rgba(0,0,0,0.6);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ff9800;
+            display: none;
+        }
 
-        #battle-screen { justify-content: flex-start; padding-top: 80px; }
-        .battle-header { width: 100%; max-width: 1200px; display: flex; justify-content: space-between; margin-bottom: 30px; gap: 20px; }
-        
-        .status-box { background: rgba(0,0,0,0.8); padding: 25px; border-radius: 20px; width: 400px; text-align: center; border: 3px solid #0f3460; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
+        /* ==========================================
+           バトル画面
+           ========================================== */
+        #battle-screen {
+            justify-content: flex-start;
+            padding-top: 80px;
+        }
+        .battle-header {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+        .status-box {
+            background: rgba(0,0,0,0.8);
+            padding: 25px;
+            border-radius: 20px;
+            width: 400px;
+            text-align: center;
+            border: 3px solid #0f3460;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
         .boss-status-box { border-color: #e94560; }
         .player-status-box { border-color: #4caf50; }
 
-        .hp-bar-container { width: 100%; height: 35px; background: #222; border-radius: 15px; margin-top: 15px; border: 2px solid #555; position: relative; }
-        .hp-bar { height: 100%; width: 100%; transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: absolute; top: 0; left: 0; border-radius: 13px; }
-        .player-hp-bar { background: linear-gradient(90deg, #4caf50, #81c784); z-index: 1; }
-        .boss-hp-bar { background: linear-gradient(90deg, #c62828, #f44336); z-index: 1; }
-        .barrier-bar { background: linear-gradient(90deg, #03a9f4, #81d4fa); z-index: 2; opacity: 0.8; width: 0%; } 
-        .hp-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; font-size: 16px; text-shadow: 1px 1px 3px black; z-index: 3; width: 100%; }
+        .hp-bar-container {
+            width: 100%;
+            height: 30px;
+            background: #222;
+            border-radius: 15px;
+            margin-top: 15px;
+            overflow: hidden;
+            border: 2px solid #555;
+            position: relative;
+        }
+        .hp-bar {
+            height: 100%;
+            background: #e94560; /* Boss */
+            width: 100%;
+            transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .player-hp-bar {
+            background: linear-gradient(90deg, #4caf50, #81c784);
+        }
+        .boss-hp-bar {
+            background: linear-gradient(90deg, #c62828, #f44336);
+        }
+        .hp-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            font-size: 16px;
+            text-shadow: 1px 1px 2px black;
+        }
         
-        .status-icons { display: flex; justify-content: center; gap: 10px; margin-top: 15px; height: 30px; font-size: 24px; }
+        .typing-area {
+            background: linear-gradient(180deg, rgba(15, 52, 96, 0.9), rgba(22, 33, 62, 0.9));
+            border: 4px solid #4a90e2;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            position: relative;
+        }
+        .japanese-text {
+            font-size: 42px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .romaji-text {
+            font-size: 56px;
+            letter-spacing: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #666; /* 未入力部分 */
+            font-weight: bold;
+        }
+        .romaji-text span.typed {
+            color: #00ffcc; /* 入力済み部分（明るい色） */
+            text-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
+        }
+        .romaji-text span.error {
+            color: #ff3333;
+            text-shadow: 0 0 15px #ff3333;
+            animation: shake 0.2s ease-in-out;
+        }
 
-        .typing-area { background: linear-gradient(180deg, rgba(15, 52, 96, 0.9), rgba(22, 33, 62, 0.9)); border: 4px solid #4a90e2; border-radius: 20px; padding: 40px; width: 100%; max-width: 900px; text-align: center; min-height: 250px; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 10px 40px rgba(0,0,0,0.8); position: relative; }
-        .japanese-text { font-size: 42px; margin-bottom: 20px; font-weight: bold; }
-        .romaji-text { font-size: 56px; letter-spacing: 8px; font-family: 'Courier New', Courier, monospace; color: #666; font-weight: bold; }
-        .romaji-text span.typed { color: #00ffcc; text-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc; }
-        .romaji-text span.error { color: #ff3333; text-shadow: 0 0 15px #ff3333; animation: shake 0.2s ease-in-out; }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
 
-        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 75% { transform: translateX(-10px); } 100% { transform: translateX(0); } }
+        .hand-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 20px;
+            border: 2px solid #333;
+            max-width: 100%;
+            justify-content: center;
+        }
 
-        .hand-container { display: flex; gap: 20px; margin-top: 30px; padding: 25px; background: rgba(0,0,0,0.6); border-radius: 20px; border: 2px solid #333; max-width: 100%; justify-content: center; }
+        .battle-log {
+            margin-top: 20px;
+            height: 120px;
+            width: 100%;
+            max-width: 900px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.8);
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 16px;
+            color: #ccc;
+            border: 1px solid #444;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        .battle-log p {
+            margin: 5px 0;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+        .battle-log p:first-child {
+            color: #fff;
+            font-weight: bold;
+        }
 
-        .battle-log { margin-top: 20px; height: 120px; width: 100%; max-width: 900px; overflow-y: auto; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 15px; font-size: 16px; color: #ccc; border: 1px solid #444; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
-        .battle-log p { margin: 5px 0; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        .battle-log p:first-child { color: #fff; font-weight: bold; }
+        /* ポップアップエフェクト */
+        .effect-popup {
+            position: absolute;
+            font-size: 36px;
+            font-weight: bold;
+            color: #ffea00;
+            text-shadow: 2px 2px 5px black, 0 0 15px currentColor;
+            pointer-events: none;
+            animation: floatUp 1.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            50% { transform: translateY(-50px) scale(1.3); }
+            100% { opacity: 0; transform: translateY(-100px) scale(1); }
+        }
 
-        .effect-popup { position: absolute; font-size: 36px; font-weight: bold; color: #ffea00; text-shadow: 2px 2px 5px black, 0 0 15px currentColor; pointer-events: none; animation: floatUp 1.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100; }
-        .freeze-popup { position: absolute; font-size: 60px; font-weight: bold; color: #00ffff; text-shadow: 0 0 20px #000, 0 0 40px #00ffff; pointer-events: none; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: freezeEffect 2s forwards; z-index: 500; }
+        /* ==========================================
+           モーダル・オーバーレイ全般
+           ========================================== */
+        .gacha-result-overlay, .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 40px;
+        }
+        .gacha-result-overlay.active, .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+        .gacha-result-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+            max-width: 1200px;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #16213e, #0f3460);
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            border: 3px solid #e94560;
+            box-shadow: 0 0 50px rgba(233, 69, 96, 0.5);
+            max-width: 600px;
+            width: 100%;
+        }
         
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 50% { transform: translateY(-50px) scale(1.3); } 100% { opacity: 0; transform: translateY(-100px) scale(1); } }
-        @keyframes freezeEffect { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); } 20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); } }
-
-        .gacha-result-overlay, .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; padding: 40px; }
-        .gacha-result-overlay.active, .modal.active { display: flex; animation: fadeIn 0.3s; }
-        .gacha-result-cards { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-bottom: 40px; max-width: 1200px; max-height: 70vh; overflow-y: auto; padding: 20px; }
-        .modal-content { background: linear-gradient(135deg, #16213e, #0f3460); padding: 50px; border-radius: 20px; text-align: center; border: 3px solid #e94560; box-shadow: 0 0 50px rgba(233, 69, 96, 0.5); max-width: 600px; width: 100%; }
-        
+        /* スクロールバー */
         ::-webkit-scrollbar { width: 12px; }
         ::-webkit-scrollbar-track { background: #1a1a2e; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #4a90e2; border-radius: 10px; }
@@ -164,34 +570,25 @@
     <div id="home-screen" class="screen active">
         <h1>デッキカードタイピング RPG</h1>
         <p style="font-size: 20px; margin-bottom: 40px; color: #ccc;">タイピングで戦い、最強のデッキを構築せよ！</p>
-        <div class="menu-grid" style="grid-template-columns: 1fr 1fr; max-width: 900px;">
-            <button class="btn-primary" onclick="GameController.switchScreen('pack-mode-screen')">🃏 パックゲットモード</button>
-            <button class="btn-danger" style="border-color: #000; box-shadow: 0 6px 0 #000, 0 0 20px red;" onclick="GameController.switchScreen('boss-select-screen'); UIController.renderBossSelect();">👹 ボスバトル</button>
+        <div class="menu-grid">
+            <button class="btn-primary" onclick="GameController.switchScreen('difficulty-screen')">⚔️ カードモード（バトル）</button>
             <button class="btn-warning" onclick="GameController.switchScreen('gacha-screen'); UIController.updateGachaScreen();">🎲 カードを引く</button>
             <button class="btn-success" onclick="GameController.switchScreen('inventory-screen'); UIController.renderInventory();">🎒 持ち物</button>
-            <button class="btn-purple" style="grid-column: span 2;" onclick="GameController.switchScreen('equip-screen'); UIController.renderEquipScreen();">🛡️ ベストを装備</button>
+            <button class="btn-purple" onclick="GameController.switchScreen('equip-screen'); UIController.renderEquipScreen();">🛡️ ベストを装備</button>
         </div>
     </div>
 
-    <div id="pack-mode-screen" class="screen">
-        <h2>🃏 パックゲットモード</h2>
-        <p style="font-size: 20px; margin-bottom: 40px; color: #aaa;">自分のHPが0になるまで戦い続ける無制限バトル！勝てばパック報酬！</p>
+    <div id="difficulty-screen" class="screen">
+        <h2>⚔️ 難易度を選択してバトル開始！</h2>
+        <p style="font-size: 20px; margin-bottom: 40px; color: #aaa;">※自分のHPが0になるまで戦い続ける無制限バトル！</p>
         
         <div class="menu-grid" style="grid-template-columns: 1fr; max-width: 500px; gap: 20px;">
-            <button class="btn-success" onclick="BattleController.startBattle('easy')">🟢 簡単 (HP: 350)</button>
-            <button class="btn-warning" onclick="BattleController.startBattle('medium')">🟡 中級 (HP: 500)</button>
-            <button class="btn-danger" onclick="BattleController.startBattle('hard')">🔴 難しい (HP: 800)</button>
-            <button class="btn-purple" style="border-color: #000; box-shadow: 0 6px 0 #000, 0 0 30px purple;" onclick="BattleController.startBattle('extreme')">😈 鬼むず (HP: 1500)</button>
+            <button class="btn-success" onclick="BattleController.startBattle('easy')">🟢 簡単 (ボスHP: 350)</button>
+            <button class="btn-warning" onclick="BattleController.startBattle('medium')">🟡 中級 (ボスHP: 1000)</button>
+            <button class="btn-danger" onclick="BattleController.startBattle('hard')">🔴 難しい (ボスHP: 3000)</button>
+            <button class="btn-purple" style="border-color: #000; box-shadow: 0 6px 0 #000, 0 0 30px purple;" onclick="BattleController.startBattle('extreme')">😈 鬼むず (ボスHP: 10000)</button>
         </div>
-        <button class="btn-dark" style="margin-top: 50px; padding: 10px 40px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
-    </div>
-
-    <div id="boss-select-screen" class="screen">
-        <h2>👹 ボスバトル</h2>
-        <p style="font-size: 20px; margin-bottom: 40px; color: #ffeb3b;">順番にボスを倒して、専用の強力な特殊カードをゲットしよう！</p>
         
-        <div class="menu-grid" id="boss-list" style="grid-template-columns: 1fr; max-width: 600px; gap: 20px;">
-            </div>
         <button class="btn-dark" style="margin-top: 50px; padding: 10px 40px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
 
@@ -199,24 +596,22 @@
         <div class="battle-header">
             <div class="status-box player-status-box">
                 <h3>🧑 あなた</h3>
+                <div style="font-size: 24px;">HP: <span id="player-hp">350</span> / <span id="player-max-hp">350</span></div>
                 <div class="hp-bar-container">
                     <div class="hp-bar player-hp-bar" id="player-hp-bar"></div>
-                    <div class="hp-bar barrier-bar" id="player-barrier-bar"></div>
-                    <div class="hp-text" id="player-hp-text">350 / 350</div>
+                    <div class="hp-text"><span id="player-hp-text">350 / 350</span></div>
                 </div>
-                <div class="status-icons" id="player-status-icons"></div>
-                <div id="player-buffs" style="color: #00ffcc; margin-top: 5px; font-weight: bold; height: 20px; font-size: 18px;"></div>
+                <div id="player-buffs" style="color: #00ffcc; margin-top: 15px; font-weight: bold; height: 24px; font-size: 20px;"></div>
             </div>
             
             <div class="status-box boss-status-box">
                 <h3 id="boss-name">👹 ボス</h3>
+                <div style="font-size: 24px;">HP: <span id="boss-hp">350</span> / <span id="boss-max-hp">350</span></div>
                 <div class="hp-bar-container">
                     <div class="hp-bar boss-hp-bar" id="boss-hp-bar"></div>
-                    <div class="hp-bar barrier-bar" id="boss-barrier-bar"></div>
-                    <div class="hp-text" id="boss-hp-text">350 / 350</div>
+                    <div class="hp-text"><span id="boss-hp-text">350 / 350</span></div>
                 </div>
-                <div class="status-icons" id="boss-status-icons"></div>
-                <div id="boss-status" style="color: #ffcc00; margin-top: 5px; font-weight: bold; height: 20px; font-size: 18px;"></div>
+                <div id="boss-status" style="color: #ffcc00; margin-top: 15px; font-weight: bold; height: 24px; font-size: 20px;"></div>
             </div>
         </div>
 
@@ -244,13 +639,18 @@
         </div>
 
         <div style="margin-top: 50px; text-align: center; background: rgba(0,0,0,0.6); padding: 30px; border-radius: 20px; border: 2px solid #555; max-width: 800px; width: 100%;">
-            <h3 style="color: #ffb74d;">📊 通常カード排出確率</h3>
+            <h3 style="color: #ffb74d;">📊 排出確率</h3>
             <p style="line-height: 1.8; font-size: 18px;">
-                <span style="color: #aaa;">⚪ コモン: 40%</span> | <span style="color: #81c784;">🟢 アンコモン: 30%</span> | <span style="color: #64b5f6;">🔵 レア: 15%</span><br>
-                <span style="color: #fff59d;">🟡 レジェンド: 8%</span> | <span style="color: #e57373;">🔴 ミシック: 4%</span> | <span style="color: #e1bee7;">✨ ゴッドリー: 2%</span><br>
-                <span style="color: #ff9800;">🌋 ボルケーノ: 0.8%</span> | <span style="color: #ffffff; text-shadow: 0 0 5px red;">🌌 シークレット: 0.15%</span><br>
-                <span style="background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; color: transparent; font-weight: bold;">🌈 アルティメット: 0.04%</span> | <span style="color: gold; font-weight: bold; text-shadow: 0 0 10px gold;">👑 OG: 0.01%</span><br>
-                <span style="color: #ff4444; font-size: 14px;">※ ボス専用カードはガチャからは排出されません</span>
+                <span style="color: #aaa;">⚪ コモン: 40%</span> | 
+                <span style="color: #81c784;">🟢 アンコモン: 30%</span> | 
+                <span style="color: #64b5f6;">🔵 レア: 15%</span><br>
+                <span style="color: #fff59d;">🟡 レジェンド: 8%</span> | 
+                <span style="color: #e57373;">🔴 ミシック: 4%</span> | 
+                <span style="color: #e1bee7;">✨ ゴッドリー: 2%</span><br>
+                <span style="color: #ff9800;">🌋 ボルケーノ: 0.8%</span> | 
+                <span style="color: #ffffff; text-shadow: 0 0 5px red;">🌌 シークレット: 0.15%</span><br>
+                <span style="background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; color: transparent; font-weight: bold;">🌈 アルティメット: 0.04%</span> | 
+                <span style="color: gold; font-weight: bold; text-shadow: 0 0 10px gold;">👑 OG: 0.01%</span>
             </p>
         </div>
 
@@ -265,6 +665,7 @@
 
     <div id="inventory-screen" class="screen">
         <h2>🎒 持ち物</h2>
+        
         <div class="tab-bar-container">
             <div class="tab-bar" id="inv-rarity-tabs">
                 <button class="active" onclick="UIController.setFilter('invRarity', 'All')">🌟 全て</button>
@@ -286,6 +687,7 @@
                 <button onclick="UIController.setFilter('invType', 'assist')">🪄 アシスト系</button>
             </div>
         </div>
+
         <div class="card-grid" id="inventory-grid"></div>
         <button class="btn-dark" style="margin-top: 30px; padding: 10px 40px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
@@ -296,8 +698,13 @@
             5つの異なるカードを装備します。<br>
             <span style="color: #ff4444; font-weight: bold;">※ ぴったり5枚装備しないと、バトルでは全持ち物からランダムに手札が組まれます。</span>
         </p>
-        <div id="equip-warning" class="equip-warning">⚠️ 現在の装備数が5枚ではありません！このままバトルに行くと全カードからランダムになります。</div>
+
+        <div id="equip-warning" class="equip-warning">
+            ⚠️ 現在の装備数が5枚ではありません！このままバトルに行くと全カードからランダムになります。
+        </div>
+        
         <div class="equipped-container" id="equipped-cards-container"></div>
+
         <h3>📦 所持カードから選んで装備する</h3>
         <div class="tab-bar-container">
             <div class="tab-bar" id="equip-rarity-tabs">
@@ -314,12 +721,13 @@
                 <button onclick="UIController.setFilter('equipRarity', 'OG')">👑 OG</button>
             </div>
         </div>
+
         <div class="card-grid" id="equip-inventory-grid"></div>
         <button class="btn-dark" style="margin-top: 30px; padding: 10px 40px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
 
     <div id="battle-result-modal" class="modal">
-        <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-content">
             <h2 id="result-title" style="font-size: 56px; margin-bottom: 20px;"></h2>
             <p id="result-desc" style="font-size: 24px; margin: 30px 0; color: #ddd;"></p>
             <button class="btn-primary" onclick="GameController.switchScreen('home-screen'); document.getElementById('battle-result-modal').classList.remove('active');" style="font-size: 24px; padding: 15px 50px;">🏠 ホームへ戻る</button>
@@ -329,13 +737,15 @@
     <div id="settings-modal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <h2 style="font-size: 40px;">⚙️ 設定</h2>
-            <p style="margin: 20px 0; color: #ccc; font-size: 18px;">所持カードや進行度などの全データを削除して、最初からやり直します。</p>
+            <p style="margin: 20px 0; color: #ccc; font-size: 18px;">所持カードやパック数などの全データを削除して、ゲームを最初からやり直します。</p>
             <button class="btn-danger" onclick="GameDataManager.resetData()" style="width: 100%; margin-bottom: 20px;">🗑️ データを全削除（リセット）</button>
             <button class="btn-dark" onclick="document.getElementById('settings-modal').classList.remove('active')" style="width: 100%;">閉じる</button>
         </div>
     </div>
 
+
     <script type="module">
+        // --- Firebase 初期化 ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
@@ -353,17 +763,21 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        // ユーザーID管理
         let userId = localStorage.getItem('typerpg_userId');
         if (!userId) {
             userId = 'user_' + Math.random().toString(36).substr(2, 9) + Date.now();
             localStorage.setItem('typerpg_userId', userId);
         }
 
-        // --- サウンド管理 ---
+        // --- サウンド（音響）管理 ---
         window.AudioController = {
             ctx: null,
             init: function() {
-                if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
                 if (this.ctx.state === 'suspended') this.ctx.resume();
             },
             playTone: function(freq, type, duration, vol=0.1) {
@@ -371,11 +785,14 @@
                 try {
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
-                    osc.type = type; osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
                     gain.gain.setValueAtTime(vol, this.ctx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-                    osc.connect(gain); gain.connect(this.ctx.destination);
-                    osc.start(); osc.stop(this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
                 } catch(e) {}
             },
             playClick: function() { this.playTone(600, 'sine', 0.1, 0.05); },
@@ -383,138 +800,165 @@
             playError: function() { this.playTone(150, 'sawtooth', 0.3, 0.1); },
             playAttack: function() { this.playTone(200, 'square', 0.2, 0.1); setTimeout(()=>this.playTone(150, 'square', 0.2, 0.1), 100); },
             playHeal: function() { this.playTone(400, 'sine', 0.3, 0.05); setTimeout(()=>this.playTone(600, 'sine', 0.3, 0.05), 150); },
-            playWin: function() { this.playTone(440, 'sine', 0.2, 0.1); setTimeout(()=>this.playTone(554, 'sine', 0.2, 0.1), 200); setTimeout(()=>this.playTone(659, 'sine', 0.4, 0.1), 400); },
-            playGacha: function() { this.playTone(880, 'sine', 0.1, 0.05); setTimeout(()=>this.playTone(1760, 'sine', 0.3, 0.05), 100); },
-            playFreeze: function() { this.playTone(1200, 'triangle', 0.3, 0.05); setTimeout(()=>this.playTone(1600, 'sine', 0.5, 0.05), 100); }
+            playWin: function() { 
+                this.playTone(440, 'sine', 0.2, 0.1);
+                setTimeout(()=>this.playTone(554, 'sine', 0.2, 0.1), 200);
+                setTimeout(()=>this.playTone(659, 'sine', 0.4, 0.1), 400);
+            },
+            playGacha: function() { 
+                this.playTone(880, 'sine', 0.1, 0.05); 
+                setTimeout(()=>this.playTone(1760, 'sine', 0.3, 0.05), 100); 
+            }
         };
 
-        // --- マスターデータ ---
+        // --- マスターデータ（全カード定義） ---
+        // コモン:25, アンコモン:35, レア:45, レジェンド:55, ミシック:65, ゴッドリー:75, ボルケーノ:85, シークレット:95, アルティメット:105, OG:115
         const ALL_CARDS = [
+            // Common (Base 25)
             { id: "c1", name: "パンチ", type: "attack", rarity: "Common", baseEffect: 25, desc: "敵に25ダメージ" },
             { id: "c2", name: "キック", type: "attack", rarity: "Common", baseEffect: 25, desc: "敵に25ダメージ" },
             { id: "c3", name: "絆創膏", type: "heal", rarity: "Common", baseEffect: 25, desc: "HPを25回復" },
             { id: "c4", name: "手札入れ替え", type: "assist", rarity: "Common", baseEffect: 2, desc: "カードを2枚リセット" },
             { id: "c5", name: "ひっかき", type: "attack", rarity: "Common", baseEffect: 25, desc: "敵に25ダメージ" },
             { id: "c6", name: "少し休憩", type: "heal", rarity: "Common", baseEffect: 25, desc: "HPを25回復" },
+            
+            // Uncommon (Base 35)
             { id: "u1", name: "スラッシュ", type: "attack", rarity: "Uncommon", baseEffect: 35, desc: "敵に35ダメージ" },
-            { id: "u2", name: "ファイア", type: "attack", rarity: "Uncommon", baseEffect: 35, desc: "敵に35ダメ＆1ターン燃やす" },
+            { id: "u2", name: "ファイア", type: "attack", rarity: "Uncommon", baseEffect: 35, desc: "敵に35ダメージ" },
             { id: "u3", name: "ポーション", type: "heal", rarity: "Uncommon", baseEffect: 35, desc: "HPを35回復" },
             { id: "u4", name: "集中", type: "assist", rarity: "Uncommon", baseEffect: 1.2, desc: "次ターンのダメージ1.2倍" },
             { id: "u5", name: "ドロー", type: "assist", rarity: "Uncommon", baseEffect: 3, desc: "カードを3枚リセット" },
             { id: "u6", name: "ウォーター", type: "attack", rarity: "Uncommon", baseEffect: 35, desc: "敵に35ダメージ" },
+
+            // Rare (Base 45)
             { id: "r1", name: "サンダー", type: "attack", rarity: "Rare", baseEffect: 45, desc: "敵に45ダメージ" },
-            { id: "r2", name: "アイススピア", type: "attack", rarity: "Rare", baseEffect: 45, desc: "敵に45ダメ＆1ターン凍結" },
+            { id: "r2", name: "アイススピア", type: "attack", rarity: "Rare", baseEffect: 45, desc: "敵に45ダメージ" },
             { id: "r3", name: "ハイポーション", type: "heal", rarity: "Rare", baseEffect: 45, desc: "HPを45回復" },
             { id: "r4", name: "気合い", type: "assist", rarity: "Rare", baseEffect: 1.5, desc: "次ターンのダメージ1.5倍" },
             { id: "r5", name: "フルリロード", type: "assist", rarity: "Rare", baseEffect: 5, desc: "カードを5枚リセット" },
             { id: "r6", name: "ウィンド", type: "attack", rarity: "Rare", baseEffect: 45, desc: "敵に45ダメージ" },
-            { id: "l1", name: "メテオ", type: "attack", rarity: "Legend", baseEffect: 55, desc: "敵に55ダメ＆1ターン燃やす" },
+
+            // Legend (Base 55)
+            { id: "l1", name: "メテオ", type: "attack", rarity: "Legend", baseEffect: 55, desc: "敵に55ダメージ" },
             { id: "l2", name: "エクスカリバー", type: "attack", rarity: "Legend", baseEffect: 55, desc: "敵に55ダメージ" },
             { id: "l3", name: "エリクサー", type: "heal", rarity: "Legend", baseEffect: 55, desc: "HPを55回復" },
             { id: "l4", name: "覚醒", type: "assist", rarity: "Legend", baseEffect: 2.0, desc: "次ターンのダメージ2倍" },
             { id: "l5", name: "グランドクロス", type: "attack", rarity: "Legend", baseEffect: 55, desc: "敵に55ダメージ" },
+
+            // Mythic (Base 65)
             { id: "m1", name: "神の裁き", type: "attack", rarity: "Mythic", baseEffect: 65, desc: "敵に65ダメージ" },
             { id: "m2", name: "完全回復", type: "heal", rarity: "Mythic", baseEffect: 65, desc: "HPを65回復" },
             { id: "m3", name: "時止め", type: "assist", rarity: "Mythic", baseEffect: 1, desc: "敵のターンを1回スキップ" },
             { id: "m4", name: "ダークマター", type: "attack", rarity: "Mythic", baseEffect: 65, desc: "敵に65ダメージ" },
+
+            // Godly (Base 75)
             { id: "g1", name: "崩星咆哮砲", type: "attack", rarity: "Godly", baseEffect: 75, desc: "敵に75ダメージ" },
             { id: "g2", name: "神の加護", type: "assist", rarity: "Godly", baseEffect: 3.0, desc: "次ターンのダメージ3倍" },
             { id: "g3", name: "ゴッドブレス", type: "heal", rarity: "Godly", baseEffect: 75, desc: "HPを75回復" },
-            { id: "v1", name: "超新星爆発", type: "attack", rarity: "Volcano", baseEffect: 85, desc: "敵に85ダメ＆3ターン燃やす" },
-            { id: "v2", name: "大噴火", type: "attack", rarity: "Volcano", baseEffect: 85, desc: "敵に85ダメ＆3ターン燃やす" },
+
+            // Volcano (Base 85)
+            { id: "v1", name: "超新星爆発", type: "attack", rarity: "Volcano", baseEffect: 85, desc: "敵に85ダメージ" },
+            { id: "v2", name: "大噴火", type: "attack", rarity: "Volcano", baseEffect: 85, desc: "敵に85ダメージ" },
+
+            // Secret (Base 95)
             { id: "s1", name: "虚無への誘い", type: "attack", rarity: "Secret", baseEffect: 95, desc: "敵に95ダメージ" },
             { id: "s2", name: "無限の命", type: "heal", rarity: "Secret", baseEffect: 95, desc: "HPを95回復" },
             { id: "s3", name: "ブラックホール", type: "attack", rarity: "Secret", baseEffect: 95, desc: "敵に95ダメージ" },
+
+            // Ultimate (Base 105)
             { id: "ul1", name: "終焉の光", type: "attack", rarity: "Ultimate", baseEffect: 105, desc: "敵に105ダメージ" },
             { id: "ul2", name: "ビッグバン", type: "attack", rarity: "Ultimate", baseEffect: 105, desc: "敵に105ダメージ" },
-            { id: "og1", name: "管理者権限", type: "attack", rarity: "OG", baseEffect: 115, desc: "敵に115ダメージ" },
-            { id: "og2", name: "デバッグ", type: "attack", rarity: "OG", baseEffect: 115, desc: "敵に115ダメージ" },
 
-            // ボス専用ドロップカード (ガチャからは出ない)
-            { id: "b1", name: "ファイアスライム", type: "attack", rarity: "Volcano", baseEffect: 35, desc: "35ダメ＆敵を2ターン燃やす(毎ターン20ダメ)", isBossDrop: true },
-            { id: "b2", name: "こねたハンバーグ", type: "heal", rarity: "Secret", baseEffect: 0, desc: "75%で50回復、25%で75回復", isBossDrop: true },
-            { id: "b3", name: "Brrrrフローズン", type: "attack", rarity: "Secret", baseEffect: 35, desc: "35ダメ＆相手を1ターン凍らす", isBossDrop: true },
-            { id: "b4", name: "アルティメットバリア", type: "assist", rarity: "Ultimate", baseEffect: 0, desc: "自分に85HPのバリアを張る", isBossDrop: true },
-            { id: "b5", name: "メディション", type: "heal", rarity: "OG", baseEffect: 0, desc: "3ターン、毎ターン15~25HP回復", isBossDrop: true },
-            { id: "b6", name: "ボルケーノタイタン", type: "assist", rarity: "Volcano", baseEffect: 0, desc: "相手を5ターン強烈に燃やす状態にする", isBossDrop: true }
+            // OG (Base 115)
+            { id: "og1", name: "管理者権限", type: "attack", rarity: "OG", baseEffect: 115, desc: "敵に115ダメージ" },
+            { id: "og2", name: "デバッグ", type: "attack", rarity: "OG", baseEffect: 115, desc: "敵に115ダメージ" }
         ];
 
+        const RARITY_WEIGHTS = [
+            { rarity: "Common", chance: 40.0 }, { rarity: "Uncommon", chance: 30.0 }, { rarity: "Rare", chance: 15.0 },
+            { rarity: "Legend", chance: 8.0 }, { rarity: "Mythic", chance: 4.0 }, { rarity: "Godly", chance: 2.0 },
+            { rarity: "Volcano", chance: 0.8 }, { rarity: "Secret", chance: 0.15 }, { rarity: "Ultimate", chance: 0.04 },
+            { rarity: "OG", chance: 0.01 }
+        ];
+
+        // 「ん＝nn」「つ＝tu」のルールに統一。さらにランダムな単語を多数追加
         const TYPING_WORDS = [
             { ja: "あいうえお", en: "aiueo" }, { ja: "こうげき", en: "kougeki" }, { ja: "かいふく", en: "kaifuku" }, 
             { ja: "ぼうぎょ", en: "bougyo" }, { ja: "ひっさつわざ", en: "hissatuwaza" }, { ja: "すきるをはつどう", en: "sukiruwohatudou" }, 
             { ja: "たいぴんぐばとる", en: "taipinngubatoru" }, { ja: "でっきをくむ", en: "dekkiwokumu" }, { ja: "かーどをひく", en: "ka-dowohiku" }, 
-            { ja: "れじぇんどかーど", en: "rejenndoka-do" }, { ja: "きゅうきょくのちから", en: "kyuukyokunotikara" }, 
+            { ja: "れじぇんどかーど", en: "rejenndoka-do" }, { ja: "きゅうきょくのちから", en: "kyuukyokunochikara" }, 
             { ja: "あきらめないこころ", en: "akirumenaikokoro" }, { ja: "すーぱーこんぼ", en: "su-pa-konnbo" }, 
-            { ja: "ぜったいぜつめい", en: "zettaizetumei" }, { ja: "きしかいせい", en: "kisikaisei" }, 
+            { ja: "ぜったいぜつめい", en: "zettaizetumei" }, { ja: "きしかいせい", en: "kishikaisei" }, 
             { ja: "うんめいのどろー", en: "unnmeinodoro-" }, { ja: "ますたー", en: "masuta-" }, 
-            { ja: "えきすぱーと", en: "ekisupa-to" }, { ja: "げんかいとっぱ", en: "gennkaitoppa" }, { ja: "さいきょうのせんし", en: "saikyounosennsi" },
-            { ja: "つめたいこおり", en: "tumetaikoori" }, { ja: "つつむ", en: "tutumu" }, { ja: "てつのけん", en: "tetunokenn" }, { ja: "つよいちから", en: "tuyoitikara" },
+            { ja: "えきすぱーと", en: "ekisupa-to" }, { ja: "げんかいとっぱ", en: "gennkaitoppa" }, { ja: "さいきょうのせんし", en: "saikyounosennshi" },
+            { ja: "つめたいこおり", en: "tumetaikoori" }, { ja: "つつむ", en: "tutumu" }, { ja: "てつのけん", en: "tetunokenn" }, { ja: "つよいちから", en: "tuyoichikara" },
             { ja: "ほのおのまほう", en: "honoonomahou" }, { ja: "みずのてっぽう", en: "mizunoteppou" }, { ja: "かぜのやいば", en: "kazenoyaiba" },
-            { ja: "だいちのいかり", en: "daitinoikari" }, { ja: "ひかりのたて", en: "hikarinotate" }, { ja: "やみのまじゅつ", en: "yaminomazyutu" },
-            { ja: "しんぴのちから", en: "sinnpinotikara" }, { ja: "でんせつのつるぎ", en: "dennsetunoturugi" }, { ja: "むげんのたいりょく", en: "mugennnotairyoku" },
+            { ja: "だいちのいかり", en: "daichinoikari" }, { ja: "ひかりのたて", en: "hikarinotate" }, { ja: "やみのまじゅつ", en: "yaminomajutu" },
+            { ja: "しんぴのちから", en: "shinnpinochikara" }, { ja: "でんせつのつるぎ", en: "dennsetunoturugi" }, { ja: "むげんのたいりょく", en: "mugennnotairyoku" },
             { ja: "きゅうきょくおうぎ", en: "kyuukyokuougi" }, { ja: "てんぺんちい", en: "tennpenntii" }, { ja: "せいなるいのり", en: "seinaruinori" },
-            { ja: "じゃあくなのろい", en: "zyaakunanoroi" }, { ja: "じくうのゆがみ", en: "zikuunoyugami" }, { ja: "はめつのあしおと", en: "hametunoasioto" },
-            { ja: "きせきのふっかつ", en: "kisekinofukkatu" }, { ja: "えいえんのいのち", en: "eiennnoinoti" }, { ja: "ばくはつするまりょく", en: "bakuhatusurumaryoku" },
-            { ja: "しんじるこころ", en: "sinnzirukokoro" }, { ja: "さいごのいちげき", en: "saigonoitigeki" }, { ja: "ふくしゅうのとき", en: "fukushuunotoki" },
-            { ja: "てんくうのしろ", en: "tennkuunosiro" }, { ja: "めいかいのおう", en: "meikainoou" }, { ja: "じょうきげん", en: "zyoukigenn" }
-        ];
-
-        const BOSS_DATA = [
-            { id: 1, name: "🔥 ファイアスライム", maxHp: 600, attack: 35, desc: "技: 相手を燃やし25ダメ＋2枚カード使用不可" },
-            { id: 2, name: "🍳 クッキングマッサー", maxHp: 500, attack: 40, desc: "技: 25%で自身のHPを100回復" },
-            { id: 3, name: "❄️ フローズンウィザード", maxHp: 800, attack: 25, desc: "技: 50%で相手のターンを1回スキップ(凍結)" },
-            { id: 4, name: "🛡️ アルティメットタイタン", maxHp: 800, attack: 35, desc: "技: 25%で自身に50HPのバリアを張る" },
-            { id: 5, name: "🌪️ アクセラレーション", maxHp: 1000, attack: 45, desc: "技: バリア貫通の強力な突進(自滅の恐れあり)" }
+            { ja: "じゃあくなのろい", en: "jaakunanoroi" }, { ja: "じくうのゆがみ", en: "jikuunoyugami" }, { ja: "はめつのあしおと", en: "hametunoashioto" },
+            { ja: "きせきのふっかつ", en: "kisekinofukkatu" }, { ja: "えいえんのいのち", en: "eiennnoinochi" }, { ja: "ばくはつするまりょく", en: "bakuhatusurumaryoku" },
+            { ja: "しんじるこころ", en: "shinnjirukokoro" }, { ja: "さいごのいちげき", en: "saigonoichigeki" }, { ja: "ふくしゅうのとき", en: "fukushuunotoki" },
+            { ja: "てんくうのしろ", en: "tennkuunoshiro" }, { ja: "めいかいのおう", en: "meikainoou" }
         ];
 
         // --- グローバルステート ---
-        window.playerData = { packs: 3, inventory: {}, equipped: [], bossProgress: 0 };
+        window.playerData = { packs: 3, inventory: {}, equipped: [] };
         window.UIState = { invRarity: 'All', invType: 'All', equipRarity: 'All' };
-        
-        // 初期化用関数（バグの根絶）
-        function getInitialBattleState() {
-            return {
-                isActive: true, isBossMode: false, bossId: null, difficulty: '',
-                boss: { hp: 0, maxHp: 0, attack: 0, name: "" },
-                playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null, typedIndex: 0, mistakes: 0, typingStartTime: 0,
-                nextTurnMultiplier: 1.0, enemyFrozen: false,
-                playerStatus: { burnTurns: 0, freezeTurns: 0, barrierHp: 0, regenTurns: 0, disabledCards: [] },
-                bossStatus: { burnTurns: 0, freezeTurns: 0, barrierHp: 0 }
-            };
-        }
-        window.battleState = getInitialBattleState();
+        window.battleState = {
+            isActive: false, difficulty: '', boss: { hp: 0, maxHp: 0, attack: 0, name: "" },
+            playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null, typedIndex: 0, mistakes: 0, 
+            typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false
+        };
 
-        // --- データ管理 ---
+        // --- データ管理（セーブ・ロード・リセット） ---
         window.GameDataManager = {
             saveData: function() {
                 const statusEl = document.getElementById('save-status');
-                statusEl.textContent = '保存中...'; statusEl.style.color = 'orange';
+                statusEl.textContent = '保存中...';
+                statusEl.style.color = 'orange';
+
                 if (!window.playerData.inventory) window.playerData.inventory = {};
+
                 set(ref(database, 'users/' + userId), window.playerData).then(() => {
-                    statusEl.textContent = '同期済'; statusEl.style.color = '#00ffcc'; UIController.updateGlobalHeader();
-                }).catch(() => { statusEl.textContent = 'エラー'; statusEl.style.color = '#ff3333'; });
+                    statusEl.textContent = '同期済';
+                    statusEl.style.color = '#00ffcc';
+                    UIController.updateGlobalHeader();
+                }).catch((error) => {
+                    statusEl.textContent = 'エラー';
+                    statusEl.style.color = '#ff3333';
+                });
             },
             loadData: function() {
                 const statusEl = document.getElementById('save-status');
-                statusEl.textContent = '読込中...'; statusEl.style.color = 'yellow';
+                statusEl.textContent = '読込中...';
+                statusEl.style.color = 'yellow';
+                
                 get(ref(database, 'users/' + userId)).then((snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
                         window.playerData.packs = data.packs !== undefined ? data.packs : 3;
                         window.playerData.inventory = data.inventory || {};
                         window.playerData.equipped = data.equipped || [];
-                        window.playerData.bossProgress = data.bossProgress || 0;
                     } else {
-                        window.playerData = { packs: 3, inventory: {}, equipped: [], bossProgress: 0 };
+                        window.playerData.inventory = {};
+                        window.playerData.equipped = [];
                         this.saveData(); 
                     }
-                    statusEl.textContent = '同期済'; statusEl.style.color = '#00ffcc'; UIController.updateGlobalHeader();
-                }).catch(() => { statusEl.textContent = 'オフライン'; statusEl.style.color = '#888'; });
+                    statusEl.textContent = '同期済';
+                    statusEl.style.color = '#00ffcc';
+                    UIController.updateGlobalHeader();
+                }).catch(() => {
+                    statusEl.textContent = 'オフライン';
+                    statusEl.style.color = '#888';
+                });
             },
             resetData: function() {
                 if (confirm("⚠️ 本当に全データを削除してリセットしますか？\n※この操作は取り消せません！")) {
-                    window.playerData = { packs: 3, inventory: {}, equipped: [], bossProgress: 0 };
-                    this.saveData(); alert("データをリセットしました。初期状態に戻ります。"); location.reload();
+                    window.playerData = { packs: 3, inventory: {}, equipped: [] };
+                    this.saveData();
+                    alert("データをリセットしました。初期状態に戻ります。");
+                    location.reload();
                 }
             }
         };
@@ -523,12 +967,12 @@
         window.UIController = {
             updateGlobalHeader: function() { document.getElementById('display-packs').textContent = window.playerData.packs; },
             getCardById: function(id) { return ALL_CARDS.find(c => c.id === id); },
-            createCardHTML: function(card, count = 0, onClickAction = "", isDisabled = false) {
-                if (!card) return '';
+            createCardHTML: function(card, count = 0, onClickAction = "") {
+                if (!card) return ''; // バグ防止
+                // 所持数を表示するバッジ (0以上の場合は常に表示)
                 const countBadge = count > 0 ? `<div class="card-count">x${count}</div>` : '';
-                const disabledClass = isDisabled ? "disabled" : "";
                 return `
-                    <div class="card rarity-${card.rarity} ${disabledClass}" ${onClickAction && !isDisabled ? `onclick="${onClickAction}"` : ''}>
+                    <div class="card rarity-${card.rarity}" ${onClickAction ? `onclick="${onClickAction}"` : ''}>
                         ${countBadge}
                         <div class="card-name">${card.name}</div>
                         <div class="card-type">${this.getTypeEmoji(card.type)} ${this.getTypeName(card.type)}</div>
@@ -544,27 +988,38 @@
                 if(filterGroup === 'invRarity') tabContainerId = 'inv-rarity-tabs';
                 if(filterGroup === 'invType') tabContainerId = 'inv-type-tabs';
                 if(filterGroup === 'equipRarity') tabContainerId = 'equip-rarity-tabs';
+                
                 if(tabContainerId) {
                     const buttons = document.getElementById(tabContainerId).getElementsByTagName('button');
-                    for(let btn of buttons) { btn.classList.remove('active'); if(btn.getAttribute('onclick').includes(`'${value}'`)) btn.classList.add('active'); }
+                    for(let btn of buttons) {
+                        btn.classList.remove('active');
+                        if(btn.getAttribute('onclick').includes(`'${value}'`)) btn.classList.add('active');
+                    }
                 }
                 if (filterGroup.startsWith('inv')) this.renderInventory();
                 if (filterGroup.startsWith('equip')) this.renderEquipScreen();
             },
             renderInventory: function() {
-                const rarityFilter = window.UIState.invRarity; const typeFilter = window.UIState.invType;
-                const grid = document.getElementById('inventory-grid'); grid.innerHTML = ''; let hasCards = false;
+                const rarityFilter = window.UIState.invRarity;
+                const typeFilter = window.UIState.invType;
+                const grid = document.getElementById('inventory-grid');
+                grid.innerHTML = '';
+                let hasCards = false;
+
                 for (const [cardId, count] of Object.entries(window.playerData.inventory)) {
                     const card = this.getCardById(cardId);
-                    if (!card) { delete window.playerData.inventory[cardId]; continue; }
+                    if (!card) { delete window.playerData.inventory[cardId]; continue; } // 古いバグデータの除去
                     if (rarityFilter !== 'All' && card.rarity !== rarityFilter) continue;
                     if (typeFilter !== 'All' && card.type !== typeFilter) continue;
-                    grid.innerHTML += this.createCardHTML(card, count); hasCards = true;
+                    grid.innerHTML += this.createCardHTML(card, count);
+                    hasCards = true;
                 }
                 if (!hasCards) grid.innerHTML = '<p style="color:#aaa; width:100%; text-align:center; font-size: 20px;">条件に一致するカードがありません。</p>';
             },
             renderEquipScreen: function() {
-                const equippedContainer = document.getElementById('equipped-cards-container'); equippedContainer.innerHTML = '';
+                const equippedContainer = document.getElementById('equipped-cards-container');
+                equippedContainer.innerHTML = '';
+                
                 for(let i=0; i<5; i++) {
                     const equippedId = window.playerData.equipped[i];
                     if (equippedId) {
@@ -575,40 +1030,34 @@
                         equippedContainer.innerHTML += `<div class="equipped-slot">スロット ${i+1}<br><span style="font-size:14px;font-weight:normal;">(空き)</span></div>`;
                     }
                 }
+
                 document.getElementById('equip-warning').style.display = window.playerData.equipped.length !== 5 ? 'block' : 'none';
 
-                const rarityFilter = window.UIState.equipRarity; const grid = document.getElementById('equip-inventory-grid'); grid.innerHTML = ''; let hasCards = false;
+                const rarityFilter = window.UIState.equipRarity;
+                const grid = document.getElementById('equip-inventory-grid');
+                grid.innerHTML = '';
+                let hasCards = false;
+
                 for (const [cardId, count] of Object.entries(window.playerData.inventory)) {
                     if (window.playerData.equipped.includes(cardId)) continue;
                     const card = this.getCardById(cardId);
                     if (!card) continue;
                     if (rarityFilter !== 'All' && card.rarity !== rarityFilter) continue;
-                    grid.innerHTML += this.createCardHTML(card, count, `EquipController.equipCard('${cardId}')`); hasCards = true;
+                    grid.innerHTML += this.createCardHTML(card, count, `EquipController.equipCard('${cardId}')`);
+                    hasCards = true;
                 }
                 if (!hasCards) grid.innerHTML = '<p style="color:#aaa; width:100%; text-align:center; font-size: 20px;">装備可能なカードがありません。</p>';
             },
             updateGachaScreen: function() { document.getElementById('gacha-pack-count').textContent = window.playerData.packs; },
-            renderBossSelect: function() {
-                const list = document.getElementById('boss-list'); list.innerHTML = '';
-                BOSS_DATA.forEach((boss, index) => {
-                    const isUnlocked = window.playerData.bossProgress >= index;
-                    const isCleared = window.playerData.bossProgress > index;
-                    const btnClass = isCleared ? 'btn-success' : (isUnlocked ? 'btn-danger' : 'btn-dark');
-                    const lockText = isUnlocked ? '' : ' 🔒 (ロック中)';
-                    list.innerHTML += `<button class="${btnClass}" style="height: auto; flex-direction: column; padding: 15px;" ${!isUnlocked ? 'disabled' : ''} onclick="BattleController.startBossBattle(${boss.id})">
-                        <div style="font-size: 28px;">第${index+1}のボス: ${boss.name}${lockText}</div>
-                        <div style="font-size: 16px; color: #ddd; margin-top: 5px;">HP: ${boss.maxHp} / 攻撃: ${boss.attack} <br> ${boss.desc}</div>
-                    </button>`;
-                });
-            },
             showEffectPopup: function(text, x, y, color = "#ffea00") {
-                const popup = document.createElement('div'); popup.className = 'effect-popup'; popup.textContent = text;
-                popup.style.left = x + 'px'; popup.style.top = y + 'px'; popup.style.color = color; document.body.appendChild(popup);
+                const popup = document.createElement('div');
+                popup.className = 'effect-popup';
+                popup.textContent = text;
+                popup.style.left = x + 'px';
+                popup.style.top = y + 'px';
+                popup.style.color = color;
+                document.body.appendChild(popup);
                 setTimeout(() => popup.remove(), 1500);
-            },
-            showFreezeEffect: function() {
-                const popup = document.createElement('div'); popup.className = 'freeze-popup'; popup.textContent = 'Brrrrrフローズン！';
-                document.body.appendChild(popup); AudioController.playFreeze(); setTimeout(() => popup.remove(), 2000);
             }
         };
 
@@ -617,456 +1066,419 @@
             equipCard: function(cardId) {
                 if (window.playerData.equipped.length >= 5) return alert("⚠️ 装備できるのは最大5つまでです。先に外してください。");
                 if (window.playerData.equipped.includes(cardId)) return alert("⚠️ 同じカードは複数装備できません。");
-                window.playerData.equipped.push(cardId); GameDataManager.saveData(); UIController.renderEquipScreen();
+                window.playerData.equipped.push(cardId);
+                GameDataManager.saveData();
+                UIController.renderEquipScreen();
             },
             unequipCard: function(cardId) {
                 window.playerData.equipped = window.playerData.equipped.filter(id => id !== cardId);
-                GameDataManager.saveData(); UIController.renderEquipScreen();
+                GameDataManager.saveData();
+                UIController.renderEquipScreen();
             }
         };
 
-        // --- ガチャ管理 ---
+        // --- ガチャ管理（1パック＝5枚） ---
         window.GachaController = {
             drawCards: function(packAmount) {
                 if (window.playerData.packs < packAmount) return alert("⚠️ パックが足りません！");
-                window.playerData.packs -= packAmount; const cardAmount = packAmount * 5; const results = [];
-                if (!window.playerData.inventory) window.playerData.inventory = {};
+                window.playerData.packs -= packAmount;
                 
-                // ガチャの排出確率ロジック
-                const getGachaCard = () => {
-                    const rand = Math.random() * 100; let cumulative = 0; let selectedRarity = "Common";
-                    for (const rw of RARITY_WEIGHTS) { cumulative += rw.chance; if (rand <= cumulative) { selectedRarity = rw.rarity; break; } }
-                    const cardsOfRarity = ALL_CARDS.filter(c => c.rarity === selectedRarity && !c.isBossDrop); 
-                    return cardsOfRarity[Math.floor(Math.random() * cardsOfRarity.length)];
-                };
+                const cardAmount = packAmount * 5; // 1パックにつき5枚
+                const results = [];
+                if (!window.playerData.inventory) window.playerData.inventory = {};
 
                 for(let i=0; i<cardAmount; i++) {
-                    const card = getGachaCard(); results.push(card);
+                    const card = this.rollSingleCard();
+                    results.push(card);
                     if (window.playerData.inventory[card.id] === undefined) window.playerData.inventory[card.id] = 0;
                     window.playerData.inventory[card.id]++;
                 }
-                AudioController.playGacha(); GameDataManager.saveData(); UIController.updateGachaScreen(); this.showResult(results);
+                
+                AudioController.playGacha();
+                GameDataManager.saveData();
+                UIController.updateGachaScreen();
+                this.showResult(results);
             },
-            drawAll: function() { if (window.playerData.packs <= 0) return alert("⚠️ パックがありません！"); this.drawCards(window.playerData.packs); },
+            drawAll: function() {
+                if (window.playerData.packs <= 0) return alert("⚠️ パックがありません！");
+                this.drawCards(window.playerData.packs);
+            },
+            rollSingleCard: function() {
+                const rand = Math.random() * 100;
+                let cumulative = 0;
+                let selectedRarity = "Common";
+                for (const rw of RARITY_WEIGHTS) {
+                    cumulative += rw.chance;
+                    if (rand <= cumulative) { selectedRarity = rw.rarity; break; }
+                }
+                const cardsOfRarity = ALL_CARDS.filter(c => c.rarity === selectedRarity);
+                return cardsOfRarity[Math.floor(Math.random() * cardsOfRarity.length)];
+            },
             showResult: function(cards) {
-                const resultDiv = document.getElementById('gacha-result-cards'); resultDiv.innerHTML = '';
-                const counts = {}; cards.forEach(c => counts[c.id] = (counts[c.id] || 0) + 1);
-                for (const [id, count] of Object.entries(counts)) { resultDiv.innerHTML += UIController.createCardHTML(UIController.getCardById(id), count); }
+                const resultDiv = document.getElementById('gacha-result-cards');
+                resultDiv.innerHTML = '';
+                // 揃ったカードをカウントして「x枚」とまとめて表示
+                const counts = {};
+                cards.forEach(c => counts[c.id] = (counts[c.id] || 0) + 1);
+                for (const [id, count] of Object.entries(counts)) {
+                    resultDiv.innerHTML += UIController.createCardHTML(UIController.getCardById(id), count);
+                }
                 document.getElementById('gacha-result').classList.add('active');
             }
         };
 
-        // --- バトルロジック ---
+        // --- バトルロジック（タイマー撤廃・手札バランス機能搭載） ---
         window.BattleController = {
             startBattle: function(difficulty) {
-                window.battleState = getInitialBattleState();
-                window.battleState.difficulty = difficulty;
+                GameController.switchScreen('battle-screen');
+
+                window.battleState = {
+                    isActive: true, difficulty: difficulty,
+                    boss: { hp: 0, maxHp: 0, attack: 0, name: "" }, // ボス情報の初期化
+                    playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null, // HPを350に変更
+                    typedIndex: 0, mistakes: 0, typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false
+                };
+
                 const boss = window.battleState.boss;
                 switch(difficulty) {
                     case 'easy': boss.maxHp = 350; boss.hp = 350; boss.attack = 30; boss.name = "🟢 スライム (簡単)"; break;
-                    case 'medium': boss.maxHp = 500; boss.hp = 500; boss.attack = 45; boss.name = "🟡 オーク (中級)"; break;
-                    case 'hard': boss.maxHp = 800; boss.hp = 800; boss.attack = 60; boss.name = "🔴 ドラゴン (難しい)"; break;
-                    case 'extreme': boss.maxHp = 1500; boss.hp = 1500; boss.attack = 100; boss.name = "😈 魔王 (鬼むず)"; break;
+                    case 'medium': boss.maxHp = 1000; boss.hp = 1000; boss.attack = 80; boss.name = "🟡 オーク (中級)"; break;
+                    case 'hard': boss.maxHp = 3000; boss.hp = 3000; boss.attack = 200; boss.name = "🔴 ドラゴン (難しい)"; break;
+                    case 'extreme': boss.maxHp = 10000; boss.hp = 10000; boss.attack = 500; boss.name = "😈 魔王 (鬼むず)"; break;
                 }
-                this.setupBattleUI();
-            },
-            startBossBattle: function(bossId) {
-                window.battleState = getInitialBattleState();
-                window.battleState.isBossMode = true; window.battleState.bossId = bossId;
-                const bossData = BOSS_DATA.find(b => b.id === bossId);
-                const boss = window.battleState.boss;
-                boss.maxHp = bossData.maxHp; boss.hp = bossData.maxHp; boss.attack = bossData.attack; boss.name = bossData.name;
-                this.setupBattleUI();
-            },
-            setupBattleUI: function() {
-                GameController.switchScreen('battle-screen');
-                document.getElementById('boss-name').textContent = window.battleState.boss.name;
+
+                document.getElementById('boss-name').textContent = boss.name;
                 document.getElementById('battle-log').innerHTML = '<p>⚔️ バトル開始！</p>';
                 this.updateHPUI();
-                setTimeout(() => this.startPlayerTurn(), 500); 
+
+                // 初期手札を確実に5枚生成
+                this.fillHand();
+                this.resetTypingUI();
             },
             
-            // 手札補充 (完全ランダム ＆ 攻撃・回復・アシストを最低1つ保証)
+            // 手札が常に5枚になるように補充する。
+            // また、攻撃・回復・アシストが最低1枚は混ざるように調整する
             fillHand: function() {
-                const bState = window.battleState;
-                const drawCount = 5 - bState.hand.length;
-                if (drawCount <= 0) return;
+                const currentCount = window.battleState.hand.length;
+                if (currentCount >= 5) return;
+                const drawCount = 5 - currentCount;
                 
-                let validInvKeys = Object.keys(window.playerData.inventory || {}).filter(id => UIController.getCardById(id));
-                let validEqKeys = (window.playerData.equipped || []).filter(id => UIController.getCardById(id));
-                const isEqValid = validEqKeys.length === 5;
+                let validInventoryKeys = Object.keys(window.playerData.inventory || {}).filter(id => UIController.getCardById(id));
+                let validEquipKeys = (window.playerData.equipped || []).filter(id => UIController.getCardById(id));
+                
+                const isEquipDeckValid = validEquipKeys.length === 5;
 
-                const drawOne = (forcedType = null) => {
-                    let pInv = validInvKeys; let pEq = validEqKeys;
-                    if (forcedType) {
-                        pInv = validInvKeys.filter(id => UIController.getCardById(id).type === forcedType);
-                        pEq = validEqKeys.filter(id => UIController.getCardById(id).type === forcedType);
-                    }
-                    if (pInv.length === 0 && pEq.length === 0) { pInv = validInvKeys; pEq = validEqKeys; } // 該当タイプが0枚なら全体から
+                // レアリティの確率に基づいてカードを引くヘルパー関数
+                const getRandomCardWeighted = (cardIdList) => {
+                    let totalWeight = 0;
+                    const weightedCards = cardIdList.map(id => {
+                        const card = UIController.getCardById(id);
+                        const rw = RARITY_WEIGHTS.find(w => w.rarity === card.rarity);
+                        const weight = rw ? rw.chance : 1; 
+                        totalWeight += weight;
+                        return { card, weight };
+                    });
                     
-                    if (isEqValid && pEq.length > 0 && Math.random() < 0.35) {
-                        return UIController.getCardById(pEq[Math.floor(Math.random() * pEq.length)]);
-                    } else if (pInv.length > 0) {
-                        // レアリティ関係なく完全ランダムに引く
-                        return UIController.getCardById(pInv[Math.floor(Math.random() * pInv.length)]);
-                    } else {
+                    let rand = Math.random() * totalWeight;
+                    for (const wc of weightedCards) {
+                        rand -= wc.weight;
+                        if (rand <= 0) return wc.card;
+                    }
+                    return weightedCards[0].card;
+                };
+
+                // 指定されたタイプを優先して1枚引くヘルパー関数
+                const drawOneCard = (forcedType = null) => {
+                    let poolInv = validInventoryKeys;
+                    let poolEq = validEquipKeys;
+
+                    // 指定タイプがあれば、そのタイプだけに絞り込む
+                    if (forcedType) {
+                        poolInv = validInventoryKeys.filter(id => UIController.getCardById(id).type === forcedType);
+                        poolEq = validEquipKeys.filter(id => UIController.getCardById(id).type === forcedType);
+                    }
+
+                    // もし絞り込んだ結果どちらも0枚なら、ユーザーはそのタイプのカードを持っていないので全体プールに戻す
+                    if (poolInv.length === 0 && poolEq.length === 0) {
+                        poolInv = validInventoryKeys;
+                        poolEq = validEquipKeys;
+                    }
+
+                    // 35%の確率でベスト装備から引く（装備が有効な場合）
+                    if (isEquipDeckValid && poolEq.length > 0 && Math.random() < 0.35) {
+                        return UIController.getCardById(poolEq[Math.floor(Math.random() * poolEq.length)]);
+                    } 
+                    // 装備が発動しなかった、または無効な場合は所持カードからレアリティに基づいて引く
+                    else if (poolInv.length > 0) {
+                        return getRandomCardWeighted(poolInv);
+                    } 
+                    // 何も持っていない場合の究極の救済措置
+                    else {
                         return ALL_CARDS[0]; 
                     }
                 };
 
                 for (let i = 0; i < drawCount; i++) {
-                    const types = bState.hand.map(c => c.type);
-                    const hasA = validInvKeys.some(id => UIController.getCardById(id).type === 'attack');
-                    const hasH = validInvKeys.some(id => UIController.getCardById(id).type === 'heal');
-                    const hasAs = validInvKeys.some(id => UIController.getCardById(id).type === 'assist');
+                    const currentTypes = window.battleState.hand.map(c => c.type);
+                    
+                    // プレイヤーがそもそもそのタイプのカードを持っているか確認
+                    const hasAttack = validInventoryKeys.some(id => UIController.getCardById(id).type === 'attack');
+                    const hasHeal = validInventoryKeys.some(id => UIController.getCardById(id).type === 'heal');
+                    const hasAssist = validInventoryKeys.some(id => UIController.getCardById(id).type === 'assist');
 
-                    // バランス保証
-                    if (!types.includes('attack') && hasA) bState.hand.push(drawOne('attack'));
-                    else if (!types.includes('heal') && hasH) bState.hand.push(drawOne('heal'));
-                    else if (!types.includes('assist') && hasAs) bState.hand.push(drawOne('assist'));
-                    else bState.hand.push(drawOne(null));
+                    let cardToPush = null;
+
+                    // 攻撃・回復・アシストが手札に無い場合は、持っていれば優先してそれを引く
+                    if (!currentTypes.includes('attack') && hasAttack) {
+                        cardToPush = drawOneCard('attack');
+                    } else if (!currentTypes.includes('heal') && hasHeal) {
+                        cardToPush = drawOneCard('heal');
+                    } else if (!currentTypes.includes('assist') && hasAssist) {
+                        cardToPush = drawOneCard('assist');
+                    } else {
+                        // 3種類とも揃っている場合は通常通りランダムドロー
+                        cardToPush = drawOneCard(null);
+                    }
+                    
+                    window.battleState.hand.push(cardToPush);
                 }
+                this.renderHand();
             },
             renderHand: function() {
-                const handDiv = document.getElementById('battle-hand'); handDiv.innerHTML = '';
+                const handDiv = document.getElementById('battle-hand');
+                handDiv.innerHTML = '';
                 window.battleState.hand.forEach((card, index) => {
-                    const isDisabled = window.battleState.playerStatus.disabledCards.includes(index);
-                    handDiv.innerHTML += UIController.createCardHTML(card, 0, `BattleController.selectCard(${index})`, isDisabled);
+                    handDiv.innerHTML += UIController.createCardHTML(card, 0, `BattleController.selectCard(${index})`);
                 });
             },
-
-            // --- ターンの流れ ---
-            startPlayerTurn: function() {
-                if (!window.battleState.isActive) return;
-                
-                const pStat = window.battleState.playerStatus;
-                if (pStat.burnTurns > 0) {
-                    this.applyDamageToPlayer(20); pStat.burnTurns--;
-                    this.logBattle(`🔥 燃焼ダメージ！あなたは20ダメージを受けた。`);
-                }
-                if (pStat.regenTurns > 0) {
-                    let heal = Math.floor(Math.random() * 11) + 15; 
-                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + heal);
-                    pStat.regenTurns--;
-                    this.logBattle(`✨ メディション効果！HPが ${heal} 回復した。`);
-                }
-                this.updateHPUI();
-                if (window.battleState.playerHp <= 0) return this.endBattle(false, "HPが0になってしまった...");
-
-                if (pStat.freezeTurns > 0) {
-                    this.logBattle(`❄️ あなたは凍結していて動けない！`);
-                    pStat.freezeTurns--;
-                    setTimeout(() => this.enemyTurn(), 1000);
-                    return;
-                }
-
-                pStat.disabledCards = []; 
-                this.fillHand();
-                this.renderHand();
-                this.resetTypingUI();
-                document.getElementById('typing-message').textContent = "👇 自分のターン：下のカードから1つ選んでください";
-            },
-
             selectCard: function(index) {
-                if (!window.battleState.isActive || window.battleState.activeCard || window.battleState.playerStatus.disabledCards.includes(index)) return;
+                if (!window.battleState.isActive || window.battleState.activeCard) return;
                 
                 window.battleState.activeCard = window.battleState.hand[index];
-                window.battleState.hand.splice(index, 1);
-                this.fillHand(); 
+                window.battleState.hand.splice(index, 1); // 選択したカードを手札から消す
+                this.fillHand(); // 即座に1枚補充して常に5枚を維持
 
+                // タイピングの単語はカードに依存せず完全ランダム
                 const word = TYPING_WORDS[Math.floor(Math.random() * TYPING_WORDS.length)];
-                window.battleState.currentWord = word; window.battleState.typedIndex = 0; window.battleState.mistakes = 0;
+                window.battleState.currentWord = word;
+                window.battleState.typedIndex = 0;
+                window.battleState.mistakes = 0;
                 window.battleState.typingStartTime = performance.now();
 
                 this.updateTypingUI();
                 document.getElementById('typing-message').textContent = `⚡ 「${window.battleState.activeCard.name}」発動！タイピングせよ！`;
             },
             updateTypingUI: function() {
-                const word = window.battleState.currentWord; if (!word) return;
+                const word = window.battleState.currentWord;
+                if (!word) return;
                 document.getElementById('typing-ja').textContent = word.ja;
                 const typedPart = word.en.substring(0, window.battleState.typedIndex);
                 const remainingPart = word.en.substring(window.battleState.typedIndex);
                 document.getElementById('typing-en').innerHTML = `<span class="typed">${typedPart}</span><span>${remainingPart}</span>`;
             },
             resetTypingUI: function() {
-                document.getElementById('typing-ja').textContent = ""; document.getElementById('typing-en').innerHTML = "";
+                document.getElementById('typing-message').textContent = "👇 下のカードから1つ選んでください";
+                document.getElementById('typing-ja').textContent = "";
+                document.getElementById('typing-en').innerHTML = "";
             },
             handleTyping: function(key) {
                 if (!window.battleState.isActive || !window.battleState.activeCard || !window.battleState.currentWord) return;
 
                 const targetChar = window.battleState.currentWord.en[window.battleState.typedIndex];
                 if (key.toLowerCase() === targetChar.toLowerCase()) {
-                    AudioController.playType(); window.battleState.typedIndex++; this.updateTypingUI();
-                    if (window.battleState.typedIndex >= window.battleState.currentWord.en.length) this.executeCardEffect();
+                    AudioController.playType();
+                    window.battleState.typedIndex++;
+                    this.updateTypingUI();
+                    if (window.battleState.typedIndex >= window.battleState.currentWord.en.length) {
+                        this.executeCardEffect();
+                    }
                 } else {
-                    AudioController.playError(); window.battleState.mistakes++;
-                    const enDiv = document.getElementById('typing-en'); enDiv.classList.add('error');
+                    AudioController.playError();
+                    window.battleState.mistakes++;
+                    const enDiv = document.getElementById('typing-en');
+                    enDiv.classList.add('error');
                     setTimeout(() => enDiv.classList.remove('error'), 100);
                 }
             },
-
-            applyDamageToPlayer: function(amount) {
-                let dmg = amount; const stat = window.battleState.playerStatus;
-                if (stat.barrierHp > 0) {
-                    if (stat.barrierHp >= dmg) { stat.barrierHp -= dmg; dmg = 0; }
-                    else { dmg -= stat.barrierHp; stat.barrierHp = 0; }
-                }
-                window.battleState.playerHp = Math.max(0, window.battleState.playerHp - dmg);
-            },
-            applyDamageToBoss: function(amount) {
-                let dmg = amount; const stat = window.battleState.bossStatus;
-                if (stat.barrierHp > 0) {
-                    if (stat.barrierHp >= dmg) { stat.barrierHp -= dmg; dmg = 0; }
-                    else { dmg -= stat.barrierHp; stat.barrierHp = 0; }
-                }
-                window.battleState.boss.hp = Math.max(0, window.battleState.boss.hp - dmg);
-            },
-
             executeCardEffect: function() {
                 const timeTaken = performance.now() - window.battleState.typingStartTime;
-                const card = window.battleState.activeCard; const mistakes = window.battleState.mistakes;
+                const card = window.battleState.activeCard;
+                const mistakes = window.battleState.mistakes;
 
-                let effectValue = card.baseEffect; let logMsg = `🃏 【${card.name}】発動！ `;
+                let effectValue = card.baseEffect;
+                let logMsg = `🃏 【${card.name}】発動！ `;
+                
                 const typingAreaRect = document.getElementById('typing-area').getBoundingClientRect();
-                const popupX = typingAreaRect.left + typingAreaRect.width / 2 - 100; const popupY = typingAreaRect.top + 80;
+                const popupX = typingAreaRect.left + typingAreaRect.width / 2 - 100;
+                const popupY = typingAreaRect.top + 80;
 
                 if (mistakes === 0) {
-                    if (card.type === 'assist' && card.baseEffect < 10 && card.baseEffect > 0) effectValue += 1;
-                    else if (card.baseEffect > 0) effectValue += 5;
-                    UIController.showEffectPopup("✨ Perfect!", popupX, popupY, "#00ffcc"); logMsg += "【Perfect!!】 ";
+                    if (card.type === 'assist' && card.baseEffect < 10) effectValue += 1;
+                    else effectValue += 5;
+                    
+                    UIController.showEffectPopup("✨ Perfect!", popupX, popupY, "#00ffcc");
+                    logMsg += "【Perfect!!】 ";
+
                     if (timeTaken <= 1000) { 
-                        if (card.type === 'assist' && card.baseEffect < 10 && card.baseEffect > 0) effectValue += 1;
-                        else if (card.baseEffect > 0) effectValue += 10;
-                        setTimeout(() => UIController.showEffectPopup("⚡ 神速!", popupX, popupY - 50, "#ff00ff"), 300); logMsg += "【神速!!】 ";
+                        if (card.type === 'assist' && card.baseEffect < 10) effectValue += 1;
+                        else effectValue += 10;
+                        setTimeout(() => UIController.showEffectPopup("⚡ 神速!", popupX, popupY - 50, "#ff00ff"), 300);
+                        logMsg += "【神速!!】 ";
                     }
                 } else {
-                    UIController.showEffectPopup("⚠️ 威力ダウン...", popupX, popupY, "#ff3333"); logMsg += `(ミス${mistakes}回で威力低下) `;
-                    if (card.type === 'assist' && card.baseEffect < 10 && card.baseEffect > 0) effectValue = Math.max(1, effectValue - 0.1 * mistakes); 
-                    else if (card.type === 'assist' && card.baseEffect > 0) effectValue = Math.max(1, effectValue - mistakes);
-                    else if (card.baseEffect > 0) effectValue = Math.max(1, effectValue - mistakes);
+                    UIController.showEffectPopup("⚠️ 威力ダウン...", popupX, popupY, "#ff3333");
+                    logMsg += `(ミス${mistakes}回で威力低下) `;
+                    if (card.type === 'assist' && card.baseEffect < 10) effectValue = Math.max(1, effectValue - 0.1 * mistakes); 
+                    else if (card.type === 'assist') effectValue = Math.max(1, effectValue - mistakes);
+                    else effectValue = Math.max(1, effectValue - mistakes);
                 }
+
                 effectValue = Math.round(effectValue * 10) / 10; 
 
-                // カード効果の分岐 (戦術系の追加)
-                if (card.id === 'u2' || card.id === 'l1') {
-                    AudioController.playAttack(); let finalDamage = Math.floor(effectValue * window.battleState.nextTurnMultiplier);
-                    this.applyDamageToBoss(finalDamage); window.battleState.bossStatus.burnTurns += 1;
-                    logMsg += `敵に 💥${finalDamage}ダメ＆🔥燃焼(1ターン)付与！`;
-                    window.battleState.nextTurnMultiplier = 1.0; document.getElementById('player-buffs').textContent = "";
-                } else if (card.id === 'r2') {
-                    AudioController.playAttack(); UIController.showFreezeEffect(); let finalDamage = Math.floor(effectValue * window.battleState.nextTurnMultiplier);
-                    this.applyDamageToBoss(finalDamage); window.battleState.bossStatus.freezeTurns = 1;
-                    logMsg += `敵に 💥${finalDamage}ダメ＆❄️凍結(1ターン)付与！`;
-                    window.battleState.nextTurnMultiplier = 1.0; document.getElementById('player-buffs').textContent = "";
-                } else if (card.id === 'v1' || card.id === 'v2') {
-                    AudioController.playAttack(); let finalDamage = Math.floor(effectValue * window.battleState.nextTurnMultiplier);
-                    this.applyDamageToBoss(finalDamage); window.battleState.bossStatus.burnTurns += 3;
-                    logMsg += `敵に 💥${finalDamage}ダメ＆🔥燃焼(3ターン)付与！`;
-                    window.battleState.nextTurnMultiplier = 1.0; document.getElementById('player-buffs').textContent = "";
-                }
-                else if (card.id === 'b1') {
-                    AudioController.playAttack(); this.applyDamageToBoss(effectValue);
-                    window.battleState.bossStatus.burnTurns = 2; logMsg += `敵に💥${effectValue}ダメ＆燃焼(2ターン)付与！`;
-                } else if (card.id === 'b2') {
-                    AudioController.playHeal(); let heal = Math.random() < 0.75 ? 50 : 75;
-                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + heal); logMsg += `HPが 💖${heal} 回復！`;
-                } else if (card.id === 'b3') {
-                    AudioController.playAttack(); UIController.showFreezeEffect(); this.applyDamageToBoss(effectValue);
-                    window.battleState.bossStatus.freezeTurns = 1; logMsg += `敵に💥${effectValue}ダメ＆凍結(1ターン)付与！`;
-                } else if (card.id === 'b4') {
-                    AudioController.playHeal(); window.battleState.playerStatus.barrierHp += 85; logMsg += `自分に🛡️85のバリアを張った！`;
-                } else if (card.id === 'b5') {
-                    AudioController.playHeal(); window.battleState.playerStatus.regenTurns = 3; logMsg += `自分に✨リジェネ(3ターン)を付与！`;
-                } else if (card.id === 'b6') {
-                    AudioController.playAttack(); window.battleState.bossStatus.burnTurns = 5; logMsg += `敵に🔥強烈な燃焼(5ターン)を付与！`;
-                } else {
-                    if (card.type === 'attack') {
-                        AudioController.playAttack(); let finalDamage = Math.floor(effectValue * window.battleState.nextTurnMultiplier);
-                        this.applyDamageToBoss(finalDamage); logMsg += `敵に 💥${finalDamage} のダメージ！`;
-                        window.battleState.nextTurnMultiplier = 1.0; document.getElementById('player-buffs').textContent = "";
-                    } else if (card.type === 'heal') {
-                        AudioController.playHeal(); window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + effectValue);
-                        logMsg += `HPが 💖${effectValue} 回復！`;
-                    } else if (card.type === 'assist') {
-                        AudioController.playHeal();
-                        if (card.name.includes("リセット") || card.name.includes("ドロー") || card.name.includes("入れ替え")) {
-                            window.battleState.hand = []; this.fillHand(); logMsg += `手札を 🔄全て引き直した！`;
-                        } else if (card.name === "時止め") {
-                            window.battleState.enemyFrozen = true; logMsg += `敵のターンを ⏳1回スキップ！`;
-                        } else {
-                            window.battleState.nextTurnMultiplier = effectValue; logMsg += `次の攻撃ダメージが ⚡${effectValue} 倍！`;
-                            document.getElementById('player-buffs').textContent = `⚔️ 攻撃 ${effectValue} 倍！`;
-                        }
+                if (card.type === 'attack') {
+                    AudioController.playAttack();
+                    let finalDamage = Math.floor(effectValue * window.battleState.nextTurnMultiplier);
+                    window.battleState.boss.hp = Math.max(0, window.battleState.boss.hp - finalDamage);
+                    logMsg += `敵に 💥${finalDamage} のダメージ！`;
+                    window.battleState.nextTurnMultiplier = 1.0; 
+                    document.getElementById('player-buffs').textContent = "";
+                } else if (card.type === 'heal') {
+                    AudioController.playHeal();
+                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + effectValue);
+                    logMsg += `HPが 💖${effectValue} 回復した！`;
+                } else if (card.type === 'assist') {
+                    AudioController.playHeal();
+                    if (card.name.includes("リセット") || card.name.includes("ドロー") || card.name.includes("入れ替え")) {
+                        window.battleState.hand = []; 
+                        this.fillHand(); // 手札を全引き直し
+                        logMsg += `手札を 🔄全て引き直した！`;
+                    } else if (card.name === "時止め") {
+                        window.battleState.enemyFrozen = true;
+                        logMsg += `敵のターンを ⏳1回スキップ！`;
+                    } else {
+                        window.battleState.nextTurnMultiplier = effectValue;
+                        logMsg += `次の攻撃ダメージが ⚡${effectValue} 倍！`;
+                        document.getElementById('player-buffs').textContent = `⚔️ 攻撃 ${effectValue} 倍！`;
                     }
                 }
 
-                this.logBattle(logMsg); this.updateHPUI(); this.resetTypingUI(); window.battleState.activeCard = null;
+                this.logBattle(logMsg);
+                this.updateHPUI();
+                this.resetTypingUI();
+                window.battleState.activeCard = null;
 
-                if (window.battleState.boss.hp <= 0) return this.endBattle(true, "ボスの撃破に成功した！");
-
-                if (window.battleState.bossStatus.burnTurns > 0) {
-                    this.applyDamageToBoss(20); window.battleState.bossStatus.burnTurns--;
-                    this.logBattle(`🔥 敵に燃焼ダメージ(20)！`);
-                    this.updateHPUI();
-                    if (window.battleState.boss.hp <= 0) return this.endBattle(true, "燃焼ダメージでボスを撃破した！");
+                if (window.battleState.boss.hp <= 0) {
+                    this.endBattle(true, "ボスの撃破に成功した！");
+                    return;
                 }
 
                 setTimeout(() => this.enemyTurn(), 1000);
             },
-
             enemyTurn: function() {
                 if (!window.battleState.isActive) return;
-                const bStat = window.battleState.bossStatus;
-                
+
                 if (window.battleState.enemyFrozen) {
-                    this.logBattle("👹 【敵のターン】敵は時を止められて動けない！"); window.battleState.enemyFrozen = false;
-                    return setTimeout(() => this.startPlayerTurn(), 1000);
-                }
-                if (bStat.freezeTurns > 0) {
-                    this.logBattle("👹 【敵のターン】敵は凍っていて動けない！"); bStat.freezeTurns--;
-                    return setTimeout(() => this.startPlayerTurn(), 1000);
+                    this.logBattle("👹 【敵のターン】敵は時を止められて動けない！");
+                    window.battleState.enemyFrozen = false;
+                    return;
                 }
 
                 const boss = window.battleState.boss;
-                const r = Math.random();
-
-                if (window.battleState.isBossMode) {
-                    if (window.battleState.bossId === 1) { 
-                        if (r < 0.5) {
-                            this.applyDamageToPlayer(25); window.battleState.playerStatus.burnTurns += 2;
-                            window.battleState.playerStatus.disabledCards = [];
-                            while(window.battleState.playerStatus.disabledCards.length < 2 && window.battleState.playerStatus.disabledCards.length < window.battleState.hand.length) {
-                                let randIdx = Math.floor(Math.random() * window.battleState.hand.length);
-                                if(!window.battleState.playerStatus.disabledCards.includes(randIdx)) window.battleState.playerStatus.disabledCards.push(randIdx);
-                            }
-                            this.logBattle(`👹 【敵の技】相手を燃やし💥25ダメ！＆手札2枚が使用不可に！`); AudioController.playError();
-                        } else { this.applyDamageToPlayer(boss.attack); this.logBattle(`👹 【敵の攻撃】💥${boss.attack} のダメージ！`); AudioController.playError(); }
-                    } 
-                    else if (window.battleState.bossId === 2) { 
-                        if (r < 0.25) { boss.hp = Math.min(boss.maxHp, boss.hp + 100); this.logBattle(`👹 【敵の技】HPを💖100回復した！`); } 
-                        else { this.applyDamageToPlayer(boss.attack); this.logBattle(`👹 【敵の攻撃】💥${boss.attack} のダメージ！`); AudioController.playError(); }
-                    }
-                    else if (window.battleState.bossId === 3) { 
-                        if (r < 0.5) { window.battleState.playerStatus.freezeTurns = 1; this.logBattle(`👹 【敵の技】凍結魔法！あなたは次のターン動けない！`); UIController.showFreezeEffect(); } 
-                        else { this.applyDamageToPlayer(boss.attack); this.logBattle(`👹 【敵の攻撃】💥${boss.attack} のダメージ！`); AudioController.playError(); }
-                    }
-                    else if (window.battleState.bossId === 4) { 
-                        if (r < 0.25) { window.battleState.bossStatus.barrierHp += 50; this.logBattle(`👹 【敵の技】自身に🛡️50のバリアを張った！`); } 
-                        else { this.applyDamageToPlayer(boss.attack); this.logBattle(`👹 【敵の攻撃】💥${boss.attack} のダメージ！`); AudioController.playError(); }
-                    }
-                    else if (window.battleState.bossId === 5) { 
-                        if (r < 0.5) {
-                            if (Math.random() < 0.75) {
-                                window.battleState.playerStatus.barrierHp = 0; this.applyDamageToPlayer(65);
-                                this.logBattle(`👹 【敵の技】強烈な突進！バリアを破壊され、あなたは💥65ダメージ！`); AudioController.playError();
-                            } else {
-                                this.applyDamageToBoss(50); this.logBattle(`👹 【敵の技】突進失敗！ボスは自滅して💥50ダメージ！`);
-                            }
-                        } else { this.applyDamageToPlayer(boss.attack); this.logBattle(`👹 【敵の攻撃】💥${boss.attack} のダメージ！`); AudioController.playError(); }
-                    }
+                if (Math.random() < 0.2) {
+                    const healAmount = Math.floor(boss.maxHp * 0.1);
+                    boss.hp = Math.min(boss.maxHp, boss.hp + healAmount);
+                    this.logBattle(`👹 【敵のターン】ボスは特殊技を使った！ HPを 💖${healAmount} 回復した。`);
                 } else {
-                    if (Math.random() < 0.2) {
-                        const healAmount = Math.floor(boss.maxHp * 0.1); boss.hp = Math.min(boss.maxHp, boss.hp + healAmount);
-                        this.logBattle(`👹 【敵のターン】ボスは特殊技を使った！ HPを 💖${healAmount} 回復した。`);
-                    } else {
-                        this.applyDamageToPlayer(boss.attack); this.logBattle(`👹 【敵のターン】ボスの攻撃！ あなたは 💥${boss.attack} のダメージを受けた。`); AudioController.playError();
-                    }
+                    window.battleState.playerHp = Math.max(0, window.battleState.playerHp - boss.attack);
+                    this.logBattle(`👹 【敵のターン】ボスの攻撃！ あなたは 💥${boss.attack} のダメージを受けた。`);
+                    AudioController.playError();
                 }
 
                 this.updateHPUI();
-                if (window.battleState.playerHp <= 0) return this.endBattle(false, "HPが0になってしまった...");
-                setTimeout(() => this.startPlayerTurn(), 1000);
-            },
 
+                if (window.battleState.playerHp <= 0) {
+                    this.endBattle(false, "HPが0になってしまった...");
+                }
+            },
             updateHPUI: function() {
-                const bState = window.battleState;
-                document.getElementById('player-hp').textContent = Math.floor(bState.playerHp);
-                document.getElementById('boss-hp').textContent = Math.floor(bState.boss.hp);
+                document.getElementById('player-hp').textContent = Math.floor(window.battleState.playerHp);
+                document.getElementById('boss-hp').textContent = Math.floor(window.battleState.boss.hp);
+                document.getElementById('player-hp-text').textContent = `${Math.floor(window.battleState.playerHp)} / ${window.battleState.playerMaxHp}`;
+                document.getElementById('boss-hp-text').textContent = `${Math.floor(window.battleState.boss.hp)} / ${window.battleState.boss.maxHp}`;
                 
-                let pBarText = `${Math.floor(bState.playerHp)} / ${bState.playerMaxHp}`;
-                if (bState.playerStatus.barrierHp > 0) pBarText += ` (🛡️${bState.playerStatus.barrierHp})`;
-                document.getElementById('player-hp-text').textContent = pBarText;
-
-                let bBarText = `${Math.floor(bState.boss.hp)} / ${bState.boss.maxHp}`;
-                if (bState.bossStatus.barrierHp > 0) bBarText += ` (🛡️${bState.bossStatus.barrierHp})`;
-                document.getElementById('boss-hp-text').textContent = bBarText;
-                
-                document.getElementById('player-hp-bar').style.width = (bState.playerHp / bState.playerMaxHp) * 100 + '%';
-                document.getElementById('boss-hp-bar').style.width = (bState.boss.hp / bState.boss.maxHp) * 100 + '%';
-                
-                document.getElementById('player-barrier-bar').style.width = Math.min(100, (bState.playerStatus.barrierHp / 200) * 100) + '%';
-                document.getElementById('boss-barrier-bar').style.width = Math.min(100, (bState.bossStatus.barrierHp / 200) * 100) + '%';
-
-                let pIcons = ""; if(bState.playerStatus.burnTurns > 0) pIcons += "🔥"; if(bState.playerStatus.freezeTurns > 0) pIcons += "❄️"; if(bState.playerStatus.regenTurns > 0) pIcons += "✨";
-                document.getElementById('player-status-icons').textContent = pIcons;
-                
-                let bIcons = ""; if(bState.bossStatus.burnTurns > 0) bIcons += "🔥"; if(bState.bossStatus.freezeTurns > 0) bIcons += "❄️";
-                document.getElementById('boss-status-icons').textContent = bIcons;
+                const pPct = (window.battleState.playerHp / window.battleState.playerMaxHp) * 100;
+                const bPct = (window.battleState.boss.hp / window.battleState.boss.maxHp) * 100;
+                document.getElementById('player-hp-bar').style.width = pPct + '%';
+                document.getElementById('boss-hp-bar').style.width = bPct + '%';
             },
-            
             logBattle: function(msg) {
-                const logDiv = document.getElementById('battle-log'); logDiv.innerHTML = `<p>${msg}</p>` + logDiv.innerHTML;
+                const logDiv = document.getElementById('battle-log');
+                logDiv.innerHTML = `<p>${msg}</p>` + logDiv.innerHTML;
             },
-
             endBattle: function(isWin, reason) {
                 window.battleState.isActive = false;
-                const modal = document.getElementById('battle-result-modal'); const title = document.getElementById('result-title'); const desc = document.getElementById('result-desc');
+
+                const modal = document.getElementById('battle-result-modal');
+                const title = document.getElementById('result-title');
+                const desc = document.getElementById('result-desc');
 
                 if (isWin) {
-                    AudioController.playWin(); title.innerHTML = "🏆 YOU WIN!"; title.style.color = "gold";
-                    if (window.battleState.isBossMode) {
-                        const bossId = window.battleState.bossId; let dropCard = null; let r = Math.random();
-                        if (bossId === 1 && r < 0.10) dropCard = "b1";
-                        if (bossId === 2 && r < 0.08) dropCard = "b2";
-                        if (bossId === 3 && r < 0.05) dropCard = "b3";
-                        if (bossId === 4 && r < 0.03) dropCard = "b4";
-                        if (bossId === 5 && r < 0.01) dropCard = "b5";
-
-                        if (bossId === window.playerData.bossProgress + 1) {
-                            window.playerData.bossProgress = bossId;
-                            if (bossId === 5) dropCard = "b6"; 
-                        }
-                        
-                        desc.innerHTML = `${reason}<br><br>ボスを討伐した！`;
-                        if (dropCard) {
-                            if (!window.playerData.inventory[dropCard]) window.playerData.inventory[dropCard] = 0;
-                            window.playerData.inventory[dropCard]++;
-                            desc.innerHTML += `<br><br><span style="color: #ffea00; font-size: 28px;">✨ レアカード「${UIController.getCardById(dropCard).name}」をドロップした！</span>`;
-                        }
-                    } else {
-                        let reward = 0;
-                        switch(window.battleState.difficulty) { case 'easy': reward = 1; break; case 'medium': reward = 3; break; case 'hard': reward = 5; break; case 'extreme': reward = 10; break; }
-                        desc.innerHTML = `${reason}<br><br><span style="color: #00ffcc; font-size: 32px; font-weight: bold;">🎁 報酬: ${reward} パック獲得！</span>`;
-                        window.playerData.packs += reward;
+                    AudioController.playWin();
+                    let reward = 0;
+                    switch(window.battleState.difficulty) {
+                        case 'easy': reward = 1; break;
+                        case 'medium': reward = 3; break;
+                        case 'hard': reward = 5; break;
+                        case 'extreme': reward = 10; break;
                     }
+                    title.innerHTML = "🏆 YOU WIN!";
+                    title.style.color = "gold";
+                    desc.innerHTML = `${reason}<br><br><span style="color: #00ffcc; font-size: 32px; font-weight: bold;">🎁 報酬: ${reward} パック獲得！</span>`;
+                    window.playerData.packs += reward;
                     GameDataManager.saveData();
                 } else {
-                    AudioController.playError(); title.innerHTML = "💀 YOU LOSE..."; title.style.color = "red"; desc.innerHTML = `${reason}`;
+                    AudioController.playError();
+                    title.innerHTML = "💀 YOU LOSE...";
+                    title.style.color = "red";
+                    desc.innerHTML = `${reason}`;
                 }
+
                 modal.classList.add('active');
             },
-            
             flee: function() {
                 if (confirm("⚠️ 本当に逃げますか？（敗北扱いになりホームに戻ります）")) {
-                    window.battleState.isActive = false; GameController.switchScreen('home-screen');
+                    window.battleState.isActive = false;
+                    GameController.switchScreen('home-screen');
                 }
             }
         };
 
         window.GameController = {
             switchScreen: function(screenId) {
-                document.querySelectorAll('.screen').forEach(el => el.classList.remove('active')); document.getElementById(screenId).classList.add('active');
+                document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+                document.getElementById(screenId).classList.add('active');
             }
         };
 
         // --- イベントと初期化 ---
-        document.addEventListener('keydown', (e) => { if (/^[a-zA-Z-]$/.test(e.key)) BattleController.handleTyping(e.key); });
-        document.body.addEventListener('click', (e) => {
-            AudioController.init();
-            if (e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.closest('.card')) AudioController.playClick();
+        document.addEventListener('keydown', (e) => {
+            if (/^[a-zA-Z-]$/.test(e.key)) {
+                BattleController.handleTyping(e.key);
+            }
         });
 
-        window.onload = function() { GameDataManager.loadData(); };
+        // ボタンクリック時に音を鳴らす＆オーディオ有効化
+        document.body.addEventListener('click', (e) => {
+            AudioController.init();
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.closest('.card')) {
+                AudioController.playClick();
+            }
+        });
+
+        window.onload = function() {
+            GameDataManager.loadData();
+            UIController.updateGlobalHeader();
+        };
 
     </script>
 </body>
