@@ -826,35 +826,66 @@
         };
 
         // --- マスターデータ（全カード定義） ---
+        // コモン:25, アンコモン:35, レア:45, レジェンド:55, ミシック:65, ゴッドリー:75, ボルケーノ:85, シークレット:95, アルティメット:105, OG:115
         const ALL_CARDS = [
-            { id: "c1", name: "パンチ", type: "attack", rarity: "Common", baseEffect: 30, desc: "敵に30ダメージ" },
-            { id: "c2", name: "キック", type: "attack", rarity: "Common", baseEffect: 40, desc: "敵に40ダメージ" },
-            { id: "c3", name: "絆創膏", type: "heal", rarity: "Common", baseEffect: 30, desc: "HPを30回復" },
+            // Common (Base 25)
+            { id: "c1", name: "パンチ", type: "attack", rarity: "Common", baseEffect: 25, desc: "敵に25ダメージ" },
+            { id: "c2", name: "キック", type: "attack", rarity: "Common", baseEffect: 25, desc: "敵に25ダメージ" },
+            { id: "c3", name: "絆創膏", type: "heal", rarity: "Common", baseEffect: 25, desc: "HPを25回復" },
             { id: "c4", name: "手札入れ替え", type: "assist", rarity: "Common", baseEffect: 2, desc: "カードを2枚リセット" },
-            { id: "u1", name: "スラッシュ", type: "attack", rarity: "Uncommon", baseEffect: 60, desc: "敵に60ダメージ" },
-            { id: "u2", name: "ファイア", type: "attack", rarity: "Uncommon", baseEffect: 80, desc: "敵に80ダメージ" },
-            { id: "u3", name: "ポーション", type: "heal", rarity: "Uncommon", baseEffect: 80, desc: "HPを80回復" },
-            { id: "u4", name: "集中", type: "assist", rarity: "Uncommon", baseEffect: 1.5, desc: "次ターンのダメージ1.5倍" },
-            { id: "u5", name: "ドロー", type: "assist", rarity: "Uncommon", baseEffect: 4, desc: "カードを4枚リセット" },
-            { id: "r1", name: "サンダー", type: "attack", rarity: "Rare", baseEffect: 150, desc: "敵に150ダメージ" },
-            { id: "r2", name: "アイススピア", type: "attack", rarity: "Rare", baseEffect: 130, desc: "敵に130ダメージ" },
-            { id: "r3", name: "ハイポーション", type: "heal", rarity: "Rare", baseEffect: 200, desc: "HPを200回復" },
-            { id: "r4", name: "気合い", type: "assist", rarity: "Rare", baseEffect: 2.0, desc: "次ターンのダメージ2倍" },
+            { id: "c5", name: "ひっかき", type: "attack", rarity: "Common", baseEffect: 25, desc: "敵に25ダメージ" },
+            { id: "c6", name: "少し休憩", type: "heal", rarity: "Common", baseEffect: 25, desc: "HPを25回復" },
+            
+            // Uncommon (Base 35)
+            { id: "u1", name: "スラッシュ", type: "attack", rarity: "Uncommon", baseEffect: 35, desc: "敵に35ダメージ" },
+            { id: "u2", name: "ファイア", type: "attack", rarity: "Uncommon", baseEffect: 35, desc: "敵に35ダメージ" },
+            { id: "u3", name: "ポーション", type: "heal", rarity: "Uncommon", baseEffect: 35, desc: "HPを35回復" },
+            { id: "u4", name: "集中", type: "assist", rarity: "Uncommon", baseEffect: 1.2, desc: "次ターンのダメージ1.2倍" },
+            { id: "u5", name: "ドロー", type: "assist", rarity: "Uncommon", baseEffect: 3, desc: "カードを3枚リセット" },
+            { id: "u6", name: "ウォーター", type: "attack", rarity: "Uncommon", baseEffect: 35, desc: "敵に35ダメージ" },
+
+            // Rare (Base 45)
+            { id: "r1", name: "サンダー", type: "attack", rarity: "Rare", baseEffect: 45, desc: "敵に45ダメージ" },
+            { id: "r2", name: "アイススピア", type: "attack", rarity: "Rare", baseEffect: 45, desc: "敵に45ダメージ" },
+            { id: "r3", name: "ハイポーション", type: "heal", rarity: "Rare", baseEffect: 45, desc: "HPを45回復" },
+            { id: "r4", name: "気合い", type: "assist", rarity: "Rare", baseEffect: 1.5, desc: "次ターンのダメージ1.5倍" },
             { id: "r5", name: "フルリロード", type: "assist", rarity: "Rare", baseEffect: 5, desc: "カードを5枚リセット" },
-            { id: "l1", name: "メテオ", type: "attack", rarity: "Legend", baseEffect: 350, desc: "敵に350ダメージ" },
-            { id: "l2", name: "エクスカリバー", type: "attack", rarity: "Legend", baseEffect: 400, desc: "敵に400ダメージ" },
-            { id: "l3", name: "エリクサー", type: "heal", rarity: "Legend", baseEffect: 500, desc: "HPを500回復" },
-            { id: "l4", name: "覚醒", type: "assist", rarity: "Legend", baseEffect: 3.0, desc: "次ターンのダメージ3倍" },
-            { id: "m1", name: "神の裁き", type: "attack", rarity: "Mythic", baseEffect: 800, desc: "敵に800ダメージ" },
-            { id: "m2", name: "完全回復", type: "heal", rarity: "Mythic", baseEffect: 1000, desc: "HPを1000回復" },
+            { id: "r6", name: "ウィンド", type: "attack", rarity: "Rare", baseEffect: 45, desc: "敵に45ダメージ" },
+
+            // Legend (Base 55)
+            { id: "l1", name: "メテオ", type: "attack", rarity: "Legend", baseEffect: 55, desc: "敵に55ダメージ" },
+            { id: "l2", name: "エクスカリバー", type: "attack", rarity: "Legend", baseEffect: 55, desc: "敵に55ダメージ" },
+            { id: "l3", name: "エリクサー", type: "heal", rarity: "Legend", baseEffect: 55, desc: "HPを55回復" },
+            { id: "l4", name: "覚醒", type: "assist", rarity: "Legend", baseEffect: 2.0, desc: "次ターンのダメージ2倍" },
+            { id: "l5", name: "グランドクロス", type: "attack", rarity: "Legend", baseEffect: 55, desc: "敵に55ダメージ" },
+
+            // Mythic (Base 65)
+            { id: "m1", name: "神の裁き", type: "attack", rarity: "Mythic", baseEffect: 65, desc: "敵に65ダメージ" },
+            { id: "m2", name: "完全回復", type: "heal", rarity: "Mythic", baseEffect: 65, desc: "HPを65回復" },
             { id: "m3", name: "時止め", type: "assist", rarity: "Mythic", baseEffect: 1, desc: "敵のターンを1回スキップ" },
-            { id: "g1", name: "崩星咆哮砲", type: "attack", rarity: "Godly", baseEffect: 1500, desc: "敵に1500ダメージ" },
-            { id: "g2", name: "神の加護", type: "assist", rarity: "Godly", baseEffect: 5.0, desc: "次ターンのダメージ5倍" },
-            { id: "v1", name: "超新星爆発", type: "attack", rarity: "Volcano", baseEffect: 3000, desc: "敵に3000ダメージ" },
-            { id: "s1", name: "虚無への誘い", type: "attack", rarity: "Secret", baseEffect: 6000, desc: "敵に6000ダメージ" },
-            { id: "s2", name: "無限の命", type: "heal", rarity: "Secret", baseEffect: 9999, desc: "HPを全回復" },
-            { id: "ul1", name: "終焉の光", type: "attack", rarity: "Ultimate", baseEffect: 12000, desc: "敵に12000ダメージ" },
-            { id: "og1", name: "管理者権限", type: "attack", rarity: "OG", baseEffect: 99999, desc: "敵を消し飛ばす" }
+            { id: "m4", name: "ダークマター", type: "attack", rarity: "Mythic", baseEffect: 65, desc: "敵に65ダメージ" },
+
+            // Godly (Base 75)
+            { id: "g1", name: "崩星咆哮砲", type: "attack", rarity: "Godly", baseEffect: 75, desc: "敵に75ダメージ" },
+            { id: "g2", name: "神の加護", type: "assist", rarity: "Godly", baseEffect: 3.0, desc: "次ターンのダメージ3倍" },
+            { id: "g3", name: "ゴッドブレス", type: "heal", rarity: "Godly", baseEffect: 75, desc: "HPを75回復" },
+
+            // Volcano (Base 85)
+            { id: "v1", name: "超新星爆発", type: "attack", rarity: "Volcano", baseEffect: 85, desc: "敵に85ダメージ" },
+            { id: "v2", name: "大噴火", type: "attack", rarity: "Volcano", baseEffect: 85, desc: "敵に85ダメージ" },
+
+            // Secret (Base 95)
+            { id: "s1", name: "虚無への誘い", type: "attack", rarity: "Secret", baseEffect: 95, desc: "敵に95ダメージ" },
+            { id: "s2", name: "無限の命", type: "heal", rarity: "Secret", baseEffect: 95, desc: "HPを95回復" },
+            { id: "s3", name: "ブラックホール", type: "attack", rarity: "Secret", baseEffect: 95, desc: "敵に95ダメージ" },
+
+            // Ultimate (Base 105)
+            { id: "ul1", name: "終焉の光", type: "attack", rarity: "Ultimate", baseEffect: 105, desc: "敵に105ダメージ" },
+            { id: "ul2", name: "ビッグバン", type: "attack", rarity: "Ultimate", baseEffect: 105, desc: "敵に105ダメージ" },
+
+            // OG (Base 115)
+            { id: "og1", name: "管理者権限", type: "attack", rarity: "OG", baseEffect: 115, desc: "敵に115ダメージ" },
+            { id: "og2", name: "デバッグ", type: "attack", rarity: "OG", baseEffect: 115, desc: "敵に115ダメージ" }
         ];
 
         const RARITY_WEIGHTS = [
@@ -866,13 +897,14 @@
 
         const TYPING_WORDS = [
             { ja: "あいうえお", en: "aiueo" }, { ja: "こうげき", en: "kougeki" }, { ja: "かいふく", en: "kaifuku" }, 
-            { ja: "ぼうぎょ", en: "bougyo" }, { ja: "ひっさつわざ", en: "hissatsuwaza" }, { ja: "すきるをはつどう", en: "sukiruwohatsudou" }, 
+            { ja: "ぼうぎょ", en: "bougyo" }, { ja: "ひっさつわざ", en: "hissatuwaza" }, { ja: "すきるをはつどう", en: "sukiruwohatsudou" }, 
             { ja: "たいぴんぐばとる", en: "taipingubatoru" }, { ja: "でっきをくむ", en: "dekkiwokumu" }, { ja: "かーどをひく", en: "ka-dowohiku" }, 
             { ja: "れじぇんどかーど", en: "rejendoka-do" }, { ja: "きゅうきょくのちから", en: "kyuukyokunochikara" }, 
             { ja: "あきらめないこころ", en: "akirumenaikokoro" }, { ja: "すーぱーこんぼ", en: "su-pa-konbo" }, 
-            { ja: "ぜったいぜつめい", en: "zettaizetsumei" }, { ja: "きしかいせい", en: "kishikaisei" }, 
+            { ja: "ぜったいぜつめい", en: "zettaizetumei" }, { ja: "きしかいせい", en: "kishikaisei" }, 
             { ja: "うんめいのどろー", en: "unmeinodoro-" }, { ja: "ますたー", en: "masuta-" }, 
-            { ja: "えきすぱーと", en: "ekisupa-to" }, { ja: "げんかいとっぱ", en: "genkaitoppa" }, { ja: "さいきょうのせんし", en: "saikyounosenshi" }
+            { ja: "えきすぱーと", en: "ekisupa-to" }, { ja: "げんかいとっぱ", en: "genkaitoppa" }, { ja: "さいきょうのせんし", en: "saikyounosenshi" },
+            { ja: "つめたいこおり", en: "tumetaikouri" }, { ja: "つつむ", en: "tutumu" }, { ja: "てつのけん", en: "tetunoken" }, { ja: "つよいちから", en: "tuyoichikara" }
         ];
 
         // --- グローバルステート ---
@@ -1108,10 +1140,9 @@
 
                 GameController.switchScreen('battle-screen');
 
-                // ここがバグの原因でした！ボス情報の初期化（boss: {hp...}）を追加修正しました。
                 window.battleState = {
                     isActive: true, timeLeft: 60, timerInterval: null, difficulty: difficulty,
-                    boss: { hp: 0, maxHp: 0, attack: 0, name: "" }, // ← 【重要】この行が抜けていたためエラーで止まっていました
+                    boss: { hp: 0, maxHp: 0, attack: 0, name: "" }, // ボス情報の初期化
                     playerHp: 1000, playerMaxHp: 1000, hand: [], activeCard: null, currentWord: null,
                     typedIndex: 0, mistakes: 0, typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false
                 };
@@ -1149,25 +1180,47 @@
                 if (currentCount >= 5) return;
                 const drawCount = 5 - currentCount;
                 
-                // 有効な所持カード・装備カードのみを抽出（不正なIDによるエラー防止）
                 let validInventoryKeys = Object.keys(window.playerData.inventory || {}).filter(id => UIController.getCardById(id));
                 let validEquipKeys = (window.playerData.equipped || []).filter(id => UIController.getCardById(id));
                 
                 const isEquipDeckValid = validEquipKeys.length === 5;
-                let pool = [];
 
-                if (isEquipDeckValid) {
-                    pool = validEquipKeys;
-                } else if (validInventoryKeys.length > 0) {
-                    pool = validInventoryKeys; // 装備が無効なら全持ち物から
-                }
-
-                // 持ち物が完全にゼロの場合の救済措置（パンチのみ）
-                if (pool.length === 0) pool = [ALL_CARDS[0].id];
+                // レアリティの確率に基づいてカードを引く関数（レアリティが低いほど出やすい）
+                const getRandomCardWeighted = (cardIdList) => {
+                    let totalWeight = 0;
+                    const weightedCards = cardIdList.map(id => {
+                        const card = UIController.getCardById(id);
+                        const rw = RARITY_WEIGHTS.find(w => w.rarity === card.rarity);
+                        const weight = rw ? rw.chance : 1; 
+                        totalWeight += weight;
+                        return { card, weight };
+                    });
+                    
+                    let rand = Math.random() * totalWeight;
+                    for (const wc of weightedCards) {
+                        rand -= wc.weight;
+                        if (rand <= 0) return wc.card;
+                    }
+                    return weightedCards[0].card;
+                };
 
                 for (let i = 0; i < drawCount; i++) {
-                    const randomId = pool[Math.floor(Math.random() * pool.length)];
-                    let cardToPush = UIController.getCardById(randomId) || ALL_CARDS[0];
+                    let cardToPush = null;
+                    
+                    // 35%の確率でベスト装備の5枚から引く（装備が有効な場合のみ）
+                    if (isEquipDeckValid && Math.random() < 0.35) {
+                        const randomId = validEquipKeys[Math.floor(Math.random() * validEquipKeys.length)];
+                        cardToPush = UIController.getCardById(randomId);
+                    } 
+                    // 装備が発動しなかった、または無効な場合は所持カード全体からレアリティに基づいて引く
+                    else if (validInventoryKeys.length > 0) {
+                        cardToPush = getRandomCardWeighted(validInventoryKeys);
+                    } 
+                    // 所持カードが1枚もない場合の完全な救済措置
+                    else {
+                        cardToPush = ALL_CARDS[0]; 
+                    }
+                    
                     window.battleState.hand.push(cardToPush);
                 }
                 this.renderHand();
