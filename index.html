@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>デッキカードタイピング RPG - ボスバトル</title>
     <style>
         /* ==========================================
@@ -32,23 +32,23 @@
             top: 20px;
             right: 20px;
             background: rgba(0, 0, 0, 0.8);
-            padding: 10px 20px;
+            padding: 8px 15px;
             border-radius: 50px;
-            font-size: 18px;
+            font-size: 14px;
             border: 2px solid #0f3460;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             z-index: 100;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
 
         .settings-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid #aaa;
             border-radius: 50%;
-            width: 45px;
-            height: 45px;
+            width: 35px;
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -56,7 +56,7 @@
             transition: all 0.3s ease;
             color: white;
             padding: 0;
-            font-size: 24px;
+            font-size: 18px;
             box-shadow: none;
         }
         .settings-btn:hover {
@@ -74,7 +74,7 @@
             width: 100%;
             flex-grow: 1;
             min-height: 100vh;
-            padding: 40px;
+            padding: 20px;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -90,8 +90,8 @@
         }
 
         h1 {
-            font-size: 64px;
-            margin-bottom: 40px;
+            font-size: 48px;
+            margin-bottom: 30px;
             text-align: center;
             color: #e94560;
             text-shadow: 0 0 20px rgba(233, 69, 96, 0.5), 2px 2px 4px #000;
@@ -99,52 +99,52 @@
         }
 
         h2 {
-            font-size: 42px;
-            margin-bottom: 30px;
+            font-size: 32px;
+            margin-bottom: 20px;
             text-align: center;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
 
         h3 {
-            font-size: 28px;
-            margin-bottom: 15px;
+            font-size: 22px;
+            margin-bottom: 10px;
             text-align: center;
         }
 
         /* ==========================================
-           ボタンのスタイル（色、枠、ホバーエフェクト）
+           ボタンのスタイル
            ========================================== */
         button {
             cursor: pointer;
             border: none;
-            border-radius: 12px;
-            padding: 15px 30px;
-            font-size: 22px;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
             font-weight: bold;
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 6px 0 rgba(0,0,0,0.4), 0 10px 20px rgba(0,0,0,0.3);
+            gap: 8px;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.4), 0 8px 15px rgba(0,0,0,0.3);
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
         
         button:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 0 rgba(0,0,0,0.4), 0 15px 25px rgba(0,0,0,0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 0 rgba(0,0,0,0.4), 0 12px 20px rgba(0,0,0,0.4);
             filter: brightness(1.1);
         }
         
         button:active {
-            transform: translateY(6px);
+            transform: translateY(4px);
             box-shadow: 0 0 0 rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.3);
         }
 
         button:disabled {
             background: #555 !important;
-            box-shadow: 0 6px 0 #333 !important;
+            box-shadow: 0 4px 0 #333 !important;
             cursor: not-allowed;
             transform: none !important;
             filter: grayscale(100%);
@@ -160,18 +160,18 @@
         .btn-gold { background: linear-gradient(135deg, #ffd700, #ff8c00); border: 2px solid #fffacd; color: #000; text-shadow: none; }
 
         /* ==========================================
-           メニューグリッド (ホーム画面等)
+           メニューグリッド
            ========================================== */
         .menu-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            gap: 20px;
             width: 100%;
-            max-width: 800px;
+            max-width: 700px;
         }
         .menu-grid button {
-            height: 120px;
-            font-size: 28px;
+            height: 90px;
+            font-size: 22px;
         }
 
         /* ==========================================
@@ -179,27 +179,27 @@
            ========================================== */
         .tab-bar-container {
             width: 100%;
-            max-width: 1200px;
-            margin-bottom: 20px;
+            max-width: 1000px;
+            margin-bottom: 15px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
         }
         .tab-bar {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
             justify-content: center;
             background: rgba(0,0,0,0.5);
-            padding: 10px;
-            border-radius: 15px;
+            padding: 8px;
+            border-radius: 12px;
             border: 1px solid #333;
         }
         .tab-bar button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 50px;
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 40px;
             background: #2a2a4a;
             box-shadow: none;
             border: 2px solid transparent;
@@ -215,59 +215,58 @@
         .tab-bar button.active {
             background: #e94560;
             border-color: #ff2e63;
-            box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
         }
 
         /* ==========================================
-           カードのスタイルとレアリティ色（サイズ縮小版）
+           カードのスタイル
            ========================================== */
         .rarity-Common { background: linear-gradient(135deg, #808080, #555555); color: white; border: 2px solid #aaaaaa; }
         .rarity-Uncommon { background: linear-gradient(135deg, #4caf50, #2e7d32); color: white; border: 2px solid #81c784; }
         .rarity-Rare { background: linear-gradient(135deg, #2196f3, #1565c0); color: white; border: 2px solid #64b5f6; }
         .rarity-Legend { background: linear-gradient(135deg, #ffeb3b, #fbc02d); color: black; border: 2px solid #fff59d; }
         .rarity-Mythic { background: linear-gradient(135deg, #f44336, #c62828); color: white; border: 2px solid #e57373; }
-        .rarity-Godly { background: linear-gradient(135deg, #9c27b0, #03a9f4); color: white; border: 2px solid #e1bee7; box-shadow: 0 0 15px #03a9f4; }
-        .rarity-Volcano { background: linear-gradient(135deg, #ff0000, #ff9800); color: white; border: 2px solid #ffcc80; box-shadow: 0 0 15px #ff5722; }
-        .rarity-Secret { background: linear-gradient(135deg, #000000, #424242); color: #ff0000; border: 2px solid #ffffff; box-shadow: 0 0 20px #ffffff; }
-        .rarity-Ultimate { background: linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet); color: white; border: 3px solid white; box-shadow: 0 0 20px violet; }
-        .rarity-OG { background: linear-gradient(135deg, gold, black, white, gold); color: white; border: 4px solid gold; box-shadow: 0 0 30px gold; font-weight: 900; }
+        .rarity-Godly { background: linear-gradient(135deg, #9c27b0, #03a9f4); color: white; border: 2px solid #e1bee7; box-shadow: 0 0 10px #03a9f4; }
+        .rarity-Volcano { background: linear-gradient(135deg, #ff0000, #ff9800); color: white; border: 2px solid #ffcc80; box-shadow: 0 0 10px #ff5722; }
+        .rarity-Secret { background: linear-gradient(135deg, #000000, #424242); color: #ff0000; border: 2px solid #ffffff; box-shadow: 0 0 15px #ffffff; }
+        .rarity-Ultimate { background: linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet); color: white; border: 3px solid white; box-shadow: 0 0 15px violet; }
+        .rarity-OG { background: linear-gradient(135deg, gold, black, white, gold); color: white; border: 4px solid gold; box-shadow: 0 0 20px gold; font-weight: 900; }
 
-        /* カードサイズを小さく */
         .card {
-            width: 130px;
-            height: 190px;
-            border-radius: 12px;
-            padding: 10px;
+            width: 110px;
+            height: 160px;
+            border-radius: 10px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
             text-align: center;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.8);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.8);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             cursor: pointer;
         }
         .card:hover {
-            transform: translateY(-10px) scale(1.03);
+            transform: translateY(-8px) scale(1.02);
             z-index: 10;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.9);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.9);
         }
         .card-name {
-            font-size: 13px;
+            font-size: 11px;
             font-weight: bold;
-            margin-bottom: 4px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            margin-bottom: 3px;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.8);
         }
         .card-type {
-            font-size: 10px;
+            font-size: 9px;
             background: rgba(0,0,0,0.6);
-            padding: 3px 6px;
-            border-radius: 20px;
+            padding: 2px 5px;
+            border-radius: 15px;
             border: 1px solid rgba(255,255,255,0.3);
         }
         .card-desc {
-            font-size: 10px;
+            font-size: 9px;
             flex-grow: 1;
             display: flex;
             align-items: center;
@@ -276,13 +275,13 @@
         }
         .card-count {
             position: absolute;
-            top: -8px;
-            right: -8px;
+            top: -6px;
+            right: -6px;
             background: #e94560;
             color: white;
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -290,174 +289,156 @@
             border: 2px solid #1a1a2e;
             z-index: 5;
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-            font-size: 12px;
+            font-size: 11px;
         }
 
-        /* 装備スロットも小さく */
         .equipped-slot {
-            width: 130px;
-            height: 190px;
-            border: 3px solid rgba(255,215,0,0.3);
-            border-radius: 12px;
+            width: 110px;
+            height: 160px;
+            border: 2px solid rgba(255,215,0,0.3);
+            border-radius: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
             color: rgba(255,215,0,0.5);
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
             background: rgba(0,0,0,0.5);
             text-align: center;
             flex-direction: column;
         }
 
-        /* 持ち物・装備・ガチャ画面共通のグリッド */
         .card-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 12px;
             justify-content: center;
             width: 100%;
-            max-width: 1200px;
-            max-height: 60vh;
+            max-width: 1000px;
+            max-height: 50vh;
             overflow-y: auto;
-            padding: 20px;
+            padding: 15px;
             background: rgba(0,0,0,0.4);
-            border-radius: 20px;
+            border-radius: 15px;
             border: 2px solid #0f3460;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
         }
 
-        /* ==========================================
-           装備画面 (25スロット)
-           ========================================== */
         .equipped-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-            min-height: 440px;
-            padding: 15px;
+            gap: 12px;
+            margin-bottom: 20px;
+            min-height: 360px;
+            padding: 12px;
             background: rgba(255,215,0,0.05);
-            border: 3px dashed gold;
-            border-radius: 20px;
+            border: 2px dashed gold;
+            border-radius: 15px;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1000px;
             justify-content: center;
             align-items: center;
-            box-shadow: inset 0 0 30px rgba(255,215,0,0.1);
+            box-shadow: inset 0 0 20px rgba(255,215,0,0.1);
         }
-        .equip-warning {
-            color: #ff9800;
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
-            background: rgba(0,0,0,0.6);
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #ff9800;
+        .equip-warning, .deck-warning {
+            color: #ffaa00;
+            font-size: 14px;
+            margin-top: 8px;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid #ffaa00;
             display: none;
         }
         .equip-error {
             color: #ff4444;
-            font-size: 18px;
-            margin-top: 10px;
-        }
-        /* デッキ不足警告 */
-        .deck-warning {
-            color: #ffaa00;
-            font-size: 18px;
-            margin-top: 10px;
-            background: rgba(0,0,0,0.7);
-            padding: 12px 20px;
-            border-radius: 10px;
-            border: 1px solid #ffaa00;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
         }
 
         /* ==========================================
-           バトル画面
+           バトル画面（コンパクト版）
            ========================================== */
         #battle-screen {
             justify-content: flex-start;
-            padding-top: 80px;
+            padding-top: 60px;
+            padding-bottom: 20px;
         }
         .battle-header {
             width: 100%;
-            max-width: 1200px;
+            max-width: 900px;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
-            gap: 20px;
+            margin-bottom: 15px;
+            gap: 15px;
         }
         .status-box {
             background: rgba(0,0,0,0.8);
-            padding: 25px;
-            border-radius: 20px;
-            width: 400px;
+            padding: 12px;
+            border-radius: 12px;
+            width: 300px;
             text-align: center;
-            border: 3px solid #0f3460;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            position: relative;
+            border: 2px solid #0f3460;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
         .boss-status-box { border-color: #e94560; }
         .player-status-box { border-color: #4caf50; }
+        .status-box h3 { font-size: 18px; margin-bottom: 5px; }
+        .status-box > div { font-size: 18px; }
 
         .hp-bar-container {
             width: 100%;
-            height: 30px;
+            height: 20px;
             background: #222;
-            border-radius: 15px;
-            margin-top: 15px;
+            border-radius: 10px;
+            margin-top: 8px;
             overflow: hidden;
-            border: 2px solid #555;
+            border: 1px solid #555;
             position: relative;
         }
         .hp-bar {
             height: 100%;
             background: #e94560;
             width: 100%;
-            transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .player-hp-bar {
-            background: linear-gradient(90deg, #4caf50, #81c784);
-        }
-        .boss-hp-bar {
-            background: linear-gradient(90deg, #c62828, #f44336);
-        }
+        .player-hp-bar { background: linear-gradient(90deg, #4caf50, #81c784); }
+        .boss-hp-bar { background: linear-gradient(90deg, #c62828, #f44336); }
         .hp-text {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             font-weight: bold;
-            font-size: 16px;
-            text-shadow: 1px 1px 2px black;
+            font-size: 11px;
+            text-shadow: 1px 1px 1px black;
         }
         
         .typing-area {
             background: linear-gradient(180deg, rgba(15, 52, 96, 0.9), rgba(22, 33, 62, 0.9));
-            border: 4px solid #4a90e2;
-            border-radius: 20px;
-            padding: 40px;
+            border: 3px solid #4a90e2;
+            border-radius: 15px;
+            padding: 20px;
             width: 100%;
-            max-width: 900px;
+            max-width: 800px;
             text-align: center;
-            min-height: 250px;
+            min-height: 180px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
             position: relative;
         }
         .japanese-text {
-            font-size: 32px;
-            margin-bottom: 15px;
+            font-size: 24px;
+            margin-bottom: 10px;
             font-weight: bold;
             word-break: break-all;
         }
         .romaji-text {
-            font-size: 28px;
-            letter-spacing: 4px;
+            font-size: 20px;
+            letter-spacing: 3px;
             font-family: 'Courier New', Courier, monospace;
             color: #666;
             font-weight: bold;
@@ -465,89 +446,82 @@
         }
         .romaji-text span.typed {
             color: #00ffcc;
-            text-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
         }
         .romaji-text span.error {
             color: #ff3333;
-            text-shadow: 0 0 15px #ff3333;
+            text-shadow: 0 0 10px #ff3333;
             animation: shake 0.2s ease-in-out;
         }
 
         @keyframes shake {
             0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
+            25% { transform: translateX(-3px); }
+            50% { transform: translateX(3px); }
+            75% { transform: translateX(-3px); }
             100% { transform: translateX(0); }
         }
 
         .hand-container {
             display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            padding: 20px;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 12px;
             background: rgba(0,0,0,0.6);
-            border-radius: 20px;
-            border: 2px solid #333;
+            border-radius: 15px;
+            border: 1px solid #333;
             max-width: 100%;
             justify-content: center;
             flex-wrap: wrap;
         }
 
         .battle-log {
-            margin-top: 20px;
-            height: 120px;
+            margin-top: 15px;
+            height: 90px;
             width: 100%;
-            max-width: 900px;
+            max-width: 800px;
             overflow-y: auto;
             background: rgba(0,0,0,0.8);
-            padding: 15px;
-            border-radius: 15px;
-            font-size: 16px;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 13px;
             color: #ccc;
             border: 1px solid #444;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
         }
         .battle-log p {
-            margin: 5px 0;
+            margin: 3px 0;
             border-bottom: 1px solid #333;
-            padding-bottom: 5px;
+            padding-bottom: 3px;
         }
-        .battle-log p:first-child {
-            color: #fff;
-            font-weight: bold;
-        }
+        .battle-log p:first-child { color: #fff; font-weight: bold; }
 
-        /* ポップアップエフェクト */
         .effect-popup {
             position: absolute;
-            font-size: 36px;
+            font-size: 28px;
             font-weight: bold;
             color: #ffea00;
             text-shadow: 2px 2px 5px black, 0 0 15px currentColor;
             pointer-events: none;
-            animation: floatUp 1.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: floatUp 1.2s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 100;
         }
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
-            50% { transform: translateY(-50px) scale(1.3); }
-            100% { opacity: 0; transform: translateY(-100px) scale(1); }
+            50% { transform: translateY(-40px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-80px) scale(1); }
         }
 
-        /* ==========================================
-           モーダル・オーバーレイ全般
-           ========================================== */
         .gacha-result-overlay, .modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 2000;
-            padding: 40px;
+            padding: 30px;
         }
         .gacha-result-overlay.active, .modal.active {
             display: flex;
@@ -556,32 +530,30 @@
         .gacha-result-cards {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
             justify-content: center;
-            margin-bottom: 40px;
-            max-width: 1200px;
-            max-height: 70vh;
+            margin-bottom: 30px;
+            max-width: 1000px;
+            max-height: 60vh;
             overflow-y: auto;
-            padding: 20px;
+            padding: 15px;
         }
         .modal-content {
             background: linear-gradient(135deg, #16213e, #0f3460);
-            padding: 50px;
-            border-radius: 20px;
+            padding: 30px;
+            border-radius: 15px;
             text-align: center;
             border: 3px solid #e94560;
-            box-shadow: 0 0 50px rgba(233, 69, 96, 0.5);
-            max-width: 600px;
+            box-shadow: 0 0 40px rgba(233, 69, 96, 0.5);
+            max-width: 500px;
             width: 100%;
         }
         
-        /* スクロールバー */
-        ::-webkit-scrollbar { width: 12px; }
-        ::-webkit-scrollbar-track { background: #1a1a2e; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #4a90e2; border-radius: 10px; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a2e; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb { background: #4a90e2; border-radius: 8px; }
         ::-webkit-scrollbar-thumb:hover { background: #e94560; }
 
-        /* 氷のエフェクト用 */
         .ice-effect {
             position: fixed;
             top: 0;
@@ -598,7 +570,6 @@
             50% { opacity: 1; }
             100% { opacity: 0; }
         }
-        /* 火のエフェクト用 */
         .fire-effect {
             position: fixed;
             top: 0;
@@ -608,27 +579,26 @@
             background: radial-gradient(circle at center, rgba(255, 69, 0, 0.3), transparent);
             pointer-events: none;
             z-index: 1500;
-            animation: fireFade 0.8s ease-out forwards;
+            animation: fireFade 0.6s ease-out forwards;
         }
         @keyframes fireFade {
             0% { opacity: 0.8; }
             100% { opacity: 0; }
         }
 
-        /* ボス選択画面 */
         .boss-select-grid {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             width: 100%;
-            max-width: 600px;
-            margin: 20px 0;
+            max-width: 500px;
+            margin: 15px 0;
         }
         .boss-select-item {
             background: rgba(0,0,0,0.7);
             border: 2px solid #e94560;
-            border-radius: 20px;
-            padding: 20px;
+            border-radius: 15px;
+            padding: 15px;
             text-align: center;
             transition: all 0.2s;
         }
@@ -637,37 +607,29 @@
             opacity: 0.6;
             filter: grayscale(0.3);
         }
-        .boss-select-item h3 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        .boss-select-item p {
-            font-size: 16px;
-            color: #ccc;
-            margin-bottom: 15px;
-        }
-        .boss-select-item button {
-            padding: 10px 30px;
-            font-size: 20px;
-        }
-        .boss-progress {
-            margin-bottom: 30px;
-            font-size: 18px;
+        .boss-select-item h3 { font-size: 22px; margin-bottom: 8px; }
+        .boss-select-item p { font-size: 14px; color: #ccc; margin-bottom: 10px; }
+        .boss-select-item button { padding: 8px 25px; font-size: 18px; }
+        .boss-progress { margin-bottom: 20px; font-size: 16px; color: #ffcc00; }
+
+        .drop-rate {
+            font-size: 12px;
             color: #ffcc00;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
 
     <div class="header-info" id="global-header">
-        <div>📦 パック: <span id="display-packs" style="font-weight: bold; color: #00ffcc; font-size: 24px;">0</span></div>
+        <div>📦 パック: <span id="display-packs" style="font-weight: bold; color: #00ffcc; font-size: 20px;">0</span></div>
         <div>💾 セーブ: <span id="save-status" style="color: yellow;">同期中...</span></div>
         <button class="settings-btn" onclick="document.getElementById('settings-modal').classList.add('active')" title="設定">⚙️</button>
     </div>
 
     <div id="home-screen" class="screen active">
         <h1>デッキカードタイピング RPG</h1>
-        <p style="font-size: 20px; margin-bottom: 40px; color: #ccc;">タイピングで戦い、最強のデッキを構築せよ！</p>
+        <p style="font-size: 18px; margin-bottom: 25px; color: #ccc;">タイピングで戦い、最強のデッキを構築せよ！</p>
         <div class="menu-grid">
             <button class="btn-primary" onclick="GameController.checkAndStartBattle()">⚔️ パックゲットモード</button>
             <button class="btn-danger" onclick="GameController.switchScreen('boss-select-screen')">👑 ボスバトル</button>
@@ -677,80 +639,79 @@
         </div>
     </div>
 
-    <!-- ボス選択画面（順次解放） -->
     <div id="boss-select-screen" class="screen">
         <h2>👑 ボスバトル</h2>
-        <p style="font-size: 20px; margin-bottom: 20px; color: #aaa;">ボスを倒すと次のボスが解放されます！</p>
+        <p style="font-size: 16px; margin-bottom: 15px; color: #aaa;">ボスを倒すと次のボスが解放されます！</p>
         <div class="boss-progress" id="boss-progress-display"></div>
         <div class="boss-select-grid" id="boss-select-grid"></div>
-        <button class="btn-dark" style="margin-top: 30px; padding: 10px 40px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
+        <button class="btn-dark" style="margin-top: 20px; padding: 8px 30px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
 
     <div id="difficulty-screen" class="screen">
         <h2>⚔️ 難易度を選択してバトル開始！</h2>
-        <p style="font-size: 20px; margin-bottom: 40px; color: #aaa;">※自分のHPが0になるまで戦い続ける無制限バトル！</p>
+        <p style="font-size: 16px; margin-bottom: 25px; color: #aaa;">※自分のHPが0になるまで戦い続ける無制限バトル！</p>
         
-        <div class="menu-grid" style="grid-template-columns: 1fr; max-width: 500px; gap: 20px;">
-            <button class="btn-success" onclick="BattleController.startBattle('easy')">🟢 簡単 (ボスHP: 350)</button>
-            <button class="btn-warning" onclick="BattleController.startBattle('medium')">🟡 中級 (ボスHP: 500)</button>
-            <button class="btn-danger" onclick="BattleController.startBattle('hard')">🔴 難しい (ボスHP: 1000)</button>
-            <button class="btn-purple" style="border-color: #000; box-shadow: 0 6px 0 #000, 0 0 30px purple;" onclick="BattleController.startBattle('extreme')">😈 鬼むず (ボスHP: 2500)</button>
+        <div class="menu-grid" style="grid-template-columns: 1fr; max-width: 400px; gap: 15px;">
+            <button class="btn-success" onclick="BattleController.startBattle('easy')">🟢 簡単 (ボスHP: 350 / 攻撃: 30)</button>
+            <button class="btn-warning" onclick="BattleController.startBattle('medium')">🟡 中級 (ボスHP: 500 / 攻撃: 80)</button>
+            <button class="btn-danger" onclick="BattleController.startBattle('hard')">🔴 難しい (ボスHP: 1000 / 攻撃: 200)</button>
+            <button class="btn-purple" onclick="BattleController.startBattle('extreme')">😈 鬼むず (ボスHP: 2500 / 攻撃: 500)</button>
         </div>
         
-        <button class="btn-dark" style="margin-top: 50px; padding: 10px 40px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
+        <button class="btn-dark" style="margin-top: 30px; padding: 8px 30px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
 
     <div id="battle-screen" class="screen">
         <div class="battle-header">
             <div class="status-box player-status-box">
                 <h3>🧑 あなた</h3>
-                <div style="font-size: 24px;">HP: <span id="player-hp">350</span> / <span id="player-max-hp">350</span></div>
+                <div>HP: <span id="player-hp">350</span> / <span id="player-max-hp">350</span></div>
                 <div class="hp-bar-container">
                     <div class="hp-bar player-hp-bar" id="player-hp-bar"></div>
                     <div class="hp-text"><span id="player-hp-text">350 / 350</span></div>
                 </div>
-                <div id="player-buffs" style="color: #00ffcc; margin-top: 15px; font-weight: bold; height: 24px; font-size: 20px;"></div>
-                <div id="player-debuffs" style="color: #ff6666; margin-top: 5px; font-weight: bold; height: 24px; font-size: 16px;"></div>
+                <div id="player-buffs" style="color: #00ffcc; font-size: 14px; height: 20px;"></div>
+                <div id="player-debuffs" style="color: #ff6666; font-size: 12px; height: 18px;"></div>
             </div>
             
             <div class="status-box boss-status-box">
                 <h3 id="boss-name">👹 ボス</h3>
-                <div style="font-size: 24px;">HP: <span id="boss-hp">350</span> / <span id="boss-max-hp">350</span></div>
+                <div>HP: <span id="boss-hp">350</span> / <span id="boss-max-hp">350</span></div>
                 <div class="hp-bar-container">
                     <div class="hp-bar boss-hp-bar" id="boss-hp-bar"></div>
                     <div class="hp-text"><span id="boss-hp-text">350 / 350</span></div>
                 </div>
-                <div id="boss-status" style="color: #ffcc00; margin-top: 15px; font-weight: bold; height: 24px; font-size: 20px;"></div>
-                <div id="boss-debuffs" style="color: #ff8888; margin-top: 5px; font-weight: bold; height: 24px; font-size: 16px;"></div>
+                <div id="boss-status" style="color: #ffcc00; font-size: 14px; height: 20px;"></div>
+                <div id="boss-debuffs" style="color: #ff8888; font-size: 12px; height: 18px;"></div>
             </div>
         </div>
 
         <div class="typing-area" id="typing-area">
-            <div id="typing-message" style="font-size: 28px; color: #4a90e2; font-weight: bold; margin-bottom: 10px;">👇 下のカードから1つ選んでください</div>
+            <div id="typing-message" style="font-size: 20px; color: #4a90e2; font-weight: bold; margin-bottom: 8px;">👇 下のカードから1つ選んでください</div>
             <div class="japanese-text" id="typing-ja"></div>
             <div class="romaji-text" id="typing-en"></div>
         </div>
 
         <div class="battle-log" id="battle-log"></div>
         <div class="hand-container" id="battle-hand"></div>
-        <button class="btn-dark" style="margin-top: 30px; padding: 10px 50px;" onclick="BattleController.flee()">🏃 逃げる（敗北扱い）</button>
+        <button class="btn-dark" style="margin-top: 15px; padding: 8px 30px; font-size: 16px;" onclick="BattleController.flee()">🏃 逃げる（敗北扱い）</button>
     </div>
 
     <div id="gacha-screen" class="screen">
         <h2>🎲 カードを引く</h2>
-        <p style="font-size: 24px; margin-bottom: 30px; color: #00ffcc; font-weight: bold;">所持パック: <span id="gacha-pack-count">0</span> パック</p>
+        <p style="font-size: 20px; margin-bottom: 20px; color: #00ffcc; font-weight: bold;">所持パック: <span id="gacha-pack-count">0</span> パック</p>
         
-        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 900px;">
-            <button class="btn-primary" onclick="GachaController.drawCards(1)">📦 1パック引く (5枚)</button>
-            <button class="btn-success" onclick="GachaController.drawCards(3)">📦 3パック引く (15枚)</button>
-            <button class="btn-warning" onclick="GachaController.drawCards(10)">📦 10パック引く (50枚)</button>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; max-width: 800px;">
+            <button class="btn-primary" onclick="GachaController.drawCards(1)">📦 1パック (5枚)</button>
+            <button class="btn-success" onclick="GachaController.drawCards(3)">📦 3パック (15枚)</button>
+            <button class="btn-warning" onclick="GachaController.drawCards(10)">📦 10パック (50枚)</button>
             <button class="btn-purple" onclick="GachaController.drawCards(100)">💎 100パック (500枚)</button>
             <button class="btn-gold" onclick="GachaController.drawAll()">🌟 全て引く</button>
         </div>
 
-        <div style="margin-top: 50px; text-align: center; background: rgba(0,0,0,0.6); padding: 30px; border-radius: 20px; border: 2px solid #555; max-width: 800px; width: 100%;">
-            <h3 style="color: #ffb74d;">📊 排出確率</h3>
-            <p style="line-height: 1.8; font-size: 18px;">
+        <div style="margin-top: 30px; text-align: center; background: rgba(0,0,0,0.6); padding: 20px; border-radius: 15px; border: 2px solid #555; max-width: 700px; width: 100%;">
+            <h3 style="color: #ffb74d; font-size: 20px;">📊 排出確率</h3>
+            <p style="line-height: 1.6; font-size: 14px;">
                 <span style="color: #aaa;">⚪ コモン: 40%</span> | 
                 <span style="color: #81c784;">🟢 アンコモン: 30%</span> | 
                 <span style="color: #64b5f6;">🔵 レア: 15%</span><br>
@@ -764,13 +725,13 @@
             </p>
         </div>
 
-        <button class="btn-dark" style="margin-top: 40px; padding: 10px 40px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
+        <button class="btn-dark" style="margin-top: 25px; padding: 8px 30px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
 
     <div id="gacha-result" class="gacha-result-overlay">
-        <h2 style="font-size: 56px; margin-bottom: 30px; color: #fff; text-shadow: 0 0 30px gold;">🎉 獲得カード</h2>
+        <h2 style="font-size: 40px; margin-bottom: 20px; color: #fff; text-shadow: 0 0 30px gold;">🎉 獲得カード</h2>
         <div class="gacha-result-cards" id="gacha-result-cards"></div>
-        <button class="btn-gold" onclick="document.getElementById('gacha-result').classList.remove('active')" style="font-size: 28px; padding: 15px 50px;">⭕ 閉じる</button>
+        <button class="btn-gold" onclick="document.getElementById('gacha-result').classList.remove('active')" style="font-size: 22px; padding: 10px 40px;">⭕ 閉じる</button>
     </div>
 
     <div id="inventory-screen" class="screen">
@@ -799,29 +760,23 @@
         </div>
 
         <div class="card-grid" id="inventory-grid"></div>
-        <button class="btn-dark" style="margin-top: 30px; padding: 10px 40px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
+        <button class="btn-dark" style="margin-top: 20px; padding: 8px 30px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
 
     <div id="equip-screen" class="screen">
         <h2>🛡️ カードを装備 (25枚)</h2>
-        <p style="color: #ccc; margin-bottom: 20px; font-size: 18px;">
+        <p style="color: #ccc; margin-bottom: 15px; font-size: 14px;">
             25枚のカードを装備してデッキを構築します。<br>
-            <span style="color: #ff4444; font-weight: bold;">※ 攻撃・回復・アシストをそれぞれ1枚以上含める必要があります。</span>
+            <span style="color: #ff4444;">※ 攻撃・回復・アシストをそれぞれ1枚以上必須</span>
         </p>
 
-        <div id="equip-warning" class="equip-warning">
-            ⚠️ 現在の装備数が25枚ではありません！このままバトルに行くと全カードからランダムになります。
-        </div>
-        <div id="equip-type-error" class="equip-error" style="display: none;">
-            ❌ 攻撃・回復・アシストカードをそれぞれ1枚以上装備してください！
-        </div>
-        <div id="deck-warning" class="deck-warning" style="display: none;">
-            ⚠️ あなたは25種類以上の違う種類のカードを持っていません。そのため、持っているカードからランダムに支給されます。
-        </div>
+        <div id="equip-warning" class="equip-warning">⚠️ 現在の装備数が25枚ではありません！</div>
+        <div id="equip-type-error" class="equip-error">❌ 攻撃・回復・アシストをそれぞれ1枚以上装備してください！</div>
+        <div id="deck-warning" class="deck-warning"></div>
         
         <div class="equipped-container" id="equipped-cards-container"></div>
 
-        <h3>📦 所持カードから選んで装備する</h3>
+        <h3 style="font-size: 18px; margin: 10px 0;">📦 所持カードから選んで装備する</h3>
         <div class="tab-bar-container">
             <div class="tab-bar" id="equip-rarity-tabs">
                 <button class="active" onclick="UIController.setFilter('equipRarity', 'All')">🌟 全て</button>
@@ -839,22 +794,22 @@
         </div>
 
         <div class="card-grid" id="equip-inventory-grid"></div>
-        <button class="btn-dark" style="margin-top: 30px; padding: 10px 40px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
+        <button class="btn-dark" style="margin-top: 20px; padding: 8px 30px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
 
     <div id="battle-result-modal" class="modal">
         <div class="modal-content">
-            <h2 id="result-title" style="font-size: 56px; margin-bottom: 20px;"></h2>
-            <p id="result-desc" style="font-size: 24px; margin: 30px 0; color: #ddd;"></p>
-            <button class="btn-primary" onclick="GameController.switchScreen('home-screen'); document.getElementById('battle-result-modal').classList.remove('active');" style="font-size: 24px; padding: 15px 50px;">🏠 ホームへ戻る</button>
+            <h2 id="result-title" style="font-size: 40px; margin-bottom: 15px;"></h2>
+            <p id="result-desc" style="font-size: 18px; margin: 20px 0; color: #ddd;"></p>
+            <button class="btn-primary" onclick="GameController.switchScreen('home-screen'); document.getElementById('battle-result-modal').classList.remove('active');" style="font-size: 18px; padding: 10px 30px;">🏠 ホームへ戻る</button>
         </div>
     </div>
 
     <div id="settings-modal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <h2 style="font-size: 40px;">⚙️ 設定</h2>
-            <p style="margin: 20px 0; color: #ccc; font-size: 18px;">所持カードやパック数などの全データを削除して、ゲームを最初からやり直します。</p>
-            <button class="btn-danger" onclick="GameDataManager.resetData()" style="width: 100%; margin-bottom: 20px;">🗑️ データを全削除（リセット）</button>
+        <div class="modal-content" style="max-width: 400px;">
+            <h2 style="font-size: 32px;">⚙️ 設定</h2>
+            <p style="margin: 15px 0; color: #ccc; font-size: 16px;">所持カードやパック数などの全データを削除して、ゲームを最初からやり直します。</p>
+            <button class="btn-danger" onclick="GameDataManager.resetData()" style="width: 100%; margin-bottom: 15px;">🗑️ データを全削除（リセット）</button>
             <button class="btn-dark" onclick="document.getElementById('settings-modal').classList.remove('active')" style="width: 100%;">閉じる</button>
         </div>
     </div>
@@ -998,9 +953,10 @@
             { ja: "きりふだのかあどをつかえ", en: "kirihudanokaadowotukae" }
         ];
 
-        // ボス定義
+        // ボス定義（ドロップ確率表示付き）
         const BOSSES = [
             { name: "🔥 ファイアスライム", hp: 600, maxHp: 600, attack: 35, index: 0,
+              dropRate: "10%",
               special: (battleState) => {
                   if (Math.random() < 0.25) {
                       const dmg = 25;
@@ -1031,6 +987,7 @@
               }
             },
             { name: "🍳 クッキングマッサー", hp: 500, maxHp: 500, attack: 40, index: 1,
+              dropRate: "8%",
               special: (battleState) => {
                   if (Math.random() < 0.25) {
                       const heal = 100;
@@ -1054,6 +1011,7 @@
               }
             },
             { name: "❄️ フローズンウィザード", hp: 800, maxHp: 800, attack: 25, index: 2,
+              dropRate: "5%",
               special: (battleState) => {
                   if (Math.random() < 0.5) {
                       battleState.playerFrozen = true;
@@ -1076,6 +1034,7 @@
               }
             },
             { name: "🛡️ アルティメットタイタン", hp: 800, maxHp: 800, attack: 35, index: 3,
+              dropRate: "0% (ドロップなし)",
               special: (battleState) => {
                   if (Math.random() < 0.25) {
                       battleState.boss.shield = 50;
@@ -1087,6 +1046,7 @@
               onDefeat: () => {}
             },
             { name: "👑 ラスボス", hp: 1200, maxHp: 1200, attack: 50, index: 4,
+              dropRate: "0% (ドロップなし)",
               special: (battleState) => {
                   const r = Math.random();
                   if (r < 0.2) {
@@ -1109,7 +1069,7 @@
         window.playerData = { packs: 10, inventory: {}, equipped: [], unlockedBosses: [0] };
         window.UIState = { invRarity: 'All', invType: 'All', equipRarity: 'All' };
         window.battleState = {
-            isActive: false, difficulty: '', boss: { hp: 0, maxHp: 0, attack: 0, name: "", special: null, shield: 0, onDefeat: null },
+            isActive: false, difficulty: '', boss: { hp: 0, maxHp: 0, attack: 0, name: "", special: null, shield: 0, onDefeat: null, dropRate: "" },
             playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null, typedIndex: 0, mistakes: 0, 
             typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false
         };
@@ -1214,7 +1174,7 @@
                         if (!card) { window.playerData.equipped[i] = null; continue; }
                         equippedContainer.innerHTML += this.createCardHTML(card, 0, `EquipController.unequipCard(${i})`);
                     } else {
-                        equippedContainer.innerHTML += `<div class="equipped-slot">スロット ${i+1}<br><span style="font-size:12px;">(空き)</span></div>`;
+                        equippedContainer.innerHTML += `<div class="equipped-slot">スロット ${i+1}<br><span style="font-size:10px;">(空き)</span></div>`;
                     }
                 }
                 const isValidCount = window.playerData.equipped.length === 25;
@@ -1225,7 +1185,6 @@
                 document.getElementById('equip-warning').style.display = !isValidCount ? 'block' : 'none';
                 document.getElementById('equip-type-error').style.display = (isValidCount && !isValidTypes) ? 'block' : 'none';
                 
-                // 25種類以上のカードを持っているかチェックして表示
                 const uniqueCardCount = Object.keys(window.playerData.inventory).length;
                 const deckWarningDiv = document.getElementById('deck-warning');
                 if (uniqueCardCount < 25) {
@@ -1263,7 +1222,8 @@
                         <div class="boss-select-item ${lockedClass}">
                             <h3>${boss.name}</h3>
                             <p>💪 HP: ${boss.hp} | ⚔️ 攻撃力: ${boss.attack}</p>
-                            ${isUnlocked ? `<button class="btn-danger" onclick="BossBattleController.startBossBattle(${boss.index})">⚔️ 戦闘開始</button>` : `<button class="btn-dark" disabled style="opacity:0.5;">🔒 未解放 (前のボスを倒せ)</button>`}
+                            <div class="drop-rate">🎴 ドロップ確率: ${boss.dropRate}</div>
+                            ${isUnlocked ? `<button class="btn-danger" onclick="BossBattleController.startBossBattle(${boss.index})">⚔️ 戦闘開始</button>` : `<button class="btn-dark" disabled style="opacity:0.5;">🔒 未解放</button>`}
                         </div>
                     `;
                 });
@@ -1332,7 +1292,7 @@
                 GameController.switchScreen('battle-screen');
                 window.battleState = {
                     isActive: true, difficulty: difficulty, isBossBattle: isBossBattle,
-                    boss: { hp: 0, maxHp: 0, attack: 0, name: "", special: null, shield: 0, onDefeat: null },
+                    boss: { hp: 0, maxHp: 0, attack: 0, name: "", special: null, shield: 0, onDefeat: null, dropRate: "" },
                     playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null,
                     typedIndex: 0, mistakes: 0, typingStartTime: 0, nextTurnMultiplier: 1.0,
                     enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false
@@ -1344,22 +1304,23 @@
                     window.battleState.boss.attack = bossData.attack;
                     window.battleState.boss.special = bossData.special;
                     window.battleState.boss.onDefeat = bossData.onDefeat;
+                    window.battleState.boss.dropRate = bossData.dropRate;
                 } else {
-                    const hpMap = { easy: 350, medium: 500, hard: 1000, extreme: 2500 };
+                    // パックゲットモードの攻撃力を修正
                     const attackMap = { easy: 30, medium: 80, hard: 200, extreme: 500 };
+                    const hpMap = { easy: 350, medium: 500, hard: 1000, extreme: 2500 };
                     const nameMap = { easy: "🟢 スライム", medium: "🟡 オーク", hard: "🔴 ドラゴン", extreme: "😈 魔王" };
                     window.battleState.boss.maxHp = hpMap[difficulty];
                     window.battleState.boss.hp = hpMap[difficulty];
                     window.battleState.boss.attack = attackMap[difficulty];
                     window.battleState.boss.name = nameMap[difficulty];
                 }
-                document.getElementById('boss-name').textContent = window.battleState.boss.name;
+                document.getElementById('boss-name').innerHTML = window.battleState.boss.name + (window.battleState.boss.dropRate ? `<span style="font-size:12px; display:block;">🎴 ドロップ確率: ${window.battleState.boss.dropRate}</span>` : '');
                 document.getElementById('battle-log').innerHTML = '<p>⚔️ バトル開始！</p>';
                 this.updateHPUI();
                 this.fillHand();
                 this.resetTypingUI();
             },
-            // 所持カードのみから手札を補充する関数
             getRandomOwnedCard: function() {
                 const ownedCardIds = Object.keys(window.playerData.inventory);
                 if (ownedCardIds.length === 0) return null;
@@ -1371,13 +1332,11 @@
                 if (currentCount >= 5) return;
                 const drawCount = 5 - currentCount;
                 
-                // 装備デッキが有効かチェック（25枚かつ各タイプ1枚以上）
                 const hasValidDeck = window.playerData.equipped.length === 25 && 
                     window.playerData.equipped.some(id => UIController.getCardById(id)?.type === 'attack') &&
                     window.playerData.equipped.some(id => UIController.getCardById(id)?.type === 'heal') &&
                     window.playerData.equipped.some(id => UIController.getCardById(id)?.type === 'assist');
                 
-                // 所持カードの種類数を取得
                 const ownedCardIds = Object.keys(window.playerData.inventory);
                 const hasEnoughCards = ownedCardIds.length >= 25;
                 
@@ -1385,14 +1344,11 @@
                     let card = null;
                     
                     if (hasValidDeck && hasEnoughCards) {
-                        // 装備デッキからランダムにドロー
                         const randomIndex = Math.floor(Math.random() * window.playerData.equipped.length);
                         card = UIController.getCardById(window.playerData.equipped[randomIndex]);
                     } else if (ownedCardIds.length > 0) {
-                        // 所持カードがある場合 -> 所持カードからのみドロー（持っていないカードは絶対に出さない）
                         card = this.getRandomOwnedCard();
                     } else {
-                        // 所持カードが1枚もない場合のみ、デフォルトカードを支給（初期状態対策）
                         const defaultCards = ALL_CARDS.filter(c => !c.id.startsWith("boss_") && (c.id === "c1" || c.id === "c3" || c.id === "c4"));
                         card = defaultCards[Math.floor(Math.random() * defaultCards.length)];
                     }
@@ -1534,17 +1490,21 @@
                 if (!window.battleState.isActive) return;
                 if (window.battleState.playerBurnTurns > 0) {
                     window.battleState.playerHp = Math.max(0, window.battleState.playerHp - 20);
-                    this.logBattle(`🔥 燃える状態！ 20ダメージ！`);
+                    this.logBattle(`🔥 燃えた！ 20ダメージ！`);
                     window.battleState.playerBurnTurns--;
                     this.updateHPUI();
                     if (window.battleState.playerHp <= 0) { this.endBattle(false, "燃え尽きた..."); return; }
                 }
                 if (window.battleState.enemyBurnTurns > 0) {
                     window.battleState.boss.hp = Math.max(0, window.battleState.boss.hp - 20);
-                    this.logBattle(`🔥 ボスが燃えている！ 20ダメージ！`);
+                    this.logBattle(`🔥 ボスが燃えた！ 20ダメージ！`);
                     window.battleState.enemyBurnTurns--;
                     this.updateHPUI();
-                    if (window.battleState.boss.hp <= 0) { this.endBattle(true, "ボスを撃破した！"); return; }
+                    if (window.battleState.boss.hp <= 0) { 
+                        if (window.battleState.isBossBattle && window.battleState.boss.onDefeat) window.battleState.boss.onDefeat();
+                        this.endBattle(true, "ボスを撃破した！"); 
+                        return; 
+                    }
                 }
                 if (window.battleState.enemyFrozen) {
                     this.logBattle("👹 敵は凍っていて動けない！");
