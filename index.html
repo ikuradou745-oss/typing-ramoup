@@ -653,9 +653,9 @@
         
         <div class="menu-grid" style="grid-template-columns: 1fr; max-width: 400px; gap: 15px;">
             <button class="btn-success" onclick="BattleController.startBattle('easy')">🟢 簡単 (ボスHP: 350 / 攻撃: 30)</button>
-            <button class="btn-warning" onclick="BattleController.startBattle('medium')">🟡 中級 (ボスHP: 500 / 攻撃: 80)</button>
-            <button class="btn-danger" onclick="BattleController.startBattle('hard')">🔴 難しい (ボスHP: 1000 / 攻撃: 200)</button>
-            <button class="btn-purple" onclick="BattleController.startBattle('extreme')">😈 鬼むず (ボスHP: 2500 / 攻撃: 500)</button>
+            <button class="btn-warning" onclick="BattleController.startBattle('medium')">🟡 中級 (ボスHP: 500 / 攻撃: 35)</button>
+            <button class="btn-danger" onclick="BattleController.startBattle('hard')">🔴 難しい (ボスHP: 1000 / 攻撃: 40)</button>
+            <button class="btn-purple" onclick="BattleController.startBattle('extreme')">😈 鬼むず (ボスHP: 2500 / 攻撃: 45)</button>
         </div>
         
         <button class="btn-dark" style="margin-top: 30px; padding: 8px 30px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
@@ -1306,8 +1306,8 @@
                     window.battleState.boss.onDefeat = bossData.onDefeat;
                     window.battleState.boss.dropRate = bossData.dropRate;
                 } else {
-                    // パックゲットモードの攻撃力を修正
-                    const attackMap = { easy: 30, medium: 80, hard: 200, extreme: 500 };
+                    // パックゲットモードの攻撃力を修正（指示通り）
+                    const attackMap = { easy: 30, medium: 35, hard: 40, extreme: 45 };
                     const hpMap = { easy: 350, medium: 500, hard: 1000, extreme: 2500 };
                     const nameMap = { easy: "🟢 スライム", medium: "🟡 オーク", hard: "🔴 ドラゴン", extreme: "😈 魔王" };
                     window.battleState.boss.maxHp = hpMap[difficulty];
