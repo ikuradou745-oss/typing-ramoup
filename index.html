@@ -512,6 +512,32 @@
             100% { opacity: 0; transform: translateY(-80px) scale(1); }
         }
 
+        /* 中央メッセージ表示用 */
+        .center-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.85);
+            color: #ff6600;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 20px 40px;
+            border-radius: 20px;
+            border: 3px solid #ff6600;
+            box-shadow: 0 0 30px rgba(255, 102, 0, 0.5);
+            z-index: 2000;
+            text-align: center;
+            white-space: nowrap;
+            animation: messageFade 1.5s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes messageFade {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
+        }
+
         .gacha-result-overlay, .modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -616,6 +642,11 @@
             font-size: 12px;
             color: #ffcc00;
             margin-top: 8px;
+        }
+        .drop-card {
+            font-size: 11px;
+            color: #88ff88;
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -883,6 +914,18 @@
             playFreeze: function() { this.playTone(220, 'sine', 0.4, 0.1); this.playTone(110, 'sine', 0.6, 0.1); }
         };
 
+        // 中央メッセージ表示関数
+        function showCenterMessage(message, color = "#ff6600") {
+            const div = document.createElement('div');
+            div.className = 'center-message';
+            div.textContent = message;
+            div.style.color = color;
+            div.style.borderColor = color;
+            div.style.boxShadow = `0 0 30px ${color}`;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 1500);
+        }
+
         // --- マスターデータ ---
         const ALL_CARDS = [
             { id: "c1", name: "パンチ", type: "attack", rarity: "Common", baseEffect: 25, desc: "25ダメージ" },
@@ -901,7 +944,7 @@
             { id: "r2", name: "アイススピア", type: "attack", rarity: "Rare", baseEffect: 45, desc: "45ダメージ" },
             { id: "r3", name: "ハイポーション", type: "heal", rarity: "Rare", baseEffect: 45, desc: "45回復" },
             { id: "r4", name: "気合い", type: "assist", rarity: "Rare", baseEffect: 1.5, desc: "次1.5倍" },
-            { id: "r5", name: "フルリロード", type: "assist", rarity: "Rare", baseEffect: 5, desc: "5枚リセット" },
+            { id: "r5", name: "フルリロード", type: "assist", rarity: "Rare", baseEffect: 5, desc: "5枚リセット (ミス-0.5)" },
             { id: "r6", name: "ウィンド", type: "attack", rarity: "Rare", baseEffect: 45, desc: "45ダメージ" },
             { id: "l1", name: "メテオ", type: "attack", rarity: "Legend", baseEffect: 55, desc: "55ダメージ" },
             { id: "l2", name: "エクスカリバー", type: "attack", rarity: "Legend", baseEffect: 55, desc: "55ダメージ" },
@@ -953,10 +996,10 @@
             { ja: "きりふだのかあどをつかえ", en: "kirihudanokaadowotukae" }
         ];
 
-        // ボス定義（ドロップ確率表示付き）
+        // ボス定義（ドロップ確率とドロップカード表示付き）
         const BOSSES = [
             { name: "🔥 ファイアスライム", hp: 600, maxHp: 600, attack: 35, index: 0,
-              dropRate: "10%",
+              dropRate: "10%", dropCard: "ファイアスライム",
               special: (battleState) => {
                   if (Math.random() < 0.25) {
                       const dmg = 25;
@@ -964,8 +1007,9 @@
                       BattleController.logBattle(`🔥 ファイアスライムの技！ 燃える息吹で ${dmg} ダメージ！`);
                       let removed = 0;
                       while (battleState.hand.length > 0 && removed < 2) {
-                          battleState.hand.pop();
+                          const removedCard = battleState.hand.pop();
                           removed++;
+                          showCenterMessage(`🔥 ${removedCard.name} が燃えた！`, "#ff6600");
                       }
                       BattleController.fillHand();
                       BattleController.logBattle(`🔥 炎の熱気でカードが2枚燃え尽きた！`);
@@ -987,7 +1031,7 @@
               }
             },
             { name: "🍳 クッキングマッサー", hp: 500, maxHp: 500, attack: 40, index: 1,
-              dropRate: "8%",
+              dropRate: "8%", dropCard: "こねたハンバーグ",
               special: (battleState) => {
                   if (Math.random() < 0.25) {
                       const heal = 100;
@@ -1011,7 +1055,7 @@
               }
             },
             { name: "❄️ フローズンウィザード", hp: 800, maxHp: 800, attack: 25, index: 2,
-              dropRate: "5%",
+              dropRate: "5%", dropCard: "Brrrrフローズン",
               special: (battleState) => {
                   if (Math.random() < 0.5) {
                       battleState.playerFrozen = true;
@@ -1034,7 +1078,7 @@
               }
             },
             { name: "🛡️ アルティメットタイタン", hp: 800, maxHp: 800, attack: 35, index: 3,
-              dropRate: "0% (ドロップなし)",
+              dropRate: "0%", dropCard: "なし",
               special: (battleState) => {
                   if (Math.random() < 0.25) {
                       battleState.boss.shield = 50;
@@ -1046,7 +1090,7 @@
               onDefeat: () => {}
             },
             { name: "👑 ラスボス", hp: 1200, maxHp: 1200, attack: 50, index: 4,
-              dropRate: "0% (ドロップなし)",
+              dropRate: "0%", dropCard: "なし",
               special: (battleState) => {
                   const r = Math.random();
                   if (r < 0.2) {
@@ -1071,7 +1115,8 @@
         window.battleState = {
             isActive: false, difficulty: '', boss: { hp: 0, maxHp: 0, attack: 0, name: "", special: null, shield: 0, onDefeat: null, dropRate: "" },
             playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null, typedIndex: 0, mistakes: 0, 
-            typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false
+            typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false,
+            canSelectCard: true  // カード選択可能フラグ
         };
         window.bossBattleState = { isActive: false, currentBoss: null };
 
@@ -1223,6 +1268,7 @@
                             <h3>${boss.name}</h3>
                             <p>💪 HP: ${boss.hp} | ⚔️ 攻撃力: ${boss.attack}</p>
                             <div class="drop-rate">🎴 ドロップ確率: ${boss.dropRate}</div>
+                            <div class="drop-card">📇 ドロップカード: ${boss.dropCard}</div>
                             ${isUnlocked ? `<button class="btn-danger" onclick="BossBattleController.startBossBattle(${boss.index})">⚔️ 戦闘開始</button>` : `<button class="btn-dark" disabled style="opacity:0.5;">🔒 未解放</button>`}
                         </div>
                     `;
@@ -1295,7 +1341,8 @@
                     boss: { hp: 0, maxHp: 0, attack: 0, name: "", special: null, shield: 0, onDefeat: null, dropRate: "" },
                     playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null,
                     typedIndex: 0, mistakes: 0, typingStartTime: 0, nextTurnMultiplier: 1.0,
-                    enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false
+                    enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false,
+                    canSelectCard: true
                 };
                 if (isBossBattle && bossData) {
                     window.battleState.boss.name = bossData.name;
@@ -1306,7 +1353,6 @@
                     window.battleState.boss.onDefeat = bossData.onDefeat;
                     window.battleState.boss.dropRate = bossData.dropRate;
                 } else {
-                    // パックゲットモードの攻撃力を修正（指示通り）
                     const attackMap = { easy: 30, medium: 35, hard: 40, extreme: 45 };
                     const hpMap = { easy: 350, medium: 500, hard: 1000, extreme: 2500 };
                     const nameMap = { easy: "🟢 スライム", medium: "🟡 オーク", hard: "🔴 ドラゴン", extreme: "😈 魔王" };
@@ -1369,13 +1415,20 @@
                 });
             },
             selectCard: function(index) {
+                // カード選択可能かチェック
                 if (!window.battleState.isActive || window.battleState.activeCard) return;
+                if (!window.battleState.canSelectCard) {
+                    this.logBattle("⏳ まだカードを選べません！");
+                    return;
+                }
                 if (window.battleState.playerFrozen) {
                     this.logBattle("❄️ あなたは凍っていてカードが使えない！");
                     window.battleState.playerFrozen = false;
                     setTimeout(() => this.enemyTurn(), 1000);
                     return;
                 }
+                // カード選択後は一時的に選択不可に
+                window.battleState.canSelectCard = false;
                 window.battleState.activeCard = window.battleState.hand[index];
                 window.battleState.hand.splice(index, 1);
                 this.fillHand();
@@ -1424,6 +1477,32 @@
                 const mistakes = window.battleState.mistakes;
                 let effectValue = card.baseEffect;
                 let logMsg = `🃏 【${card.name}】発動！ `;
+                
+                // フルリロードの特殊処理（ミスで効果減少）
+                if (card.id === "r5") {
+                    let resetCount = 5 - Math.floor(mistakes * 0.5);
+                    resetCount = Math.max(1, resetCount);
+                    logMsg += `手札を ${resetCount} 枚引き直した！ (ミス${mistakes}回で${5-resetCount}枚減少) `;
+                    // 指定枚数だけ手札をリセット
+                    for(let i = 0; i < resetCount && window.battleState.hand.length > 0; i++) {
+                        window.battleState.hand.pop();
+                    }
+                    this.fillHand();
+                    this.logBattle(logMsg);
+                    this.updateHPUI();
+                    this.resetTypingUI();
+                    window.battleState.activeCard = null;
+                    // カード選択可能に戻す
+                    window.battleState.canSelectCard = true;
+                    if (window.battleState.boss.hp <= 0) {
+                        if (window.battleState.isBossBattle && window.battleState.boss.onDefeat) window.battleState.boss.onDefeat();
+                        this.endBattle(true, "ボスを撃破した！");
+                        return;
+                    }
+                    setTimeout(() => this.enemyTurn(), 1000);
+                    return;
+                }
+                
                 if (mistakes === 0) {
                     if (card.type === 'assist' && card.baseEffect < 10) effectValue += 1;
                     else effectValue += 5;
@@ -1457,10 +1536,14 @@
                     AudioController.playHeal();
                 } else if (card.type === 'assist') {
                     if (card.name.includes("リセット") || card.name.includes("ドロー") || card.name.includes("入れ替え")) {
-                        if (card.id === "c4" || card.id === "u5" || card.id === "r5") {
-                            window.battleState.hand = [];
+                        if (card.id === "c4" || card.id === "u5") {
+                            let resetCount = card.baseEffect;
+                            if (card.id === "u5") resetCount = Math.max(1, 3 - Math.floor(mistakes * 0.5));
+                            for(let i = 0; i < resetCount && window.battleState.hand.length > 0; i++) {
+                                window.battleState.hand.pop();
+                            }
                             this.fillHand();
-                            logMsg += `手札を全て引き直した！`;
+                            logMsg += `手札を ${resetCount} 枚引き直した！`;
                         } else {
                             logMsg += `効果発動！`;
                         }
@@ -1478,6 +1561,8 @@
                 this.updateHPUI();
                 this.resetTypingUI();
                 window.battleState.activeCard = null;
+                // カード選択可能に戻す
+                window.battleState.canSelectCard = true;
                 
                 if (window.battleState.boss.hp <= 0) {
                     if (window.battleState.isBossBattle && window.battleState.boss.onDefeat) window.battleState.boss.onDefeat();
@@ -1491,6 +1576,7 @@
                 if (window.battleState.playerBurnTurns > 0) {
                     window.battleState.playerHp = Math.max(0, window.battleState.playerHp - 20);
                     this.logBattle(`🔥 燃えた！ 20ダメージ！`);
+                    showCenterMessage(`🔥 ${20}ダメージ！ 燃えた！`, "#ff6600");
                     window.battleState.playerBurnTurns--;
                     this.updateHPUI();
                     if (window.battleState.playerHp <= 0) { this.endBattle(false, "燃え尽きた..."); return; }
@@ -1498,6 +1584,7 @@
                 if (window.battleState.enemyBurnTurns > 0) {
                     window.battleState.boss.hp = Math.max(0, window.battleState.boss.hp - 20);
                     this.logBattle(`🔥 ボスが燃えた！ 20ダメージ！`);
+                    showCenterMessage(`🔥 ボスが燃えた！ 20ダメージ！`, "#ff6600");
                     window.battleState.enemyBurnTurns--;
                     this.updateHPUI();
                     if (window.battleState.boss.hp <= 0) { 
@@ -1509,6 +1596,8 @@
                 if (window.battleState.enemyFrozen) {
                     this.logBattle("👹 敵は凍っていて動けない！");
                     window.battleState.enemyFrozen = false;
+                    // 敵が動けない場合もカード選択可能に
+                    window.battleState.canSelectCard = true;
                     return;
                 }
                 let specialUsed = false;
@@ -1523,6 +1612,8 @@
                 }
                 this.updateHPUI();
                 if (window.battleState.playerHp <= 0) { this.endBattle(false, "HPが0になった..."); }
+                // 敵ターン終了後、カード選択可能に
+                window.battleState.canSelectCard = true;
             },
             updateHPUI: function() {
                 document.getElementById('player-hp').textContent = Math.floor(window.battleState.playerHp);
