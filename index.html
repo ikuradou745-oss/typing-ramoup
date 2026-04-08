@@ -698,6 +698,41 @@
             border-color: gold;
             box-shadow: 0 0 15px gold;
         }
+
+        /* ステータステキスト用CSS */
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 10px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        .status-cleared {
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+            border: 2px solid #81c784;
+            text-shadow: 1px 1px 2px black;
+        }
+        .status-available {
+            background: linear-gradient(135deg, #f57c00, #ff9800);
+            color: white;
+            border: 2px solid #ffb74d;
+            text-shadow: 1px 1px 2px black;
+            animation: pulse 1.5s infinite;
+        }
+        .status-locked {
+            background: linear-gradient(135deg, #424242, #616161);
+            color: #ccc;
+            border: 2px solid #9e9e9e;
+            text-shadow: 1px 1px 2px black;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px #ff9800; }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -733,7 +768,7 @@
         <h2>📖 ストーリーモード</h2>
         <p style="font-size: 16px; margin-bottom: 10px; color: #aaa;">ステージを選んで戦おう！</p>
         <div class="story-map" id="story-map-container"></div>
-        <div id="story-stage-detail" style="margin-bottom: 20px; min-height: 80px; text-align: center;">
+        <div id="story-stage-detail" style="margin-bottom: 20px; min-height: 120px; text-align: center; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px; width: 100%; max-width: 600px;">
             <p>👆 上のマップからステージを選択</p>
         </div>
         <button class="btn-dark" style="margin-top: 20px; padding: 8px 30px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
@@ -1218,6 +1253,7 @@
             
             let hp, attack, specialDesc, specialFunc;
             let rewardCardId = null;
+            let isSpecialStage = (stage === 25 || stage === 50 || stage === 75 || stage === 100);
             
             // 基本ステータス計算 (ステージ1: 300, 25)
             const baseHp = 300;
@@ -1228,7 +1264,7 @@
                 attack = baseAtk + (stage - 1) * 0.25;
                 specialDesc = "通常攻撃のみ";
                 specialFunc = null;
-                if (stage === 25) rewardCardId = "story_reward_1";
+                if (isSpecialStage) rewardCardId = "story_reward_1";
             } else if (stage <= 50) {
                 hp = baseHp + 24 * 5 + (stage - 25) * 5;
                 attack = baseAtk + 24 * 0.25 + (stage - 25) * 0.25;
@@ -1243,7 +1279,7 @@
                     }
                     return false;
                 };
-                if (stage === 50) rewardCardId = "story_reward_2";
+                if (isSpecialStage) rewardCardId = "story_reward_2";
             } else if (stage <= 75) {
                 hp = baseHp + 49 * 5 + (stage - 50) * 5;
                 attack = baseAtk + 49 * 0.25 + (stage - 50) * 0.25;
@@ -1258,7 +1294,7 @@
                     }
                     return false;
                 };
-                if (stage === 75) rewardCardId = "story_reward_3";
+                if (isSpecialStage) rewardCardId = "story_reward_3";
             } else {
                 hp = baseHp + 74 * 5 + (stage - 75) * 5;
                 attack = baseAtk + 74 * 0.25 + (stage - 75) * 0.25;
@@ -1272,7 +1308,7 @@
                     }
                     return false;
                 };
-                if (stage === 100) rewardCardId = "story_reward_4";
+                if (isSpecialStage) rewardCardId = "story_reward_4";
             }
             
             attack = Math.ceil(attack * 10) / 10; // 小数第一位で切り上げ
@@ -1285,7 +1321,8 @@
                 attack: attack,
                 specialDesc: specialDesc,
                 specialFunc: specialFunc,
-                rewardCardId: rewardCardId
+                rewardCardId: rewardCardId,
+                isSpecial: isSpecialStage
             };
         }
 
@@ -1565,24 +1602,26 @@
                 const isCleared = window.storyData.clearedStages.includes(stage);
                 const isCurrent = stage === window.storyData.currentStage;
                 
-                let statusText = '';
+                let statusHtml = '';
                 let buttonHtml = '';
                 
                 if (isCleared) {
-                    statusText = '<span style="color: #4caf50;">✅ クリア済み</span>';
+                    statusHtml = '<div class="status-badge status-cleared">✅ クリア済み</div>';
                 } else if (isCurrent) {
-                    statusText = '<span style="color: #ff9800;">⚡ 挑戦可能！</span>';
+                    statusHtml = '<div class="status-badge status-available">⚡ 挑戦可能！</div>';
                     buttonHtml = `<button class="btn-danger" onclick="StoryController.startStage(${stage})">⚔️ 戦闘開始</button>`;
                 } else if (isLocked) {
-                    statusText = '<span style="color: #888;">🔒 未開放</span>';
+                    statusHtml = '<div class="status-badge status-locked">🔒 未開放</div>';
                 }
                 
                 let rewardText = '';
                 if (info.rewardCardId) {
                     const rewardCard = UIController.getCardById(info.rewardCardId);
                     if (rewardCard) {
-                        rewardText = `<p style="color: gold;">🎁 報酬: ${rewardCard.name} (${rewardCard.rarity})<br>　${rewardCard.desc}</p>`;
+                        rewardText = `<p style="color: gold; font-size: 16px; margin-top: 10px;">🎁 報酬: ${rewardCard.name} (${rewardCard.rarity})<br>　<span style="font-size: 12px;">${rewardCard.desc}</span></p>`;
                     }
+                } else {
+                    rewardText = '<p style="color: #aaa; margin-top: 10px;">📦 このステージに報酬はありません。</p>';
                 }
                 
                 detailDiv.innerHTML = `
@@ -1590,7 +1629,7 @@
                     <p>💪 HP: ${info.hp} | ⚔️ 攻撃力: ${info.attack}</p>
                     <p>📋 行動: ${info.specialDesc}</p>
                     ${rewardText}
-                    <p>${statusText}</p>
+                    ${statusHtml}
                     ${buttonHtml}
                 `;
             },
@@ -1626,7 +1665,7 @@
                 if (!window.storyData.clearedStages.includes(stage)) {
                     window.storyData.clearedStages.push(stage);
                     
-                    // 報酬カード付与
+                    // 報酬カード付与 (特別ステージのみ)
                     if (info.rewardCardId) {
                         const card = UIController.getCardById(info.rewardCardId);
                         if (card) {
@@ -2012,11 +2051,17 @@
                     AudioController.playWin();
                     let reward = 0;
                     if (window.storyBattleState.isActive) {
-                        reward = 2; // ストーリーモードの基本報酬
+                        const info = window.storyBattleState.stageInfo;
+                        // 特別ステージ(報酬カードあり)のみパック報酬を与える
+                        if (info && info.isSpecial) {
+                            reward = 2;
+                            desc.innerHTML = `${reason}<br><br><span style="color: #00ffcc;">🎁 報酬: ${reward} パック獲得！</span>`;
+                            window.playerData.packs += reward;
+                        } else {
+                            desc.innerHTML = `${reason}<br><br><span style="color: #aaa;">📦 このステージにパック報酬はありません。</span>`;
+                        }
                         title.innerHTML = "🏆 STAGE CLEAR!";
                         title.style.color = "gold";
-                        desc.innerHTML = `${reason}<br><br><span style="color: #00ffcc;">🎁 報酬: ${reward} パック獲得！</span>`;
-                        window.playerData.packs += reward;
                     } else if (window.battleState.isBossBattle) {
                         reward = 5;
                         title.innerHTML = "🏆 BOSS DEFEATED!";
