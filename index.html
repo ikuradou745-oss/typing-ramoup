@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>デッキカードタイピング RPG - ボスバトル</title>
+    <title>デッキカードタイピング RPG - 完全版</title>
     <style>
         /* ==========================================
            全体のリセットと基本スタイル
@@ -26,7 +26,7 @@
             flex-direction: column;
         }
 
-        /* ヘッダー情報（パック数・セーブ状態・設定ボタン） */
+        /* ヘッダー情報 */
         .header-info {
             position: absolute;
             top: 20px;
@@ -67,7 +67,7 @@
         }
 
         /* ==========================================
-           画面レイアウト（全画面使用・中央配置）
+           画面レイアウト
            ========================================== */
         .screen {
             display: none;
@@ -358,7 +358,7 @@
         }
 
         /* ==========================================
-           バトル画面（コンパクト版）
+           バトル画面
            ========================================== */
         #battle-screen {
             justify-content: flex-start;
@@ -512,7 +512,7 @@
             100% { opacity: 0; transform: translateY(-80px) scale(1); }
         }
 
-        /* 中央メッセージ表示用 */
+        /* 中央メッセージ */
         .center-message {
             position: fixed;
             top: 50%;
@@ -596,21 +596,6 @@
             50% { opacity: 1; }
             100% { opacity: 0; }
         }
-        .fire-effect {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(255, 69, 0, 0.3), transparent);
-            pointer-events: none;
-            z-index: 1500;
-            animation: fireFade 0.6s ease-out forwards;
-        }
-        @keyframes fireFade {
-            0% { opacity: 0.8; }
-            100% { opacity: 0; }
-        }
 
         .boss-select-grid {
             display: flex;
@@ -648,6 +633,91 @@
             color: #88ff88;
             margin-top: 4px;
         }
+        
+        /* ストーリーマップ用 */
+        .story-map-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+        .world-map {
+            background: #1e3a5f;
+            border-radius: 30px;
+            padding: 30px;
+            border: 5px solid #8B4513;
+            box-shadow: inset 0 0 30px #000, 0 10px 20px rgba(0,0,0,0.5);
+            width: 100%;
+            overflow-x: auto;
+        }
+        .map-path {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px;
+        }
+        .map-node {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #2ecc71;
+            border: 4px solid #f1c40f;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 0 0 4px #2c3e50, 0 8px 0 #1a252f;
+            transition: all 0.1s;
+            cursor: pointer;
+            position: relative;
+        }
+        .map-node.completed {
+            background: #3498db;
+            border-color: #ecf0f1;
+            box-shadow: 0 0 0 4px #2c3e50, 0 4px 0 #1a252f;
+            transform: translateY(4px);
+            cursor: default;
+            opacity: 0.8;
+        }
+        .map-node.locked {
+            background: #7f8c8d;
+            border-color: #bdc3c7;
+            box-shadow: 0 0 0 4px #2c3e50, 0 8px 0 #1a252f;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        .map-node.current {
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 4px #e74c3c, 0 8px 0 #1a252f; }
+            50% { transform: scale(1.05); box-shadow: 0 0 15px 8px #f1c40f, 0 8px 0 #1a252f; }
+            100% { transform: scale(1); box-shadow: 0 0 0 4px #e74c3c, 0 8px 0 #1a252f; }
+        }
+        .map-node span:first-child {
+            font-size: 18px;
+        }
+        .map-node span:last-child {
+            font-size: 10px;
+        }
+        .map-line {
+            width: 30px;
+            height: 6px;
+            background: #f1c40f;
+            border-radius: 10px;
+            box-shadow: 0 2px 0 #1a252f;
+        }
+        .story-reward {
+            margin: 20px 0;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: 1px solid gold;
+        }
     </style>
 </head>
 <body>
@@ -658,6 +728,7 @@
         <button class="settings-btn" onclick="document.getElementById('settings-modal').classList.add('active')" title="設定">⚙️</button>
     </div>
 
+    <!-- ホーム画面 -->
     <div id="home-screen" class="screen active">
         <h1>デッキカードタイピング RPG</h1>
         <p style="font-size: 18px; margin-bottom: 25px; color: #ccc;">タイピングで戦い、最強のデッキを構築せよ！</p>
@@ -667,7 +738,19 @@
             <button class="btn-warning" onclick="GameController.switchScreen('gacha-screen'); UIController.updateGachaScreen();">🎲 カードを引く</button>
             <button class="btn-success" onclick="GameController.switchScreen('inventory-screen'); UIController.renderInventory();">🎒 持ち物</button>
             <button class="btn-purple" onclick="GameController.switchScreen('equip-screen'); UIController.renderEquipScreen();">🛡️ カードを装備</button>
+            <button class="btn-gold" onclick="GameController.switchScreen('story-mode-screen'); StoryController.renderMap();">📖 ストーリーモード</button>
         </div>
+    </div>
+
+    <!-- ストーリーモード画面 -->
+    <div id="story-mode-screen" class="screen">
+        <h2>📖 ストーリーモード</h2>
+        <div class="story-map-container">
+            <p style="margin-bottom: 10px;">ステージをクリアして先へ進もう！</p>
+            <div class="story-reward" id="story-reward-info"></div>
+            <div class="world-map" id="world-map"></div>
+        </div>
+        <button class="btn-dark" style="margin-top: 25px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
 
     <div id="boss-select-screen" class="screen">
@@ -914,7 +997,6 @@
             playFreeze: function() { this.playTone(220, 'sine', 0.4, 0.1); this.playTone(110, 'sine', 0.6, 0.1); }
         };
 
-        // 中央メッセージ表示関数
         function showCenterMessage(message, color = "#ff6600") {
             const div = document.createElement('div');
             div.className = 'center-message';
@@ -924,6 +1006,13 @@
             div.style.boxShadow = `0 0 30px ${color}`;
             document.body.appendChild(div);
             setTimeout(() => div.remove(), 1500);
+        }
+        
+        function showIceEffect() {
+            const iceDiv = document.createElement('div');
+            iceDiv.className = 'ice-effect';
+            document.body.appendChild(iceDiv);
+            setTimeout(() => iceDiv.remove(), 1000);
         }
 
         // --- マスターデータ ---
@@ -968,6 +1057,12 @@
             { id: "boss_brrr_frozen", name: "Brrrrフローズン", type: "attack", rarity: "Secret", baseEffect: 35, desc: "35+凍らせ" },
             { id: "ul1", name: "終焉の光", type: "attack", rarity: "Ultimate", baseEffect: 105, desc: "105ダメージ" },
             { id: "ul2", name: "ビッグバン", type: "attack", rarity: "Ultimate", baseEffect: 105, desc: "105ダメージ" },
+            { id: "story_pizza", name: "ピッザ", type: "heal", rarity: "Mythic", baseEffect: 0, desc: "2T回復β(30/ターン)" },
+            { id: "story_accel", name: "アクセラフローズン", type: "assist", rarity: "Godly", baseEffect: 2, desc: "敵2T凍結/自身30回復" },
+            { id: "story_secret_heal", name: "シークレットヒール", type: "heal", rarity: "Secret", baseEffect: 35, desc: "35回復+2T回復β" },
+            { id: "story_power", name: "攻撃力の力", type: "assist", rarity: "Ultimate", baseEffect: 0, desc: "75%で3.5倍/25%で5倍" },
+            { id: "boss_titan", name: "タイタンの守護", type: "assist", rarity: "Ultimate", baseEffect: 50, desc: "50バリア+50回復" },
+            { id: "boss_lastboss", name: "ラスボスの威光", type: "attack", rarity: "OG", baseEffect: 150, desc: "150ダメージ" },
             { id: "og1", name: "管理者権限", type: "attack", rarity: "OG", baseEffect: 115, desc: "115ダメージ" },
             { id: "og2", name: "デバッグ", type: "attack", rarity: "OG", baseEffect: 115, desc: "115ダメージ" }
         ];
@@ -996,7 +1091,7 @@
             { ja: "きりふだのかあどをつかえ", en: "kirihudanokaadowotukae" }
         ];
 
-        // ボス定義（ドロップ確率とドロップカード表示付き）
+        // ボス定義（ストーリー用ではない通常ボス）
         const BOSSES = [
             { name: "🔥 ファイアスライム", hp: 600, maxHp: 600, attack: 35, index: 0,
               dropRate: "10%", dropCard: "ファイアスライム",
@@ -1006,13 +1101,18 @@
                       battleState.playerHp = Math.max(0, battleState.playerHp - dmg);
                       BattleController.logBattle(`🔥 ファイアスライムの技！ 燃える息吹で ${dmg} ダメージ！`);
                       let removed = 0;
+                      const burnedCards = [];
                       while (battleState.hand.length > 0 && removed < 2) {
                           const removedCard = battleState.hand.pop();
+                          burnedCards.push(removedCard.name);
                           removed++;
-                          showCenterMessage(`🔥 ${removedCard.name} が燃えた！`, "#ff6600");
+                      }
+                      if (burnedCards.length > 0) {
+                          const msg = `🔥 ${burnedCards.join(' と ')} が燃えた！`;
+                          BattleController.logBattle(msg);
+                          showCenterMessage(msg, "#ff6600");
                       }
                       BattleController.fillHand();
-                      BattleController.logBattle(`🔥 炎の熱気でカードが2枚燃え尽きた！`);
                       AudioController.playBurn();
                       return true;
                   }
@@ -1060,6 +1160,8 @@
                   if (Math.random() < 0.5) {
                       battleState.playerFrozen = true;
                       BattleController.logBattle(`❄️ フローズンウィザードの技！ 氷結の呪文であなたは1ターン動けなくなる！`);
+                      showCenterMessage("❄️ BrrBrr フローズン！", "#00ffff");
+                      showIceEffect();
                       AudioController.playFreeze();
                       return true;
                   }
@@ -1078,7 +1180,7 @@
               }
             },
             { name: "🛡️ アルティメットタイタン", hp: 800, maxHp: 800, attack: 35, index: 3,
-              dropRate: "0%", dropCard: "なし",
+              dropRate: "3%", dropCard: "タイタンの守護",
               special: (battleState) => {
                   if (Math.random() < 0.25) {
                       battleState.boss.shield = 50;
@@ -1087,10 +1189,20 @@
                   }
                   return false;
               },
-              onDefeat: () => {}
+              onDefeat: () => {
+                  if (Math.random() < 0.03) {
+                      const card = ALL_CARDS.find(c => c.id === "boss_titan");
+                      if (card) {
+                          if (!window.playerData.inventory[card.id]) window.playerData.inventory[card.id] = 0;
+                          window.playerData.inventory[card.id]++;
+                          GameDataManager.saveData();
+                          BattleController.logBattle("🎉 ボスから『タイタンの守護』(Ultimate) カードを入手した！");
+                      }
+                  }
+              }
             },
             { name: "👑 ラスボス", hp: 1200, maxHp: 1200, attack: 50, index: 4,
-              dropRate: "0%", dropCard: "なし",
+              dropRate: "1%", dropCard: "ラスボスの威光",
               special: (battleState) => {
                   const r = Math.random();
                   if (r < 0.2) {
@@ -1105,18 +1217,31 @@
                   }
                   return false;
               },
-              onDefeat: () => {}
+              onDefeat: () => {
+                  if (Math.random() < 0.01) {
+                      const card = ALL_CARDS.find(c => c.id === "boss_lastboss");
+                      if (card) {
+                          if (!window.playerData.inventory[card.id]) window.playerData.inventory[card.id] = 0;
+                          window.playerData.inventory[card.id]++;
+                          GameDataManager.saveData();
+                          BattleController.logBattle("🎉 ボスから『ラスボスの威光』(OG) カードを入手した！");
+                      }
+                  }
+              }
             }
         ];
 
         // --- グローバルステート ---
-        window.playerData = { packs: 10, inventory: {}, equipped: [], unlockedBosses: [0] };
+        window.playerData = { 
+            packs: 10, inventory: {}, equipped: [], unlockedBosses: [0],
+            storyClearedStage: 0 
+        };
         window.UIState = { invRarity: 'All', invType: 'All', equipRarity: 'All' };
         window.battleState = {
             isActive: false, difficulty: '', boss: { hp: 0, maxHp: 0, attack: 0, name: "", special: null, shield: 0, onDefeat: null, dropRate: "" },
             playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null, typedIndex: 0, mistakes: 0, 
             typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false,
-            canSelectCard: true  // カード選択可能フラグ
+            canSelectCard: true, playerHealOverTimeTurns: 0, enemyHealOverTimeTurns: 0
         };
         window.bossBattleState = { isActive: false, currentBoss: null };
 
@@ -1131,7 +1256,8 @@
                     packs: window.playerData.packs,
                     inventory: window.playerData.inventory,
                     equipped: window.playerData.equipped,
-                    unlockedBosses: window.playerData.unlockedBosses || [0]
+                    unlockedBosses: window.playerData.unlockedBosses || [0],
+                    storyClearedStage: window.playerData.storyClearedStage || 0
                 }).then(() => {
                     statusEl.textContent = '同期済';
                     statusEl.style.color = '#00ffcc';
@@ -1153,10 +1279,12 @@
                         window.playerData.inventory = data.inventory || {};
                         window.playerData.equipped = data.equipped || [];
                         window.playerData.unlockedBosses = data.unlockedBosses || [0];
+                        window.playerData.storyClearedStage = data.storyClearedStage || 0;
                     } else {
                         window.playerData.inventory = {};
                         window.playerData.equipped = [];
                         window.playerData.unlockedBosses = [0];
+                        window.playerData.storyClearedStage = 0;
                         this.saveData(); 
                     }
                     statusEl.textContent = '同期済';
@@ -1169,7 +1297,7 @@
             },
             resetData: function() {
                 if (confirm("⚠️ 本当に全データを削除してリセットしますか？")) {
-                    window.playerData = { packs: 10, inventory: {}, equipped: [], unlockedBosses: [0] };
+                    window.playerData = { packs: 10, inventory: {}, equipped: [], unlockedBosses: [0], storyClearedStage: 0 };
                     this.saveData();
                     alert("データをリセットしました。");
                     location.reload();
@@ -1317,7 +1445,7 @@
                     cumulative += rw.chance;
                     if (rand <= cumulative) { selectedRarity = rw.rarity; break; }
                 }
-                let cardsOfRarity = ALL_CARDS.filter(c => c.rarity === selectedRarity && !c.id.startsWith("boss_"));
+                let cardsOfRarity = ALL_CARDS.filter(c => c.rarity === selectedRarity && !c.id.startsWith("boss_") && !c.id.startsWith("story_"));
                 if (cardsOfRarity.length === 0) cardsOfRarity = ALL_CARDS.filter(c => c.rarity === "Common" && !c.id.startsWith("boss_"));
                 return cardsOfRarity[Math.floor(Math.random() * cardsOfRarity.length)];
             },
@@ -1333,16 +1461,165 @@
             }
         };
 
+        window.StoryController = {
+            // ストーリーステージ定義
+            getStageData: function(stage) {
+                // stage: 1 ~ 100
+                if (stage < 1 || stage > 100) return null;
+                
+                let hp = 300 + (stage - 1) * 5;
+                let attack = 25 + (stage - 1) * 0.25;
+                attack = Math.ceil(attack); // 切り上げ
+                
+                let special = null;
+                let name = `ステージ ${stage}`;
+                
+                if (stage <= 25) {
+                    name = `🌱 森の守護者 Lv.${stage}`;
+                } else if (stage <= 50) {
+                    name = `❄️ 氷の魔術師 Lv.${stage-25}`;
+                    special = (bs) => {
+                        if (Math.random() < 0.25) {
+                            bs.playerFrozen = true;
+                            BattleController.logBattle(`❄️ ${name} の凍結攻撃！ あなたは凍りついた！`);
+                            showCenterMessage(`❄️ BrrBrr フローズン！`, "#00ffff");
+                            showIceEffect();
+                            AudioController.playFreeze();
+                            return true;
+                        }
+                        return false;
+                    };
+                } else if (stage <= 75) {
+                    name = `💚 癒しの賢者 Lv.${stage-50}`;
+                    special = (bs) => {
+                        if (Math.random() < 0.25) {
+                            const heal = 100;
+                            bs.boss.hp = Math.min(bs.boss.maxHp, bs.boss.hp + heal);
+                            BattleController.logBattle(`💚 ${name} の回復！ HPが ${heal} 回復した！`);
+                            AudioController.playHeal();
+                            return true;
+                        }
+                        return false;
+                    };
+                } else {
+                    name = `💢 憤怒の巨人 Lv.${stage-75}`;
+                    special = (bs) => {
+                        if (Math.random() < 0.25) {
+                            const dmg = Math.floor(bs.boss.attack * 1.5);
+                            bs.playerHp = Math.max(0, bs.playerHp - dmg);
+                            BattleController.logBattle(`💢 ${name} の強力な一撃！ ${dmg} ダメージ！`);
+                            AudioController.playAttack();
+                            return true;
+                        }
+                        return false;
+                    };
+                }
+                
+                return { name, hp, maxHp: hp, attack, special };
+            },
+            
+            getStageReward: function(stage) {
+                if (stage === 25) return { cardId: "story_pizza", message: "🎉 ステージ25クリア！ ミシックカード『ピッザ』を獲得！" };
+                if (stage === 50) return { cardId: "story_accel", message: "🎉 ステージ50クリア！ ゴッドリーカード『アクセラフローズン』を獲得！" };
+                if (stage === 75) return { cardId: "story_secret_heal", message: "🎉 ステージ75クリア！ シークレットカード『シークレットヒール』を獲得！" };
+                if (stage === 100) return { cardId: "story_power", message: "🎉 ステージ100クリア！ アルティメットカード『攻撃力の力』を獲得！" };
+                return null;
+            },
+            
+            startStoryBattle: function(stage) {
+                if (stage > window.playerData.storyClearedStage + 1) {
+                    alert("前のステージをクリアしてください！");
+                    return;
+                }
+                const stageData = this.getStageData(stage);
+                if (!stageData) return;
+                
+                GameController.switchScreen('battle-screen');
+                window.battleState = {
+                    isActive: true, difficulty: 'story', isBossBattle: true, isStoryMode: true, currentStoryStage: stage,
+                    boss: { hp: stageData.hp, maxHp: stageData.hp, attack: stageData.attack, name: stageData.name, special: stageData.special, shield: 0, onDefeat: () => {
+                        // クリア時処理
+                        if (stage > window.playerData.storyClearedStage) {
+                            window.playerData.storyClearedStage = stage;
+                            
+                            const reward = StoryController.getStageReward(stage);
+                            if (reward) {
+                                const card = ALL_CARDS.find(c => c.id === reward.cardId);
+                                if (card) {
+                                    if (!window.playerData.inventory[card.id]) window.playerData.inventory[card.id] = 0;
+                                    window.playerData.inventory[card.id]++;
+                                    BattleController.logBattle(reward.message);
+                                    showCenterMessage(reward.message.split(' ').slice(1).join(' '), "#ffd700");
+                                }
+                            } else {
+                                BattleController.logBattle(`ステージ ${stage} クリア！`);
+                            }
+                            GameDataManager.saveData();
+                        }
+                    }, dropRate: "" },
+                    playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null,
+                    typedIndex: 0, mistakes: 0, typingStartTime: 0, nextTurnMultiplier: 1.0,
+                    enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false,
+                    canSelectCard: true, playerHealOverTimeTurns: 0, enemyHealOverTimeTurns: 0
+                };
+                
+                document.getElementById('boss-name').innerHTML = stageData.name;
+                document.getElementById('battle-log').innerHTML = `<p>⚔️ ストーリーバトル ステージ${stage} 開始！</p>`;
+                BattleController.updateHPUI();
+                BattleController.fillHand();
+                BattleController.resetTypingUI();
+            },
+            
+            renderMap: function() {
+                const mapDiv = document.getElementById('world-map');
+                const rewardInfo = document.getElementById('story-reward-info');
+                const cleared = window.playerData.storyClearedStage || 0;
+                
+                rewardInfo.innerHTML = `現在の進行度: ${cleared} / 100 ステージクリア`;
+                
+                let html = '<div class="map-path">';
+                for (let i = 1; i <= 100; i++) {
+                    let statusClass = '';
+                    let onClick = '';
+                    let rewardMark = '';
+                    
+                    if (i <= cleared) {
+                        statusClass = 'completed';
+                    } else if (i === cleared + 1) {
+                        statusClass = 'current';
+                        onClick = `StoryController.startStoryBattle(${i})`;
+                    } else {
+                        statusClass = 'locked';
+                    }
+                    
+                    if (i === 25 || i === 50 || i === 75 || i === 100) {
+                        rewardMark = '🎁';
+                    }
+                    
+                    html += `<div class="map-node ${statusClass}" ${onClick ? `onclick="${onClick}"` : ''}>
+                        <span>${i}</span>
+                        <span>${rewardMark}</span>
+                    </div>`;
+                    
+                    if (i < 100) {
+                        html += '<div class="map-line"></div>';
+                    }
+                }
+                html += '</div>';
+                mapDiv.innerHTML = html;
+            }
+        };
+
         window.BattleController = {
             startBattle: function(difficulty, isBossBattle = false, bossData = null) {
                 GameController.switchScreen('battle-screen');
                 window.battleState = {
-                    isActive: true, difficulty: difficulty, isBossBattle: isBossBattle,
+                    isActive: true, difficulty: difficulty, isBossBattle: isBossBattle, isStoryMode: false,
                     boss: { hp: 0, maxHp: 0, attack: 0, name: "", special: null, shield: 0, onDefeat: null, dropRate: "" },
                     playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null,
                     typedIndex: 0, mistakes: 0, typingStartTime: 0, nextTurnMultiplier: 1.0,
                     enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false,
-                    canSelectCard: true
+                    canSelectCard: true, playerHealOverTimeTurns: 0, enemyHealOverTimeTurns: 0
                 };
                 if (isBossBattle && bossData) {
                     window.battleState.boss.name = bossData.name;
@@ -1415,7 +1692,6 @@
                 });
             },
             selectCard: function(index) {
-                // カード選択可能かチェック
                 if (!window.battleState.isActive || window.battleState.activeCard) return;
                 if (!window.battleState.canSelectCard) {
                     this.logBattle("⏳ まだカードを選べません！");
@@ -1424,10 +1700,10 @@
                 if (window.battleState.playerFrozen) {
                     this.logBattle("❄️ あなたは凍っていてカードが使えない！");
                     window.battleState.playerFrozen = false;
+                    window.battleState.canSelectCard = false;
                     setTimeout(() => this.enemyTurn(), 1000);
                     return;
                 }
-                // カード選択後は一時的に選択不可に
                 window.battleState.canSelectCard = false;
                 window.battleState.activeCard = window.battleState.hand[index];
                 window.battleState.hand.splice(index, 1);
@@ -1478,12 +1754,38 @@
                 let effectValue = card.baseEffect;
                 let logMsg = `🃏 【${card.name}】発動！ `;
                 
-                // フルリロードの特殊処理（ミスで効果減少）
-                if (card.id === "r5") {
+                // 特殊カード処理
+                if (card.id === "story_pizza") {
+                    window.battleState.playerHealOverTimeTurns = 2;
+                    logMsg += `2ターンの間、毎ターン30回復する！`;
+                } else if (card.id === "story_accel") {
+                    window.battleState.enemyFrozen = true;
+                    window.battleState.enemyFrozen = true; // 2ターン分凍結
+                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 30);
+                    logMsg += `敵を2ターン凍結！ HPが30回復！`;
+                    this.updateHPUI();
+                } else if (card.id === "story_secret_heal") {
+                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 35);
+                    window.battleState.playerHealOverTimeTurns = 2;
+                    logMsg += `35回復し、2ターンの間毎ターン30回復！`;
+                    this.updateHPUI();
+                } else if (card.id === "story_power") {
+                    const r = Math.random();
+                    const mult = r < 0.75 ? 3.5 : 5.0;
+                    window.battleState.nextTurnMultiplier = mult;
+                    logMsg += `次の攻撃が ${mult} 倍！ (${r < 0.75 ? '3.5倍' : '5倍'})`;
+                } else if (card.id === "boss_titan") {
+                    window.battleState.boss.shield = (window.battleState.boss.shield || 0) + 50;
+                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 50);
+                    logMsg += `50バリアを獲得し、50回復！`;
+                    this.updateHPUI();
+                } else if (card.id === "boss_lastboss") {
+                    effectValue = 150;
+                }
+                else if (card.id === "r5") {
                     let resetCount = 5 - Math.floor(mistakes * 0.5);
                     resetCount = Math.max(1, resetCount);
                     logMsg += `手札を ${resetCount} 枚引き直した！ (ミス${mistakes}回で${5-resetCount}枚減少) `;
-                    // 指定枚数だけ手札をリセット
                     for(let i = 0; i < resetCount && window.battleState.hand.length > 0; i++) {
                         window.battleState.hand.pop();
                     }
@@ -1492,7 +1794,6 @@
                     this.updateHPUI();
                     this.resetTypingUI();
                     window.battleState.activeCard = null;
-                    // カード選択可能に戻す
                     window.battleState.canSelectCard = true;
                     if (window.battleState.boss.hp <= 0) {
                         if (window.battleState.isBossBattle && window.battleState.boss.onDefeat) window.battleState.boss.onDefeat();
@@ -1503,23 +1804,12 @@
                     return;
                 }
                 
-                if (mistakes === 0) {
-                    if (card.type === 'assist' && card.baseEffect < 10) effectValue += 1;
-                    else effectValue += 5;
-                    logMsg += "【Perfect!!】 ";
-                    if (timeTaken <= 1000) { 
-                        if (card.type === 'assist' && card.baseEffect < 10) effectValue += 1;
-                        else effectValue += 10;
-                        logMsg += "【神速!!】 ";
-                    }
-                } else {
-                    logMsg += `(ミス${mistakes}回で威力低下) `;
-                    if (card.type === 'assist' && card.baseEffect < 10) effectValue = Math.max(1, effectValue - 0.1 * mistakes);
+                // 基本効果処理（attack/heal/assist）
+                if (card.type === 'attack' && (card.id !== "story_pizza" && card.id !== "story_accel" && card.id !== "story_secret_heal" && card.id !== "story_power" && card.id !== "boss_titan")) {
+                    if (mistakes === 0) effectValue += 5;
                     else effectValue = Math.max(1, effectValue - mistakes);
-                }
-                effectValue = Math.round(effectValue * 10) / 10;
-                
-                if (card.type === 'attack') {
+                    if (timeTaken <= 1000) effectValue += 10;
+                    
                     let finalDamage = Math.floor(effectValue * window.battleState.nextTurnMultiplier);
                     if (window.battleState.boss.shield > 0) {
                         const shield = window.battleState.boss.shield;
@@ -1530,29 +1820,30 @@
                     logMsg += `敵に 💥${finalDamage} ダメージ！`;
                     window.battleState.nextTurnMultiplier = 1.0;
                     AudioController.playAttack();
-                } else if (card.type === 'heal') {
+                } else if (card.type === 'heal' && !card.id.startsWith("story_") && card.id !== "boss_titan") {
+                    if (mistakes === 0) effectValue += 5;
+                    else effectValue = Math.max(1, effectValue - mistakes);
                     window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + effectValue);
                     logMsg += `HPが 💖${effectValue} 回復！`;
                     AudioController.playHeal();
-                } else if (card.type === 'assist') {
+                } else if (card.type === 'assist' && !card.id.startsWith("story_") && card.id !== "boss_titan") {
                     if (card.name.includes("リセット") || card.name.includes("ドロー") || card.name.includes("入れ替え")) {
-                        if (card.id === "c4" || card.id === "u5") {
-                            let resetCount = card.baseEffect;
-                            if (card.id === "u5") resetCount = Math.max(1, 3 - Math.floor(mistakes * 0.5));
-                            for(let i = 0; i < resetCount && window.battleState.hand.length > 0; i++) {
-                                window.battleState.hand.pop();
-                            }
-                            this.fillHand();
-                            logMsg += `手札を ${resetCount} 枚引き直した！`;
-                        } else {
-                            logMsg += `効果発動！`;
+                        let resetCount = card.baseEffect;
+                        if (card.id === "u5") resetCount = Math.max(1, 3 - Math.floor(mistakes * 0.5));
+                        for(let i = 0; i < resetCount && window.battleState.hand.length > 0; i++) {
+                            window.battleState.hand.pop();
                         }
+                        this.fillHand();
+                        logMsg += `手札を ${resetCount} 枚引き直した！`;
                     } else if (card.name === "時止め") {
                         window.battleState.enemyFrozen = true;
                         logMsg += `敵のターンをスキップ！`;
                     } else {
-                        window.battleState.nextTurnMultiplier = effectValue;
-                        logMsg += `次の攻撃が ${effectValue} 倍！`;
+                        let mult = effectValue;
+                        if (mistakes === 0) mult += 0.5;
+                        else mult = Math.max(1.0, mult - mistakes * 0.2);
+                        window.battleState.nextTurnMultiplier = mult;
+                        logMsg += `次の攻撃が ${mult.toFixed(1)} 倍！`;
                     }
                     AudioController.playHeal();
                 }
@@ -1561,7 +1852,6 @@
                 this.updateHPUI();
                 this.resetTypingUI();
                 window.battleState.activeCard = null;
-                // カード選択可能に戻す
                 window.battleState.canSelectCard = true;
                 
                 if (window.battleState.boss.hp <= 0) {
@@ -1573,10 +1863,18 @@
             },
             enemyTurn: function() {
                 if (!window.battleState.isActive) return;
+                
+                // プレイヤー回復効果
+                if (window.battleState.playerHealOverTimeTurns > 0) {
+                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 30);
+                    this.logBattle(`💚 回復効果β！ 30回復！`);
+                    window.battleState.playerHealOverTimeTurns--;
+                    this.updateHPUI();
+                }
                 if (window.battleState.playerBurnTurns > 0) {
                     window.battleState.playerHp = Math.max(0, window.battleState.playerHp - 20);
                     this.logBattle(`🔥 燃えた！ 20ダメージ！`);
-                    showCenterMessage(`🔥 ${20}ダメージ！ 燃えた！`, "#ff6600");
+                    showCenterMessage(`🔥 20ダメージ！ 燃えた！`, "#ff6600");
                     window.battleState.playerBurnTurns--;
                     this.updateHPUI();
                     if (window.battleState.playerHp <= 0) { this.endBattle(false, "燃え尽きた..."); return; }
@@ -1593,13 +1891,14 @@
                         return; 
                     }
                 }
+                
                 if (window.battleState.enemyFrozen) {
                     this.logBattle("👹 敵は凍っていて動けない！");
                     window.battleState.enemyFrozen = false;
-                    // 敵が動けない場合もカード選択可能に
                     window.battleState.canSelectCard = true;
                     return;
                 }
+                
                 let specialUsed = false;
                 if (window.battleState.isBossBattle && window.battleState.boss.special) {
                     specialUsed = window.battleState.boss.special(window.battleState);
@@ -1612,7 +1911,6 @@
                 }
                 this.updateHPUI();
                 if (window.battleState.playerHp <= 0) { this.endBattle(false, "HPが0になった..."); }
-                // 敵ターン終了後、カード選択可能に
                 window.battleState.canSelectCard = true;
             },
             updateHPUI: function() {
@@ -1635,7 +1933,12 @@
                 if (isWin) {
                     AudioController.playWin();
                     let reward = 0;
-                    if (window.battleState.isBossBattle) {
+                    if (window.battleState.isStoryMode) {
+                        title.innerHTML = "🏆 STAGE CLEAR!";
+                        title.style.color = "gold";
+                        desc.innerHTML = `${reason}<br><br>マップ画面から次へ進みましょう。`;
+                        GameDataManager.saveData();
+                    } else if (window.battleState.isBossBattle) {
                         reward = 5;
                         title.innerHTML = "🏆 BOSS DEFEATED!";
                         title.style.color = "gold";
@@ -1695,6 +1998,7 @@
                 document.getElementById(screenId).classList.add('active');
                 if (screenId === 'boss-select-screen') UIController.renderBossSelectScreen();
                 if (screenId === 'equip-screen') UIController.renderEquipScreen();
+                if (screenId === 'story-mode-screen') StoryController.renderMap();
             },
             checkAndStartBattle: function() {
                 const uniqueCardCount = Object.keys(window.playerData.inventory).length;
