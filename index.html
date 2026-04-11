@@ -28,7 +28,7 @@
 
         /* ヘッダー情報 */
         .header-info {
-            position: absolute;
+            position: fixed;
             top: 20px;
             right: 20px;
             background: rgba(0, 0, 0, 0.8);
@@ -58,12 +58,29 @@
             padding: 0;
             font-size: 18px;
             box-shadow: none;
+            position: relative;
         }
         .settings-btn:hover {
             transform: rotate(90deg) scale(1.1);
             background: rgba(255, 255, 255, 0.3);
             border-color: #fff;
             box-shadow: 0 0 15px rgba(255,255,255,0.5);
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid white;
         }
 
         /* ==========================================
@@ -75,6 +92,7 @@
             flex-grow: 1;
             min-height: 100vh;
             padding: 20px;
+            padding-top: 80px;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -158,6 +176,7 @@
         .btn-purple { background: linear-gradient(135deg, #9c27b0, #6a1b9a); border: 2px solid #ba68c8; }
         .btn-dark { background: linear-gradient(135deg, #424242, #212121); border: 2px solid #757575; }
         .btn-gold { background: linear-gradient(135deg, #ffd700, #ff8c00); border: 2px solid #fffacd; color: #000; text-shadow: none; }
+        .btn-teal { background: linear-gradient(135deg, #008080, #004d4d); border: 2px solid #00cccc; }
 
         /* ==========================================
            メニューグリッド
@@ -362,7 +381,7 @@
            ========================================== */
         #battle-screen {
             justify-content: flex-start;
-            padding-top: 60px;
+            padding-top: 80px;
             padding-bottom: 20px;
         }
         .battle-header {
@@ -381,6 +400,7 @@
             text-align: center;
             border: 2px solid #0f3460;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            position: relative;
         }
         .boss-status-box { border-color: #e94560; }
         .player-status-box { border-color: #4caf50; }
@@ -415,6 +435,45 @@
             text-shadow: 1px 1px 1px black;
         }
         
+        .shield-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #1a3a5c;
+            border-radius: 4px;
+            margin-top: 4px;
+            overflow: hidden;
+            border: 1px solid #3a7ca5;
+        }
+        .shield-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00bfff, #1e90ff);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .status-effects {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            max-width: 120px;
+            justify-content: flex-end;
+        }
+        .effect-icon {
+            background: rgba(0,0,0,0.7);
+            padding: 3px 6px;
+            border-radius: 12px;
+            font-size: 11px;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+        .effect-burn { border-color: #ff6600; color: #ffaa00; }
+        .effect-freeze { border-color: #00ffff; color: #88ffff; }
+        .effect-heal { border-color: #00ff88; color: #88ffbb; }
+        .effect-shield { border-color: #1e90ff; color: #88ccff; }
+
         .typing-area {
             background: linear-gradient(180deg, rgba(15, 52, 96, 0.9), rgba(22, 33, 62, 0.9));
             border: 3px solid #4a90e2;
@@ -573,6 +632,8 @@
             box-shadow: 0 0 40px rgba(233, 69, 96, 0.5);
             max-width: 500px;
             width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
         ::-webkit-scrollbar { width: 8px; }
@@ -718,6 +779,67 @@
             border-radius: 40px;
             border: 1px solid gold;
         }
+
+        /* トレード画面 */
+        .trade-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .trade-list {
+            width: 100%;
+            max-width: 1000px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        .trade-item {
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #4a90e2;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .trade-item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .trade-item-nickname {
+            font-size: 18px;
+            color: #ffcc00;
+        }
+        .trade-item-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .trade-notification-item {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #ff9800;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .notification-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        .input-field {
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 2px solid #4a90e2;
+            background: #1a1a2e;
+            color: white;
+            width: 100%;
+            max-width: 300px;
+        }
     </style>
 </head>
 <body>
@@ -725,7 +847,10 @@
     <div class="header-info" id="global-header">
         <div>📦 パック: <span id="display-packs" style="font-weight: bold; color: #00ffcc; font-size: 20px;">0</span></div>
         <div>💾 セーブ: <span id="save-status" style="color: yellow;">同期中...</span></div>
-        <button class="settings-btn" onclick="document.getElementById('settings-modal').classList.add('active')" title="設定">⚙️</button>
+        <button class="settings-btn" onclick="GameController.openSettings()" title="設定">
+            ⚙️
+            <span class="notification-badge" id="trade-notification-badge" style="display: none;">0</span>
+        </button>
     </div>
 
     <!-- ホーム画面 -->
@@ -739,6 +864,44 @@
             <button class="btn-success" onclick="GameController.switchScreen('inventory-screen'); UIController.renderInventory();">🎒 持ち物</button>
             <button class="btn-purple" onclick="GameController.switchScreen('equip-screen'); UIController.renderEquipScreen();">🛡️ カードを装備</button>
             <button class="btn-gold" onclick="GameController.switchScreen('story-mode-screen'); StoryController.renderMap();">📖 ストーリーモード</button>
+            <button class="btn-teal" onclick="GameController.switchScreen('trade-screen'); TradeController.renderMainMenu();">🔄 トレード</button>
+        </div>
+    </div>
+
+    <!-- トレード画面 -->
+    <div id="trade-screen" class="screen">
+        <h2>🔄 トレード</h2>
+        <div class="trade-tabs">
+            <button class="btn-primary active" onclick="TradeController.showSendTab()">📤 トレードを送る</button>
+            <button class="btn-secondary" onclick="TradeController.showReceiveTab()">📥 トレードを受け付ける</button>
+            <button class="btn-warning" onclick="TradeController.showNotificationTab()">🔔 トレード通知</button>
+        </div>
+        <p style="color: #aaa; margin-bottom: 15px;">※ ニックネームは設定で変更できます（現在: <span id="current-nickname-display">匿名：冒険者</span>）</p>
+        <div id="trade-content-area" style="width: 100%; max-width: 1000px;"></div>
+        <button class="btn-dark" style="margin-top: 20px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
+    </div>
+
+    <!-- カード選択モーダル（トレード用） -->
+    <div id="trade-card-select-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <h3 id="trade-modal-title">カードを選択</h3>
+            <p id="trade-modal-warning" style="color: #ffaa00; margin-bottom: 15px;">⚠️ 装備しているカードはトレードに出せません</p>
+            <div class="card-grid" id="trade-card-grid" style="max-height: 50vh;"></div>
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn-dark" onclick="document.getElementById('trade-card-select-modal').classList.remove('active')">キャンセル</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 確認モーダル -->
+    <div id="trade-confirm-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="confirm-title">確認</h3>
+            <p id="confirm-message"></p>
+            <div style="display: flex; gap: 15px; margin-top: 20px; justify-content: center;">
+                <button class="btn-success" id="confirm-yes-btn">はい</button>
+                <button class="btn-danger" onclick="document.getElementById('trade-confirm-modal').classList.remove('active')">いいえ</button>
+            </div>
         </div>
     </div>
 
@@ -784,8 +947,10 @@
                     <div class="hp-bar player-hp-bar" id="player-hp-bar"></div>
                     <div class="hp-text"><span id="player-hp-text">350 / 350</span></div>
                 </div>
-                <div id="player-buffs" style="color: #00ffcc; font-size: 14px; height: 20px;"></div>
-                <div id="player-debuffs" style="color: #ff6666; font-size: 12px; height: 18px;"></div>
+                <div class="shield-bar-container" id="player-shield-container" style="display: none;">
+                    <div class="shield-bar" id="player-shield-bar"></div>
+                </div>
+                <div class="status-effects" id="player-effects"></div>
             </div>
             
             <div class="status-box boss-status-box">
@@ -795,8 +960,10 @@
                     <div class="hp-bar boss-hp-bar" id="boss-hp-bar"></div>
                     <div class="hp-text"><span id="boss-hp-text">350 / 350</span></div>
                 </div>
-                <div id="boss-status" style="color: #ffcc00; font-size: 14px; height: 20px;"></div>
-                <div id="boss-debuffs" style="color: #ff8888; font-size: 12px; height: 18px;"></div>
+                <div class="shield-bar-container" id="boss-shield-container" style="display: none;">
+                    <div class="shield-bar" id="boss-shield-bar"></div>
+                </div>
+                <div class="status-effects" id="boss-effects"></div>
             </div>
         </div>
 
@@ -920,9 +1087,16 @@
     </div>
 
     <div id="settings-modal" class="modal">
-        <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-content" style="max-width: 450px;">
             <h2 style="font-size: 32px;">⚙️ 設定</h2>
-            <p style="margin: 15px 0; color: #ccc; font-size: 16px;">所持カードやパック数などの全データを削除して、ゲームを最初からやり直します。</p>
+            <div style="margin: 20px 0; text-align: left;">
+                <label style="display: block; margin-bottom: 8px; color: #ccc;">ニックネーム (最大15文字)</label>
+                <input type="text" id="nickname-input" class="input-field" maxlength="15" placeholder="匿名：冒険者" value="匿名：冒険者">
+                <p style="font-size: 12px; color: #888; margin-top: 5px;">※トレードで表示される名前です</p>
+            </div>
+            <button class="btn-success" onclick="GameDataManager.saveNickname()" style="width: 100%; margin-bottom: 15px;">💾 ニックネームを保存</button>
+            <hr style="border-color: #444; margin: 15px 0;">
+            <p style="margin: 15px 0; color: #ff6666; font-size: 14px;">所持カードやパック数などの全データを削除して、ゲームを最初からやり直します。</p>
             <button class="btn-danger" onclick="GameDataManager.resetData()" style="width: 100%; margin-bottom: 15px;">🗑️ データを全削除（リセット）</button>
             <button class="btn-dark" onclick="document.getElementById('settings-modal').classList.remove('active')" style="width: 100%;">閉じる</button>
         </div>
@@ -932,7 +1106,7 @@
     <script type="module">
         // --- Firebase 初期化 ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+        import { getDatabase, ref, set, get, update, push, remove, onValue, off } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDcds20u1-6-nk7710P4xddsa-m1wDL0TQ",
@@ -1091,7 +1265,7 @@
             { ja: "きりふだのかあどをつかえ", en: "kirihudanokaadowotukae" }
         ];
 
-        // ボス定義（ストーリー用ではない通常ボス）
+        // ボス定義
         const BOSSES = [
             { name: "🔥 ファイアスライム", hp: 600, maxHp: 600, attack: 35, index: 0,
               dropRate: "10%", dropCard: "ファイアスライム",
@@ -1114,6 +1288,7 @@
                       }
                       BattleController.fillHand();
                       AudioController.playBurn();
+                      battleState.playerBurnTurns = 2;
                       return true;
                   }
                   return false;
@@ -1183,7 +1358,7 @@
               dropRate: "3%", dropCard: "タイタンの守護",
               special: (battleState) => {
                   if (Math.random() < 0.25) {
-                      battleState.boss.shield = 50;
+                      battleState.boss.shield = (battleState.boss.shield || 0) + 50;
                       BattleController.logBattle(`🛡️ アルティメットタイタンの技！ 50のバリアを張った！`);
                       return true;
                   }
@@ -1234,16 +1409,24 @@
         // --- グローバルステート ---
         window.playerData = { 
             packs: 10, inventory: {}, equipped: [], unlockedBosses: [0],
-            storyClearedStage: 0 
+            storyClearedStage: 0, nickname: "匿名：冒険者"
         };
         window.UIState = { invRarity: 'All', invType: 'All', equipRarity: 'All' };
         window.battleState = {
             isActive: false, difficulty: '', boss: { hp: 0, maxHp: 0, attack: 0, name: "", special: null, shield: 0, onDefeat: null, dropRate: "" },
-            playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null, typedIndex: 0, mistakes: 0, 
+            playerHp: 350, playerMaxHp: 350, playerShield: 0, hand: [], activeCard: null, currentWord: null, typedIndex: 0, mistakes: 0, 
             typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false,
             canSelectCard: true, playerHealOverTimeTurns: 0, enemyHealOverTimeTurns: 0
         };
         window.bossBattleState = { isActive: false, currentBoss: null };
+        
+        // トレード関連
+        window.tradeState = {
+            currentTab: 'send',
+            selectedOfferCardId: null,
+            pendingTradeId: null,
+            notifications: []
+        };
 
         // --- データ管理 ---
         window.GameDataManager = {
@@ -1257,7 +1440,8 @@
                     inventory: window.playerData.inventory,
                     equipped: window.playerData.equipped,
                     unlockedBosses: window.playerData.unlockedBosses || [0],
-                    storyClearedStage: window.playerData.storyClearedStage || 0
+                    storyClearedStage: window.playerData.storyClearedStage || 0,
+                    nickname: window.playerData.nickname || "匿名：冒険者"
                 }).then(() => {
                     statusEl.textContent = '同期済';
                     statusEl.style.color = '#00ffcc';
@@ -1280,16 +1464,19 @@
                         window.playerData.equipped = data.equipped || [];
                         window.playerData.unlockedBosses = data.unlockedBosses || [0];
                         window.playerData.storyClearedStage = data.storyClearedStage || 0;
+                        window.playerData.nickname = data.nickname || "匿名：冒険者";
                     } else {
                         window.playerData.inventory = {};
                         window.playerData.equipped = [];
                         window.playerData.unlockedBosses = [0];
                         window.playerData.storyClearedStage = 0;
+                        window.playerData.nickname = "匿名：冒険者";
                         this.saveData(); 
                     }
                     statusEl.textContent = '同期済';
                     statusEl.style.color = '#00ffcc';
                     UIController.updateGlobalHeader();
+                    document.getElementById('nickname-input').value = window.playerData.nickname;
                 }).catch(() => {
                     statusEl.textContent = 'オフライン';
                     statusEl.style.color = '#888';
@@ -1297,11 +1484,23 @@
             },
             resetData: function() {
                 if (confirm("⚠️ 本当に全データを削除してリセットしますか？")) {
-                    window.playerData = { packs: 10, inventory: {}, equipped: [], unlockedBosses: [0], storyClearedStage: 0 };
+                    window.playerData = { packs: 10, inventory: {}, equipped: [], unlockedBosses: [0], storyClearedStage: 0, nickname: "匿名：冒険者" };
                     this.saveData();
                     alert("データをリセットしました。");
                     location.reload();
                 }
+            },
+            saveNickname: function() {
+                const input = document.getElementById('nickname-input');
+                const newNickname = input.value.trim() || "匿名：冒険者";
+                window.playerData.nickname = newNickname;
+                this.saveData();
+                document.getElementById('settings-modal').classList.remove('active');
+                showCenterMessage(`ニックネームを「${newNickname}」に変更しました`, "#00ffcc");
+            },
+            openSettings: function() {
+                document.getElementById('nickname-input').value = window.playerData.nickname;
+                document.getElementById('settings-modal').classList.add('active');
             }
         };
 
@@ -1401,6 +1600,38 @@
                         </div>
                     `;
                 });
+            },
+            updateBattleEffectsUI: function() {
+                const playerEffectsDiv = document.getElementById('player-effects');
+                const bossEffectsDiv = document.getElementById('boss-effects');
+                const bs = window.battleState;
+                
+                let playerHtml = '';
+                if (bs.playerShield > 0) {
+                    playerHtml += `<span class="effect-icon effect-shield">🛡️ ${bs.playerShield}</span>`;
+                    document.getElementById('player-shield-container').style.display = 'block';
+                    const maxShield = 100;
+                    document.getElementById('player-shield-bar').style.width = Math.min(100, (bs.playerShield / maxShield) * 100) + '%';
+                } else {
+                    document.getElementById('player-shield-container').style.display = 'none';
+                }
+                if (bs.playerBurnTurns > 0) playerHtml += `<span class="effect-icon effect-burn">🔥 ${bs.playerBurnTurns}</span>`;
+                if (bs.playerFrozen) playerHtml += `<span class="effect-icon effect-freeze">❄️ 凍結</span>`;
+                if (bs.playerHealOverTimeTurns > 0) playerHtml += `<span class="effect-icon effect-heal">💚 ${bs.playerHealOverTimeTurns}</span>`;
+                playerEffectsDiv.innerHTML = playerHtml;
+                
+                let bossHtml = '';
+                if (bs.boss.shield > 0) {
+                    bossHtml += `<span class="effect-icon effect-shield">🛡️ ${bs.boss.shield}</span>`;
+                    document.getElementById('boss-shield-container').style.display = 'block';
+                    const maxShield = 100;
+                    document.getElementById('boss-shield-bar').style.width = Math.min(100, (bs.boss.shield / maxShield) * 100) + '%';
+                } else {
+                    document.getElementById('boss-shield-container').style.display = 'none';
+                }
+                if (bs.enemyBurnTurns > 0) bossHtml += `<span class="effect-icon effect-burn">🔥 ${bs.enemyBurnTurns}</span>`;
+                if (bs.enemyFrozen) bossHtml += `<span class="effect-icon effect-freeze">❄️ 凍結</span>`;
+                bossEffectsDiv.innerHTML = bossHtml;
             }
         };
 
@@ -1461,15 +1692,393 @@
             }
         };
 
+        // --- トレードコントローラー ---
+        window.TradeController = {
+            currentTradeMode: null,
+            selectedOfferCard: null,
+            
+            renderMainMenu: function() {
+                document.getElementById('current-nickname-display').textContent = window.playerData.nickname;
+                this.showSendTab();
+                this.startTradeListener();
+            },
+            
+            startTradeListener: function() {
+                const notifRef = ref(database, `trades/notifications/${userId}`);
+                off(notifRef);
+                onValue(notifRef, (snapshot) => {
+                    const data = snapshot.val() || {};
+                    const count = Object.keys(data).length;
+                    const badge = document.getElementById('trade-notification-badge');
+                    if (count > 0) {
+                        badge.style.display = 'flex';
+                        badge.textContent = count;
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                    window.tradeState.notifications = data;
+                });
+            },
+            
+            showSendTab: function() {
+                window.tradeState.currentTab = 'send';
+                document.querySelectorAll('.trade-tabs button').forEach((btn, i) => {
+                    btn.classList.remove('active');
+                    if (i === 0) btn.classList.add('active');
+                });
+                const area = document.getElementById('trade-content-area');
+                area.innerHTML = `
+                    <div style="text-align: center;">
+                        <p style="color: #aaa; margin-bottom: 20px;">出品するカードを1枚選んでください</p>
+                        <p style="color: #ffaa00; margin-bottom: 20px;">⚠️ 装備しているカードは出品できません</p>
+                        <button class="btn-success" onclick="TradeController.showCardSelectForOffer()">📤 カードを選んで出品する</button>
+                    </div>
+                `;
+            },
+            
+            showReceiveTab: function() {
+                window.tradeState.currentTab = 'receive';
+                document.querySelectorAll('.trade-tabs button').forEach((btn, i) => {
+                    btn.classList.remove('active');
+                    if (i === 1) btn.classList.add('active');
+                });
+                const area = document.getElementById('trade-content-area');
+                area.innerHTML = '<p style="text-align: center;">読み込み中...</p>';
+                
+                const offersRef = ref(database, 'trades/offers');
+                get(offersRef).then((snapshot) => {
+                    const offers = snapshot.val() || {};
+                    let html = '<div class="trade-list">';
+                    let hasOffers = false;
+                    
+                    for (const [offerId, offer] of Object.entries(offers)) {
+                        if (offer.sellerId === userId) continue;
+                        const card = UIController.getCardById(offer.cardId);
+                        if (!card) continue;
+                        hasOffers = true;
+                        const isMyOffer = offer.sellerId === userId;
+                        html += `
+                            <div class="trade-item">
+                                ${UIController.createCardHTML(card, 1)}
+                                <div class="trade-item-info">
+                                    <span class="trade-item-nickname">${offer.sellerNickname || '不明'}</span>
+                                    <span style="color: #ccc;">出品日時: ${new Date(offer.timestamp).toLocaleString()}</span>
+                                </div>
+                                <div style="margin-left: auto;">
+                                    ${isMyOffer ? 
+                                        `<button class="btn-warning" onclick="TradeController.cancelOffer('${offerId}')">📤 出品取り消し</button>` :
+                                        `<button class="btn-primary" onclick="TradeController.requestTrade('${offerId}')">🔄 トレードを申し込む</button>`
+                                    }
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    if (!hasOffers) html += '<p style="text-align: center; color: #aaa;">現在出品されているカードはありません</p>';
+                    html += '</div>';
+                    area.innerHTML = html;
+                });
+            },
+            
+            showNotificationTab: function() {
+                window.tradeState.currentTab = 'notification';
+                document.querySelectorAll('.trade-tabs button').forEach((btn, i) => {
+                    btn.classList.remove('active');
+                    if (i === 2) btn.classList.add('active');
+                });
+                const area = document.getElementById('trade-content-area');
+                const notifications = window.tradeState.notifications;
+                let html = '<div class="trade-list">';
+                let hasNotif = false;
+                
+                for (const [notifId, notif] of Object.entries(notifications)) {
+                    hasNotif = true;
+                    const offerCard = UIController.getCardById(notif.offerCardId);
+                    const requestCard = UIController.getCardById(notif.requestCardId);
+                    html += `
+                        <div class="trade-notification-item">
+                            <p style="font-size: 16px; margin-bottom: 15px;">
+                                <strong>${notif.requesterNickname}</strong>さんが、あなたの
+                                <strong>${offerCard?.name || '?'}</strong> を 
+                                <strong>${requestCard?.name || '?'}</strong> と交換しようとしています。
+                            </p>
+                            <div style="display: flex; gap: 20px; justify-content: center;">
+                                ${offerCard ? UIController.createCardHTML(offerCard) : ''}
+                                <span style="font-size: 30px; align-self: center;">➡️</span>
+                                ${requestCard ? UIController.createCardHTML(requestCard) : ''}
+                            </div>
+                            <div class="notification-buttons">
+                                <button class="btn-success" onclick="TradeController.acceptTrade('${notifId}')">✅ 許可</button>
+                                <button class="btn-danger" onclick="TradeController.rejectTrade('${notifId}')">❌ 拒否</button>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if (!hasNotif) html += '<p style="text-align: center; color: #aaa;">通知はありません</p>';
+                html += '</div>';
+                area.innerHTML = html;
+            },
+            
+            showCardSelectForOffer: function() {
+                const modal = document.getElementById('trade-card-select-modal');
+                document.getElementById('trade-modal-title').textContent = '出品するカードを選択';
+                const grid = document.getElementById('trade-card-grid');
+                grid.innerHTML = '';
+                
+                let hasCards = false;
+                for (const [cardId, count] of Object.entries(window.playerData.inventory)) {
+                    if (window.playerData.equipped.includes(cardId)) continue;
+                    if (count < 1) continue;
+                    const card = UIController.getCardById(cardId);
+                    if (!card) continue;
+                    hasCards = true;
+                    grid.innerHTML += UIController.createCardHTML(card, count, `TradeController.selectOfferCard('${cardId}')`);
+                }
+                
+                if (!hasCards) {
+                    grid.innerHTML = '<p style="color: #aaa;">出品できるカードがありません（装備中でないカードが必要です）</p>';
+                }
+                
+                modal.classList.add('active');
+            },
+            
+            selectOfferCard: function(cardId) {
+                window.tradeState.selectedOfferCardId = cardId;
+                document.getElementById('trade-card-select-modal').classList.remove('active');
+                
+                const card = UIController.getCardById(cardId);
+                const confirmModal = document.getElementById('trade-confirm-modal');
+                document.getElementById('confirm-title').textContent = '出品確認';
+                document.getElementById('confirm-message').innerHTML = `
+                    「${card.name}」を出品しますか？<br>
+                    <span style="color: #ffaa00;">※出品するとカードは手元からなくなります</span>
+                `;
+                document.getElementById('confirm-yes-btn').onclick = () => {
+                    TradeController.confirmOffer();
+                    confirmModal.classList.remove('active');
+                };
+                confirmModal.classList.add('active');
+            },
+            
+            confirmOffer: function() {
+                const cardId = window.tradeState.selectedOfferCardId;
+                if (!cardId) return;
+                
+                const card = UIController.getCardById(cardId);
+                if (!window.playerData.inventory[cardId] || window.playerData.inventory[cardId] < 1) {
+                    alert("カードを持っていません");
+                    return;
+                }
+                
+                if (window.playerData.equipped.includes(cardId)) {
+                    alert("装備中のカードは出品できません");
+                    return;
+                }
+                
+                // カードを減らす
+                window.playerData.inventory[cardId]--;
+                if (window.playerData.inventory[cardId] <= 0) {
+                    delete window.playerData.inventory[cardId];
+                }
+                
+                // 出品データを作成
+                const offerRef = push(ref(database, 'trades/offers'));
+                const offerData = {
+                    offerId: offerRef.key,
+                    sellerId: userId,
+                    sellerNickname: window.playerData.nickname,
+                    cardId: cardId,
+                    timestamp: Date.now()
+                };
+                
+                set(offerRef, offerData).then(() => {
+                    GameDataManager.saveData();
+                    showCenterMessage(`「${card.name}」を出品しました！`, "#00ffcc");
+                    window.tradeState.selectedOfferCardId = null;
+                    if (window.tradeState.currentTab === 'send') {
+                        // そのまま
+                    }
+                });
+            },
+            
+            cancelOffer: function(offerId) {
+                const confirmModal = document.getElementById('trade-confirm-modal');
+                document.getElementById('confirm-title').textContent = '出品取り消し';
+                document.getElementById('confirm-message').textContent = '出品を取り消しますか？カードは手元に戻ります。';
+                document.getElementById('confirm-yes-btn').onclick = async () => {
+                    const offerRef = ref(database, `trades/offers/${offerId}`);
+                    const snapshot = await get(offerRef);
+                    if (snapshot.exists()) {
+                        const offer = snapshot.val();
+                        if (offer.sellerId === userId) {
+                            // カードを戻す
+                            if (!window.playerData.inventory[offer.cardId]) window.playerData.inventory[offer.cardId] = 0;
+                            window.playerData.inventory[offer.cardId]++;
+                            GameDataManager.saveData();
+                            await remove(offerRef);
+                            showCenterMessage("出品を取り消しました", "#ffaa00");
+                            TradeController.showReceiveTab();
+                        }
+                    }
+                    confirmModal.classList.remove('active');
+                };
+                confirmModal.classList.add('active');
+            },
+            
+            requestTrade: function(offerId) {
+                window.tradeState.pendingTradeId = offerId;
+                const modal = document.getElementById('trade-card-select-modal');
+                document.getElementById('trade-modal-title').textContent = '交換に出すカードを選択';
+                const grid = document.getElementById('trade-card-grid');
+                grid.innerHTML = '';
+                
+                let hasCards = false;
+                for (const [cardId, count] of Object.entries(window.playerData.inventory)) {
+                    if (window.playerData.equipped.includes(cardId)) continue;
+                    if (count < 1) continue;
+                    const card = UIController.getCardById(cardId);
+                    if (!card) continue;
+                    hasCards = true;
+                    grid.innerHTML += UIController.createCardHTML(card, count, `TradeController.selectTradeCard('${cardId}')`);
+                }
+                
+                if (!hasCards) {
+                    grid.innerHTML = '<p style="color: #aaa;">交換に出せるカードがありません</p>';
+                }
+                
+                modal.classList.add('active');
+            },
+            
+            selectTradeCard: function(cardId) {
+                document.getElementById('trade-card-select-modal').classList.remove('active');
+                const offerId = window.tradeState.pendingTradeId;
+                if (!offerId) return;
+                
+                get(ref(database, `trades/offers/${offerId}`)).then(async (snapshot) => {
+                    if (!snapshot.exists()) {
+                        alert("この出品は既に終了しています");
+                        TradeController.showReceiveTab();
+                        return;
+                    }
+                    
+                    const offer = snapshot.val();
+                    
+                    // 自分のカードを減らす
+                    if (!window.playerData.inventory[cardId] || window.playerData.inventory[cardId] < 1) {
+                        alert("カードを持っていません");
+                        return;
+                    }
+                    window.playerData.inventory[cardId]--;
+                    if (window.playerData.inventory[cardId] <= 0) {
+                        delete window.playerData.inventory[cardId];
+                    }
+                    GameDataManager.saveData();
+                    
+                    // 通知を作成
+                    const notifRef = push(ref(database, `trades/notifications/${offer.sellerId}`));
+                    const notifData = {
+                        notificationId: notifRef.key,
+                        offerId: offerId,
+                        offerCardId: offer.cardId,
+                        requesterId: userId,
+                        requesterNickname: window.playerData.nickname,
+                        requestCardId: cardId,
+                        timestamp: Date.now(),
+                        status: 'pending'
+                    };
+                    
+                    await set(notifRef, notifData);
+                    
+                    // 出品を一時的に非表示にする（ロック）
+                    await update(ref(database, `trades/offers/${offerId}`), { locked: true, pendingNotificationId: notifRef.key });
+                    
+                    showCenterMessage(`${offer.sellerNickname}さんにトレードを申し込みました！`, "#00ffcc");
+                    TradeController.showReceiveTab();
+                });
+            },
+            
+            acceptTrade: async function(notifId) {
+                const notifRef = ref(database, `trades/notifications/${userId}/${notifId}`);
+                const snapshot = await get(notifRef);
+                if (!snapshot.exists()) {
+                    alert("この通知は無効です");
+                    return;
+                }
+                
+                const notif = snapshot.val();
+                
+                // 出品者側の処理
+                // 相手が出したカードをもらう
+                const receivedCardId = notif.requestCardId;
+                if (!window.playerData.inventory[receivedCardId]) window.playerData.inventory[receivedCardId] = 0;
+                window.playerData.inventory[receivedCardId]++;
+                
+                // 出品を削除
+                await remove(ref(database, `trades/offers/${notif.offerId}`));
+                // 通知を削除
+                await remove(notifRef);
+                
+                GameDataManager.saveData();
+                
+                // 相手に成功通知
+                const successNotifRef = push(ref(database, `trades/notifications/${notif.requesterId}`));
+                await set(successNotifRef, {
+                    type: 'success',
+                    message: `${window.playerData.nickname}さんがトレードを許可しました！`,
+                    receivedCardId: notif.offerCardId,
+                    givenCardId: notif.requestCardId,
+                    timestamp: Date.now()
+                });
+                
+                showCenterMessage("トレード成立！カードを獲得しました！", "#ffd700");
+                TradeController.showNotificationTab();
+            },
+            
+            rejectTrade: async function(notifId) {
+                const notifRef = ref(database, `trades/notifications/${userId}/${notifId}`);
+                const snapshot = await get(notifRef);
+                if (!snapshot.exists()) return;
+                
+                const notif = snapshot.val();
+                
+                // 相手にカードを返却
+                const requesterRef = ref(database, `users/${notif.requesterId}`);
+                const requesterSnapshot = await get(requesterRef);
+                if (requesterSnapshot.exists()) {
+                    const requesterData = requesterSnapshot.val();
+                    if (!requesterData.inventory) requesterData.inventory = {};
+                    requesterData.inventory[notif.requestCardId] = (requesterData.inventory[notif.requestCardId] || 0) + 1;
+                    await set(requesterRef, requesterData);
+                }
+                
+                // 出品のロック解除
+                await update(ref(database, `trades/offers/${notif.offerId}`), { locked: false, pendingNotificationId: null });
+                
+                // 通知を削除
+                await remove(notifRef);
+                
+                // 相手に失敗通知
+                const failNotifRef = push(ref(database, `trades/notifications/${notif.requesterId}`));
+                await set(failNotifRef, {
+                    type: 'fail',
+                    message: `${window.playerData.nickname}さんがトレードを拒否しました。`,
+                    returnedCardId: notif.requestCardId,
+                    timestamp: Date.now()
+                });
+                
+                showCenterMessage("トレードを拒否しました", "#ff6666");
+                TradeController.showNotificationTab();
+            }
+        };
+
         window.StoryController = {
-            // ストーリーステージ定義
             getStageData: function(stage) {
-                // stage: 1 ~ 100
                 if (stage < 1 || stage > 100) return null;
                 
                 let hp = 300 + (stage - 1) * 5;
                 let attack = 25 + (stage - 1) * 0.25;
-                attack = Math.ceil(attack); // 切り上げ
+                attack = Math.ceil(attack);
                 
                 let special = null;
                 let name = `ステージ ${stage}`;
@@ -1538,7 +2147,6 @@
                 window.battleState = {
                     isActive: true, difficulty: 'story', isBossBattle: true, isStoryMode: true, currentStoryStage: stage,
                     boss: { hp: stageData.hp, maxHp: stageData.hp, attack: stageData.attack, name: stageData.name, special: stageData.special, shield: 0, onDefeat: () => {
-                        // クリア時処理
                         if (stage > window.playerData.storyClearedStage) {
                             window.playerData.storyClearedStage = stage;
                             
@@ -1557,7 +2165,7 @@
                             GameDataManager.saveData();
                         }
                     }, dropRate: "" },
-                    playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null,
+                    playerHp: 350, playerMaxHp: 350, playerShield: 0, hand: [], activeCard: null, currentWord: null,
                     typedIndex: 0, mistakes: 0, typingStartTime: 0, nextTurnMultiplier: 1.0,
                     enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false,
                     canSelectCard: true, playerHealOverTimeTurns: 0, enemyHealOverTimeTurns: 0
@@ -1616,7 +2224,7 @@
                 window.battleState = {
                     isActive: true, difficulty: difficulty, isBossBattle: isBossBattle, isStoryMode: false,
                     boss: { hp: 0, maxHp: 0, attack: 0, name: "", special: null, shield: 0, onDefeat: null, dropRate: "" },
-                    playerHp: 350, playerMaxHp: 350, hand: [], activeCard: null, currentWord: null,
+                    playerHp: 350, playerMaxHp: 350, playerShield: 0, hand: [], activeCard: null, currentWord: null,
                     typedIndex: 0, mistakes: 0, typingStartTime: 0, nextTurnMultiplier: 1.0,
                     enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false,
                     canSelectCard: true, playerHealOverTimeTurns: 0, enemyHealOverTimeTurns: 0
@@ -1701,6 +2309,7 @@
                     this.logBattle("❄️ あなたは凍っていてカードが使えない！");
                     window.battleState.playerFrozen = false;
                     window.battleState.canSelectCard = false;
+                    UIController.updateBattleEffectsUI();
                     setTimeout(() => this.enemyTurn(), 1000);
                     return;
                 }
@@ -1754,13 +2363,11 @@
                 let effectValue = card.baseEffect;
                 let logMsg = `🃏 【${card.name}】発動！ `;
                 
-                // 特殊カード処理
                 if (card.id === "story_pizza") {
                     window.battleState.playerHealOverTimeTurns = 2;
                     logMsg += `2ターンの間、毎ターン30回復する！`;
                 } else if (card.id === "story_accel") {
                     window.battleState.enemyFrozen = true;
-                    window.battleState.enemyFrozen = true; // 2ターン分凍結
                     window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 30);
                     logMsg += `敵を2ターン凍結！ HPが30回復！`;
                     this.updateHPUI();
@@ -1775,14 +2382,13 @@
                     window.battleState.nextTurnMultiplier = mult;
                     logMsg += `次の攻撃が ${mult} 倍！ (${r < 0.75 ? '3.5倍' : '5倍'})`;
                 } else if (card.id === "boss_titan") {
-                    window.battleState.boss.shield = (window.battleState.boss.shield || 0) + 50;
+                    window.battleState.playerShield = (window.battleState.playerShield || 0) + 50;
                     window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 50);
                     logMsg += `50バリアを獲得し、50回復！`;
                     this.updateHPUI();
                 } else if (card.id === "boss_lastboss") {
                     effectValue = 150;
-                }
-                else if (card.id === "r5") {
+                } else if (card.id === "r5") {
                     let resetCount = 5 - Math.floor(mistakes * 0.5);
                     resetCount = Math.max(1, resetCount);
                     logMsg += `手札を ${resetCount} 枚引き直した！ (ミス${mistakes}回で${5-resetCount}枚減少) `;
@@ -1795,6 +2401,7 @@
                     this.resetTypingUI();
                     window.battleState.activeCard = null;
                     window.battleState.canSelectCard = true;
+                    UIController.updateBattleEffectsUI();
                     if (window.battleState.boss.hp <= 0) {
                         if (window.battleState.isBossBattle && window.battleState.boss.onDefeat) window.battleState.boss.onDefeat();
                         this.endBattle(true, "ボスを撃破した！");
@@ -1804,8 +2411,7 @@
                     return;
                 }
                 
-                // 基本効果処理（attack/heal/assist）
-                if (card.type === 'attack' && (card.id !== "story_pizza" && card.id !== "story_accel" && card.id !== "story_secret_heal" && card.id !== "story_power" && card.id !== "boss_titan")) {
+                if (card.type === 'attack' && !card.id.startsWith("story_") && card.id !== "boss_titan") {
                     if (mistakes === 0) effectValue += 5;
                     else effectValue = Math.max(1, effectValue - mistakes);
                     if (timeTaken <= 1000) effectValue += 10;
@@ -1853,6 +2459,7 @@
                 this.resetTypingUI();
                 window.battleState.activeCard = null;
                 window.battleState.canSelectCard = true;
+                UIController.updateBattleEffectsUI();
                 
                 if (window.battleState.boss.hp <= 0) {
                     if (window.battleState.isBossBattle && window.battleState.boss.onDefeat) window.battleState.boss.onDefeat();
@@ -1864,7 +2471,6 @@
             enemyTurn: function() {
                 if (!window.battleState.isActive) return;
                 
-                // プレイヤー回復効果
                 if (window.battleState.playerHealOverTimeTurns > 0) {
                     window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 30);
                     this.logBattle(`💚 回復効果β！ 30回復！`);
@@ -1872,19 +2478,44 @@
                     this.updateHPUI();
                 }
                 if (window.battleState.playerBurnTurns > 0) {
-                    window.battleState.playerHp = Math.max(0, window.battleState.playerHp - 20);
+                    let burnDamage = 20;
+                    if (window.battleState.playerShield > 0) {
+                        if (window.battleState.playerShield >= burnDamage) {
+                            window.battleState.playerShield -= burnDamage;
+                            burnDamage = 0;
+                        } else {
+                            burnDamage -= window.battleState.playerShield;
+                            window.battleState.playerShield = 0;
+                        }
+                    }
+                    if (burnDamage > 0) {
+                        window.battleState.playerHp = Math.max(0, window.battleState.playerHp - burnDamage);
+                    }
                     this.logBattle(`🔥 燃えた！ 20ダメージ！`);
-                    showCenterMessage(`🔥 20ダメージ！ 燃えた！`, "#ff6600");
+                    showCenterMessage(`🔥 燃えた！`, "#ff6600");
                     window.battleState.playerBurnTurns--;
                     this.updateHPUI();
+                    UIController.updateBattleEffectsUI();
                     if (window.battleState.playerHp <= 0) { this.endBattle(false, "燃え尽きた..."); return; }
                 }
                 if (window.battleState.enemyBurnTurns > 0) {
-                    window.battleState.boss.hp = Math.max(0, window.battleState.boss.hp - 20);
+                    let burnDamage = 20;
+                    if (window.battleState.boss.shield > 0) {
+                        if (window.battleState.boss.shield >= burnDamage) {
+                            window.battleState.boss.shield -= burnDamage;
+                            burnDamage = 0;
+                        } else {
+                            burnDamage -= window.battleState.boss.shield;
+                            window.battleState.boss.shield = 0;
+                        }
+                    }
+                    if (burnDamage > 0) {
+                        window.battleState.boss.hp = Math.max(0, window.battleState.boss.hp - burnDamage);
+                    }
                     this.logBattle(`🔥 ボスが燃えた！ 20ダメージ！`);
-                    showCenterMessage(`🔥 ボスが燃えた！ 20ダメージ！`, "#ff6600");
                     window.battleState.enemyBurnTurns--;
                     this.updateHPUI();
+                    UIController.updateBattleEffectsUI();
                     if (window.battleState.boss.hp <= 0) { 
                         if (window.battleState.isBossBattle && window.battleState.boss.onDefeat) window.battleState.boss.onDefeat();
                         this.endBattle(true, "ボスを撃破した！"); 
@@ -1896,6 +2527,7 @@
                     this.logBattle("👹 敵は凍っていて動けない！");
                     window.battleState.enemyFrozen = false;
                     window.battleState.canSelectCard = true;
+                    UIController.updateBattleEffectsUI();
                     return;
                 }
                 
@@ -1903,13 +2535,27 @@
                 if (window.battleState.isBossBattle && window.battleState.boss.special) {
                     specialUsed = window.battleState.boss.special(window.battleState);
                     this.updateHPUI();
+                    UIController.updateBattleEffectsUI();
                     if (window.battleState.playerHp <= 0) { this.endBattle(false, "ボスの特殊攻撃で倒れた..."); return; }
                 }
                 if (!specialUsed) {
-                    window.battleState.playerHp = Math.max(0, window.battleState.playerHp - window.battleState.boss.attack);
+                    let enemyDamage = window.battleState.boss.attack;
+                    if (window.battleState.playerShield > 0) {
+                        if (window.battleState.playerShield >= enemyDamage) {
+                            window.battleState.playerShield -= enemyDamage;
+                            enemyDamage = 0;
+                        } else {
+                            enemyDamage -= window.battleState.playerShield;
+                            window.battleState.playerShield = 0;
+                        }
+                    }
+                    if (enemyDamage > 0) {
+                        window.battleState.playerHp = Math.max(0, window.battleState.playerHp - enemyDamage);
+                    }
                     this.logBattle(`👹 ${window.battleState.boss.name} の攻撃！ ${window.battleState.boss.attack} ダメージ！`);
                 }
                 this.updateHPUI();
+                UIController.updateBattleEffectsUI();
                 if (window.battleState.playerHp <= 0) { this.endBattle(false, "HPが0になった..."); }
                 window.battleState.canSelectCard = true;
             },
@@ -1920,6 +2566,7 @@
                 document.getElementById('boss-hp-text').textContent = `${Math.floor(window.battleState.boss.hp)} / ${window.battleState.boss.maxHp}`;
                 document.getElementById('player-hp-bar').style.width = (window.battleState.playerHp / window.battleState.playerMaxHp * 100) + '%';
                 document.getElementById('boss-hp-bar').style.width = (window.battleState.boss.hp / window.battleState.boss.maxHp * 100) + '%';
+                UIController.updateBattleEffectsUI();
             },
             logBattle: function(msg) {
                 const logDiv = document.getElementById('battle-log');
@@ -1999,6 +2646,7 @@
                 if (screenId === 'boss-select-screen') UIController.renderBossSelectScreen();
                 if (screenId === 'equip-screen') UIController.renderEquipScreen();
                 if (screenId === 'story-mode-screen') StoryController.renderMap();
+                if (screenId === 'trade-screen') TradeController.renderMainMenu();
             },
             checkAndStartBattle: function() {
                 const uniqueCardCount = Object.keys(window.playerData.inventory).length;
@@ -2016,6 +2664,9 @@
                     alert(`現在${uniqueCardCount}種類のカードを持っています。25種類以上集めるとデッキを組めます。それまでは所持カードからのみランダムに支給されます。`);
                 }
                 this.switchScreen('difficulty-screen');
+            },
+            openSettings: function() {
+                GameDataManager.openSettings();
             }
         };
 
