@@ -26,7 +26,6 @@
             flex-direction: column;
         }
 
-        /* ヘッダー情報 */
         .header-info {
             position: fixed;
             top: 20px;
@@ -66,9 +65,6 @@
             box-shadow: 0 0 15px rgba(255,255,255,0.5);
         }
 
-        /* ==========================================
-           画面レイアウト
-           ========================================== */
         .screen {
             display: none;
             width: 100%;
@@ -112,9 +108,6 @@
             text-align: center;
         }
 
-        /* ==========================================
-           ボタンのスタイル
-           ========================================== */
         button {
             cursor: pointer;
             border: none;
@@ -161,9 +154,6 @@
         .btn-gold { background: linear-gradient(135deg, #ffd700, #ff8c00); border: 2px solid #fffacd; color: #000; text-shadow: none; }
         .btn-teal { background: linear-gradient(135deg, #008080, #004d4d); border: 2px solid #00cccc; }
 
-        /* ==========================================
-           メニューグリッド
-           ========================================== */
         .menu-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -176,9 +166,6 @@
             font-size: 22px;
         }
 
-        /* ==========================================
-           タブバーのスタイル
-           ========================================== */
         .tab-bar-container {
             width: 100%;
             max-width: 1000px;
@@ -207,22 +194,12 @@
             border: 2px solid transparent;
             height: auto;
         }
-        .tab-bar button:hover {
-            background: #3a3a6a;
-            transform: scale(1.05);
-        }
-        .tab-bar button:active {
-            transform: scale(0.95);
-        }
         .tab-bar button.active {
             background: #e94560;
             border-color: #ff2e63;
             box-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
         }
 
-        /* ==========================================
-           カードのスタイル
-           ========================================== */
         .rarity-Common { background: linear-gradient(135deg, #808080, #555555); color: white; border: 2px solid #aaaaaa; }
         .rarity-Uncommon { background: linear-gradient(135deg, #4caf50, #2e7d32); color: white; border: 2px solid #81c784; }
         .rarity-Rare { background: linear-gradient(135deg, #2196f3, #1565c0); color: white; border: 2px solid #64b5f6; }
@@ -359,9 +336,6 @@
             display: none;
         }
 
-        /* ==========================================
-           バトル画面
-           ========================================== */
         #battle-screen {
             justify-content: flex-start;
             padding-top: 80px;
@@ -538,7 +512,6 @@
         }
         .battle-log p:first-child { color: #fff; font-weight: bold; }
 
-        /* 中央メッセージ */
         .center-message {
             position: fixed;
             top: 50%;
@@ -651,18 +624,9 @@
         .boss-select-item button { padding: 8px 25px; font-size: 18px; }
         .boss-progress { margin-bottom: 20px; font-size: 16px; color: #ffcc00; }
 
-        .drop-rate {
-            font-size: 12px;
-            color: #ffcc00;
-            margin-top: 8px;
-        }
-        .drop-card {
-            font-size: 11px;
-            color: #88ff88;
-            margin-top: 4px;
-        }
+        .drop-rate { font-size: 12px; color: #ffcc00; margin-top: 8px; }
+        .drop-card { font-size: 11px; color: #88ff88; margin-top: 4px; }
         
-        /* ストーリーマップ用 */
         .story-map-container {
             display: flex;
             flex-direction: column;
@@ -726,12 +690,8 @@
             50% { transform: scale(1.05); box-shadow: 0 0 15px 8px #f1c40f, 0 8px 0 #1a252f; }
             100% { transform: scale(1); box-shadow: 0 0 0 4px #e74c3c, 0 8px 0 #1a252f; }
         }
-        .map-node span:first-child {
-            font-size: 18px;
-        }
-        .map-node span:last-child {
-            font-size: 10px;
-        }
+        .map-node span:first-child { font-size: 18px; }
+        .map-node span:last-child { font-size: 10px; }
         .map-line {
             width: 30px;
             height: 6px;
@@ -747,7 +707,6 @@
             border: 1px solid gold;
         }
 
-        /* トレード画面 */
         .trade-tabs {
             display: flex;
             gap: 15px;
@@ -800,11 +759,6 @@
             font-size: 20px;
             color: #ffcc00;
         }
-        .trade-item-card {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
         .trade-notification-item {
             background: rgba(0,0,0,0.8);
             border: 2px solid #ff9800;
@@ -843,12 +797,9 @@
     <div class="header-info" id="global-header">
         <div>📦 パック: <span id="display-packs" style="font-weight: bold; color: #00ffcc; font-size: 20px;">0</span></div>
         <div>💾 セーブ: <span id="save-status" style="color: yellow;">同期中...</span></div>
-        <button class="settings-btn" onclick="GameController.openSettings()" title="設定">
-            ⚙️
-        </button>
+        <button class="settings-btn" onclick="GameController.openSettings()" title="設定">⚙️</button>
     </div>
 
-    <!-- ホーム画面 -->
     <div id="home-screen" class="screen active">
         <h1>デッキカードタイピング RPG</h1>
         <p style="font-size: 18px; margin-bottom: 25px; color: #ccc;">タイピングで戦い、最強のデッキを構築せよ！</p>
@@ -863,23 +814,24 @@
         </div>
     </div>
 
-    <!-- トレード画面 -->
     <div id="trade-screen" class="screen">
         <h2>🔄 トレード</h2>
         <div class="trade-tabs">
-            <button class="btn-primary" onclick="TradeController.showSendTab()">📤 出品する</button>
-            <button class="btn-secondary" onclick="TradeController.showReceiveTab()">📥 トレードを探す</button>
+            <button class="btn-primary" onclick="TradeController.showReceiveTab()">📥 トレードを探す</button>
             <button class="btn-warning" onclick="TradeController.showNotificationTab()" id="trade-notification-tab-btn">
                 🔔 通知
                 <span class="trade-notification-badge" id="trade-notification-badge" style="display: none;">0</span>
             </button>
         </div>
         <p style="color: #aaa; margin-bottom: 15px;">※ ニックネームは設定で変更できます（現在: <span id="current-nickname-display">匿名：冒険者</span>）</p>
+        <div style="margin-bottom: 20px;">
+            <button class="btn-success big-trade-btn" onclick="TradeController.showCardSelectForOffer()">📤 カードを選んで出品する</button>
+            <p style="color: #ffaa00; margin-top: 10px; font-size: 14px;">⚠️ 装備しているカードは出品できません</p>
+        </div>
         <div id="trade-content-area" style="width: 100%; max-width: 1000px;"></div>
         <button class="btn-dark" style="margin-top: 20px; padding: 14px 30px; font-size: 18px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
 
-    <!-- カード選択モーダル（トレード用） -->
     <div id="trade-card-select-modal" class="modal">
         <div class="modal-content" style="max-width: 800px;">
             <h3 id="trade-modal-title">カードを選択</h3>
@@ -891,7 +843,6 @@
         </div>
     </div>
 
-    <!-- 確認モーダル -->
     <div id="trade-confirm-modal" class="modal">
         <div class="modal-content">
             <h3 id="confirm-title">確認</h3>
@@ -903,7 +854,6 @@
         </div>
     </div>
 
-    <!-- ストーリーモード画面 -->
     <div id="story-mode-screen" class="screen">
         <h2>📖 ストーリーモード</h2>
         <div class="story-map-container">
@@ -925,14 +875,12 @@
     <div id="difficulty-screen" class="screen">
         <h2>⚔️ 難易度を選択してバトル開始！</h2>
         <p style="font-size: 16px; margin-bottom: 25px; color: #aaa;">※自分のHPが0になるまで戦い続ける無制限バトル！</p>
-        
         <div class="menu-grid" style="grid-template-columns: 1fr; max-width: 400px; gap: 15px;">
             <button class="btn-success" onclick="BattleController.startBattle('easy')">🟢 簡単 (ボスHP: 350 / 攻撃: 30)</button>
             <button class="btn-warning" onclick="BattleController.startBattle('medium')">🟡 中級 (ボスHP: 500 / 攻撃: 35)</button>
             <button class="btn-danger" onclick="BattleController.startBattle('hard')">🔴 難しい (ボスHP: 1000 / 攻撃: 40)</button>
             <button class="btn-purple" onclick="BattleController.startBattle('extreme')">😈 鬼むず (ボスHP: 2500 / 攻撃: 45)</button>
         </div>
-        
         <button class="btn-dark" style="margin-top: 30px; padding: 8px 30px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
 
@@ -950,7 +898,6 @@
                 </div>
                 <div class="status-effects" id="player-effects"></div>
             </div>
-            
             <div class="status-box boss-status-box">
                 <h3 id="boss-name">👹 ボス</h3>
                 <div>HP: <span id="boss-hp">350</span> / <span id="boss-max-hp">350</span></div>
@@ -964,13 +911,11 @@
                 <div class="status-effects" id="boss-effects"></div>
             </div>
         </div>
-
         <div class="typing-area" id="typing-area">
             <div id="typing-message" style="font-size: 20px; color: #4a90e2; font-weight: bold; margin-bottom: 8px;">👇 下のカードから1つ選んでください</div>
             <div class="japanese-text" id="typing-ja"></div>
             <div class="romaji-text" id="typing-en"></div>
         </div>
-
         <div class="battle-log" id="battle-log"></div>
         <div class="hand-container" id="battle-hand"></div>
         <button class="btn-dark" style="margin-top: 15px; padding: 8px 30px; font-size: 16px;" onclick="BattleController.flee()">🏃 逃げる（敗北扱い）</button>
@@ -979,7 +924,6 @@
     <div id="gacha-screen" class="screen">
         <h2>🎲 カードを引く</h2>
         <p style="font-size: 20px; margin-bottom: 20px; color: #00ffcc; font-weight: bold;">所持パック: <span id="gacha-pack-count">0</span> パック</p>
-        
         <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; max-width: 800px;">
             <button class="btn-primary" onclick="GachaController.drawCards(1)">📦 1パック (5枚)</button>
             <button class="btn-success" onclick="GachaController.drawCards(3)">📦 3パック (15枚)</button>
@@ -987,23 +931,21 @@
             <button class="btn-purple" onclick="GachaController.drawCards(100)">💎 100パック (500枚)</button>
             <button class="btn-gold" onclick="GachaController.drawAll()">🌟 全て引く</button>
         </div>
-
         <div style="margin-top: 30px; text-align: center; background: rgba(0,0,0,0.6); padding: 20px; border-radius: 15px; border: 2px solid #555; max-width: 700px; width: 100%;">
             <h3 style="color: #ffb74d; font-size: 20px;">📊 排出確率</h3>
-            <p style="line-height: 1.6; font-size: 14px;">
-                <span style="color: #aaa;">⚪ コモン: 40%</span> | 
+            <p style="line-height: 1.6; font-size: 13px;">
+                <span style="color: #aaa;">⚪ コモン: 45%</span> | 
                 <span style="color: #81c784;">🟢 アンコモン: 30%</span> | 
                 <span style="color: #64b5f6;">🔵 レア: 15%</span><br>
-                <span style="color: #fff59d;">🟡 レジェンド: 8%</span> | 
-                <span style="color: #e57373;">🔴 ミシック: 4%</span> | 
-                <span style="color: #e1bee7;">✨ ゴッドリー: 2%</span><br>
-                <span style="color: #ff9800;">🌋 ボルケーノ: 0.8%</span> | 
-                <span style="color: #ffffff; text-shadow: 0 0 5px red;">🌌 シークレット: 0.15%</span><br>
-                <span style="background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; color: transparent; font-weight: bold;">🌈 アルティメット: 0.04%</span> | 
-                <span style="color: gold; font-weight: bold; text-shadow: 0 0 10px gold;">👑 OG: 0.01%</span>
+                <span style="color: #fff59d;">🟡 レジェンド: 7%</span> | 
+                <span style="color: #e57373;">🔴 ミシック: 0.1%</span> | 
+                <span style="color: #e1bee7;">✨ ゴッドリー: 0.05%</span><br>
+                <span style="color: #ff9800;">🌋 ボルケーノ: 0.03%</span> | 
+                <span style="color: #ffffff; text-shadow: 0 0 5px red;">🌌 シークレット: 0.01%</span><br>
+                <span style="background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; color: transparent; font-weight: bold;">🌈 アルティメット: 0.005%</span> | 
+                <span style="color: gold; font-weight: bold; text-shadow: 0 0 10px gold;">👑 OG: 0.001%</span>
             </p>
         </div>
-
         <button class="btn-dark" style="margin-top: 25px; padding: 8px 30px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
 
@@ -1015,7 +957,6 @@
 
     <div id="inventory-screen" class="screen">
         <h2>🎒 持ち物</h2>
-        
         <div class="tab-bar-container">
             <div class="tab-bar" id="inv-rarity-tabs">
                 <button class="active" onclick="UIController.setFilter('invRarity', 'All')">🌟 全て</button>
@@ -1037,7 +978,6 @@
                 <button onclick="UIController.setFilter('invType', 'assist')">🪄 アシスト系</button>
             </div>
         </div>
-
         <div class="card-grid" id="inventory-grid"></div>
         <button class="btn-dark" style="margin-top: 20px; padding: 8px 30px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
@@ -1048,13 +988,10 @@
             25枚のカードを装備してデッキを構築します。<br>
             <span style="color: #ff4444;">※ 攻撃・回復・アシストをそれぞれ1枚以上必須</span>
         </p>
-
         <div id="equip-warning" class="equip-warning">⚠️ 現在の装備数が25枚ではありません！</div>
         <div id="equip-type-error" class="equip-error">❌ 攻撃・回復・アシストをそれぞれ1枚以上装備してください！</div>
         <div id="deck-warning" class="deck-warning"></div>
-        
         <div class="equipped-container" id="equipped-cards-container"></div>
-
         <h3 style="font-size: 18px; margin: 10px 0;">📦 所持カードから選んで装備する</h3>
         <div class="tab-bar-container">
             <div class="tab-bar" id="equip-rarity-tabs">
@@ -1071,7 +1008,6 @@
                 <button onclick="UIController.setFilter('equipRarity', 'OG')">👑 OG</button>
             </div>
         </div>
-
         <div class="card-grid" id="equip-inventory-grid"></div>
         <button class="btn-dark" style="margin-top: 20px; padding: 8px 30px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
@@ -1100,9 +1036,7 @@
         </div>
     </div>
 
-
     <script type="module">
-        // --- Firebase 初期化 ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getDatabase, ref, set, get, update, push, remove, onValue, off } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
@@ -1126,7 +1060,6 @@
             localStorage.setItem('typerpg_userId', userId);
         }
 
-        // --- サウンド ---
         window.AudioController = {
             ctx: null,
             init: function() {
@@ -1187,63 +1120,142 @@
             setTimeout(() => iceDiv.remove(), 1000);
         }
 
-        // --- マスターデータ ---
+        // 大幅に増やしたカードデータ
         const ALL_CARDS = [
-            { id: "c1", name: "パンチ", type: "attack", rarity: "Common", baseEffect: 25, desc: "25ダメージ" },
-            { id: "c2", name: "キック", type: "attack", rarity: "Common", baseEffect: 25, desc: "25ダメージ" },
-            { id: "c3", name: "絆創膏", type: "heal", rarity: "Common", baseEffect: 25, desc: "25回復" },
+            // コモン (攻撃)
+            { id: "c1", name: "パンチ", type: "attack", rarity: "Common", baseEffect: 20, desc: "20ダメージ" },
+            { id: "c2", name: "キック", type: "attack", rarity: "Common", baseEffect: 20, desc: "20ダメージ" },
+            { id: "c5", name: "ひっかき", type: "attack", rarity: "Common", baseEffect: 20, desc: "20ダメージ" },
+            { id: "c7", name: "石投げ", type: "attack", rarity: "Common", baseEffect: 22, desc: "22ダメージ" },
+            { id: "c8", name: "体当たり", type: "attack", rarity: "Common", baseEffect: 25, desc: "25ダメージ" },
+            { id: "c9", name: "噛みつき", type: "attack", rarity: "Common", baseEffect: 23, desc: "23ダメージ" },
+            // コモン (回復)
+            { id: "c3", name: "絆創膏", type: "heal", rarity: "Common", baseEffect: 20, desc: "20回復" },
+            { id: "c6", name: "少し休憩", type: "heal", rarity: "Common", baseEffect: 20, desc: "20回復" },
+            { id: "c10", name: "薬草", type: "heal", rarity: "Common", baseEffect: 22, desc: "22回復" },
+            { id: "c11", name: "水を飲む", type: "heal", rarity: "Common", baseEffect: 18, desc: "18回復" },
+            // コモン (アシスト)
             { id: "c4", name: "手札入れ替え", type: "assist", rarity: "Common", baseEffect: 2, desc: "2枚リセット" },
-            { id: "c5", name: "ひっかき", type: "attack", rarity: "Common", baseEffect: 25, desc: "25ダメージ" },
-            { id: "c6", name: "少し休憩", type: "heal", rarity: "Common", baseEffect: 25, desc: "25回復" },
-            { id: "u1", name: "スラッシュ", type: "attack", rarity: "Uncommon", baseEffect: 35, desc: "35ダメージ" },
-            { id: "u2", name: "ファイア", type: "attack", rarity: "Uncommon", baseEffect: 35, desc: "35ダメージ" },
-            { id: "u3", name: "ポーション", type: "heal", rarity: "Uncommon", baseEffect: 35, desc: "35回復" },
+            { id: "c12", name: "小呼吸", type: "assist", rarity: "Common", baseEffect: 1.1, desc: "次1.1倍" },
+            
+            // アンコモン (攻撃)
+            { id: "u1", name: "スラッシュ", type: "attack", rarity: "Uncommon", baseEffect: 30, desc: "30ダメージ" },
+            { id: "u2", name: "ファイア", type: "attack", rarity: "Uncommon", baseEffect: 30, desc: "30ダメージ" },
+            { id: "u6", name: "ウォーター", type: "attack", rarity: "Uncommon", baseEffect: 30, desc: "30ダメージ" },
+            { id: "u7", name: "岩石落とし", type: "attack", rarity: "Uncommon", baseEffect: 32, desc: "32ダメージ" },
+            { id: "u8", name: "連続斬り", type: "attack", rarity: "Uncommon", baseEffect: 28, desc: "28ダメージ" },
+            // アンコモン (回復)
+            { id: "u3", name: "ポーション", type: "heal", rarity: "Uncommon", baseEffect: 30, desc: "30回復" },
+            { id: "u9", name: "応急手当", type: "heal", rarity: "Uncommon", baseEffect: 32, desc: "32回復" },
+            { id: "u10", name: "癒しの光", type: "heal", rarity: "Uncommon", baseEffect: 28, desc: "28回復" },
+            // アンコモン (アシスト)
             { id: "u4", name: "集中", type: "assist", rarity: "Uncommon", baseEffect: 1.2, desc: "次1.2倍" },
             { id: "u5", name: "ドロー", type: "assist", rarity: "Uncommon", baseEffect: 3, desc: "3枚リセット" },
-            { id: "u6", name: "ウォーター", type: "attack", rarity: "Uncommon", baseEffect: 35, desc: "35ダメージ" },
-            { id: "r1", name: "サンダー", type: "attack", rarity: "Rare", baseEffect: 45, desc: "45ダメージ" },
-            { id: "r2", name: "アイススピア", type: "attack", rarity: "Rare", baseEffect: 45, desc: "45ダメージ" },
-            { id: "r3", name: "ハイポーション", type: "heal", rarity: "Rare", baseEffect: 45, desc: "45回復" },
+            { id: "u11", name: "防御態勢", type: "assist", rarity: "Uncommon", baseEffect: 10, desc: "10バリア" },
+            
+            // レア (攻撃)
+            { id: "r1", name: "サンダー", type: "attack", rarity: "Rare", baseEffect: 40, desc: "40ダメージ" },
+            { id: "r2", name: "アイススピア", type: "attack", rarity: "Rare", baseEffect: 40, desc: "40ダメージ" },
+            { id: "r6", name: "ウィンド", type: "attack", rarity: "Rare", baseEffect: 40, desc: "40ダメージ" },
+            { id: "r7", name: "爆裂魔法", type: "attack", rarity: "Rare", baseEffect: 45, desc: "45ダメージ" },
+            { id: "r8", name: "シャドウボール", type: "attack", rarity: "Rare", baseEffect: 42, desc: "42ダメージ" },
+            // レア (回復)
+            { id: "r3", name: "ハイポーション", type: "heal", rarity: "Rare", baseEffect: 40, desc: "40回復" },
+            { id: "r9", name: "再生の祈り", type: "heal", rarity: "Rare", baseEffect: 38, desc: "38回復+1T回復β" },
+            // レア (アシスト)
             { id: "r4", name: "気合い", type: "assist", rarity: "Rare", baseEffect: 1.5, desc: "次1.5倍" },
-            { id: "r5", name: "フルリロード", type: "assist", rarity: "Rare", baseEffect: 5, desc: "5枚リセット (ミス-0.5)" },
-            { id: "r6", name: "ウィンド", type: "attack", rarity: "Rare", baseEffect: 45, desc: "45ダメージ" },
+            { id: "r5", name: "フルリロード", type: "assist", rarity: "Rare", baseEffect: 5, desc: "5枚リセット" },
+            { id: "r10", name: "鉄壁", type: "assist", rarity: "Rare", baseEffect: 25, desc: "25バリア" },
+            
+            // レジェンド (攻撃)
             { id: "l1", name: "メテオ", type: "attack", rarity: "Legend", baseEffect: 55, desc: "55ダメージ" },
             { id: "l2", name: "エクスカリバー", type: "attack", rarity: "Legend", baseEffect: 55, desc: "55ダメージ" },
-            { id: "l3", name: "エリクサー", type: "heal", rarity: "Legend", baseEffect: 55, desc: "55回復" },
-            { id: "l4", name: "覚醒", type: "assist", rarity: "Legend", baseEffect: 2.0, desc: "次2倍" },
             { id: "l5", name: "グランドクロス", type: "attack", rarity: "Legend", baseEffect: 55, desc: "55ダメージ" },
-            { id: "m1", name: "神の裁き", type: "attack", rarity: "Mythic", baseEffect: 65, desc: "65ダメージ" },
-            { id: "m2", name: "完全回復", type: "heal", rarity: "Mythic", baseEffect: 65, desc: "65回復" },
-            { id: "m3", name: "時止め", type: "assist", rarity: "Mythic", baseEffect: 1, desc: "敵スキップ" },
-            { id: "m4", name: "ダークマター", type: "attack", rarity: "Mythic", baseEffect: 65, desc: "65ダメージ" },
-            { id: "g1", name: "崩星咆哮砲", type: "attack", rarity: "Godly", baseEffect: 75, desc: "75ダメージ" },
-            { id: "g2", name: "神の加護", type: "assist", rarity: "Godly", baseEffect: 3.0, desc: "次3倍" },
-            { id: "g3", name: "ゴッドブレス", type: "heal", rarity: "Godly", baseEffect: 75, desc: "75回復" },
-            { id: "v1", name: "超新星爆発", type: "attack", rarity: "Volcano", baseEffect: 85, desc: "85ダメージ" },
-            { id: "v2", name: "大噴火", type: "attack", rarity: "Volcano", baseEffect: 85, desc: "85ダメージ" },
-            { id: "boss_fire_slime", name: "ファイアスライム", type: "attack", rarity: "Volcano", baseEffect: 35, desc: "35+2T燃やす" },
-            { id: "s1", name: "虚無への誘い", type: "attack", rarity: "Secret", baseEffect: 95, desc: "95ダメージ" },
-            { id: "s2", name: "無限の命", type: "heal", rarity: "Secret", baseEffect: 95, desc: "95回復" },
-            { id: "s3", name: "ブラックホール", type: "attack", rarity: "Secret", baseEffect: 95, desc: "95ダメージ" },
-            { id: "boss_kone_hanbagu", name: "こねたハンバーグ", type: "heal", rarity: "Secret", baseEffect: 0, desc: "50/75回復" },
-            { id: "boss_brrr_frozen", name: "Brrrrフローズン", type: "attack", rarity: "Secret", baseEffect: 35, desc: "35+凍らせ" },
-            { id: "ul1", name: "終焉の光", type: "attack", rarity: "Ultimate", baseEffect: 105, desc: "105ダメージ" },
-            { id: "ul2", name: "ビッグバン", type: "attack", rarity: "Ultimate", baseEffect: 105, desc: "105ダメージ" },
+            { id: "l6", name: "ドラゴンブレス", type: "attack", rarity: "Legend", baseEffect: 60, desc: "60ダメージ" },
+            { id: "l7", name: "ヘルファイア", type: "attack", rarity: "Legend", baseEffect: 58, desc: "58ダメージ" },
+            // レジェンド (回復)
+            { id: "l3", name: "エリクサー", type: "heal", rarity: "Legend", baseEffect: 55, desc: "55回復" },
+            { id: "l8", name: "生命の泉", type: "heal", rarity: "Legend", baseEffect: 50, desc: "50回復+1T回復β" },
+            // レジェンド (アシスト)
+            { id: "l4", name: "覚醒", type: "assist", rarity: "Legend", baseEffect: 2.0, desc: "次2倍" },
+            { id: "l9", name: "時の逆流", type: "assist", rarity: "Legend", baseEffect: 1, desc: "敵スキップ+20回復" },
+            
+            // ミシック (攻撃)
+            { id: "m1", name: "神の裁き", type: "attack", rarity: "Mythic", baseEffect: 70, desc: "70ダメージ" },
+            { id: "m4", name: "ダークマター", type: "attack", rarity: "Mythic", baseEffect: 70, desc: "70ダメージ" },
+            { id: "m5", name: "ディバインアロー", type: "attack", rarity: "Mythic", baseEffect: 75, desc: "75ダメージ" },
+            // ミシック (回復)
+            { id: "m2", name: "完全回復", type: "heal", rarity: "Mythic", baseEffect: 70, desc: "70回復" },
+            { id: "m6", name: "天使の祝福", type: "heal", rarity: "Mythic", baseEffect: 65, desc: "65回復+状態異常解除" },
+            // ミシック (アシスト)
+            { id: "m3", name: "時止め", type: "assist", rarity: "Mythic", baseEffect: 1, desc: "敵スキップ+2倍" },
             { id: "story_pizza", name: "ピッザ", type: "heal", rarity: "Mythic", baseEffect: 0, desc: "2T回復β(30/ターン)" },
+            
+            // ゴッドリー (攻撃)
+            { id: "g1", name: "崩星咆哮砲", type: "attack", rarity: "Godly", baseEffect: 85, desc: "85ダメージ" },
+            { id: "g4", name: "ギャラクシーカノン", type: "attack", rarity: "Godly", baseEffect: 90, desc: "90ダメージ" },
+            { id: "g5", name: "ディメンションスラッシュ", type: "attack", rarity: "Godly", baseEffect: 88, desc: "88ダメージ" },
+            // ゴッドリー (回復)
+            { id: "g3", name: "ゴッドブレス", type: "heal", rarity: "Godly", baseEffect: 85, desc: "85回復" },
+            { id: "g6", name: "聖なる光", type: "heal", rarity: "Godly", baseEffect: 80, desc: "80回復+2T回復β" },
+            // ゴッドリー (アシスト)
+            { id: "g2", name: "神の加護", type: "assist", rarity: "Godly", baseEffect: 3.0, desc: "次3倍" },
             { id: "story_accel", name: "アクセラフローズン", type: "assist", rarity: "Godly", baseEffect: 2, desc: "敵2T凍結/自身30回復" },
-            { id: "story_secret_heal", name: "シークレットヒール", type: "heal", rarity: "Secret", baseEffect: 35, desc: "35回復+2T回復β" },
+            
+            // ボルケーノ (攻撃)
+            { id: "v1", name: "超新星爆発", type: "attack", rarity: "Volcano", baseEffect: 95, desc: "95ダメージ" },
+            { id: "v2", name: "大噴火", type: "attack", rarity: "Volcano", baseEffect: 95, desc: "95ダメージ" },
+            { id: "v3", name: "マグマストーム", type: "attack", rarity: "Volcano", baseEffect: 100, desc: "100ダメージ" },
+            { id: "boss_fire_slime", name: "ファイアスライム", type: "attack", rarity: "Volcano", baseEffect: 45, desc: "45+2T燃やす" },
+            // ボルケーノ (回復)
+            { id: "v4", name: "灼熱の癒し", type: "heal", rarity: "Volcano", baseEffect: 90, desc: "90回復" },
+            // ボルケーノ (アシスト)
+            { id: "v5", name: "ボルカニックバリア", type: "assist", rarity: "Volcano", baseEffect: 60, desc: "60バリア+反撃" },
+            
+            // シークレット (攻撃)
+            { id: "s1", name: "虚無への誘い", type: "attack", rarity: "Secret", baseEffect: 110, desc: "110ダメージ" },
+            { id: "s3", name: "ブラックホール", type: "attack", rarity: "Secret", baseEffect: 110, desc: "110ダメージ" },
+            { id: "s4", name: "アビスゲート", type: "attack", rarity: "Secret", baseEffect: 115, desc: "115ダメージ" },
+            { id: "boss_brrr_frozen", name: "Brrrrフローズン", type: "attack", rarity: "Secret", baseEffect: 45, desc: "45+凍らせ" },
+            // シークレット (回復)
+            { id: "s2", name: "無限の命", type: "heal", rarity: "Secret", baseEffect: 110, desc: "110回復" },
+            { id: "boss_kone_hanbagu", name: "こねたハンバーグ", type: "heal", rarity: "Secret", baseEffect: 0, desc: "90~110回復" },
+            { id: "story_secret_heal", name: "シークレットヒール", type: "heal", rarity: "Secret", baseEffect: 45, desc: "45回復+2T回復β" },
+            // シークレット (アシスト)
+            { id: "s5", name: "シークレットオーラ", type: "assist", rarity: "Secret", baseEffect: 4.0, desc: "次4倍" },
+            
+            // アルティメット (攻撃)
+            { id: "ul1", name: "終焉の光", type: "attack", rarity: "Ultimate", baseEffect: 130, desc: "130ダメージ" },
+            { id: "ul2", name: "ビッグバン", type: "attack", rarity: "Ultimate", baseEffect: 130, desc: "130ダメージ" },
+            { id: "ul3", name: "次元断裂", type: "attack", rarity: "Ultimate", baseEffect: 135, desc: "135ダメージ" },
+            // アルティメット (回復)
+            { id: "ul4", name: "アルティメットヒール", type: "heal", rarity: "Ultimate", baseEffect: 130, desc: "130回復" },
+            // アルティメット (アシスト)
+            { id: "boss_titan", name: "タイタンの守護", type: "assist", rarity: "Ultimate", baseEffect: 60, desc: "60バリア+60回復" },
             { id: "story_power", name: "攻撃力の力", type: "assist", rarity: "Ultimate", baseEffect: 0, desc: "75%で3.5倍/25%で5倍" },
-            { id: "boss_titan", name: "タイタンの守護", type: "assist", rarity: "Ultimate", baseEffect: 50, desc: "50バリア+50回復" },
-            { id: "boss_lastboss", name: "ラスボスの威光", type: "attack", rarity: "OG", baseEffect: 150, desc: "150ダメージ" },
-            { id: "og1", name: "管理者権限", type: "attack", rarity: "OG", baseEffect: 115, desc: "115ダメージ" },
-            { id: "og2", name: "デバッグ", type: "attack", rarity: "OG", baseEffect: 115, desc: "115ダメージ" }
+            
+            // OG (攻撃)
+            { id: "og1", name: "管理者権限", type: "attack", rarity: "OG", baseEffect: 160, desc: "160ダメージ" },
+            { id: "og2", name: "デバッグ", type: "attack", rarity: "OG", baseEffect: 160, desc: "160ダメージ" },
+            { id: "og3", name: "ルートアクセス", type: "attack", rarity: "OG", baseEffect: 170, desc: "170ダメージ" },
+            { id: "boss_lastboss", name: "ラスボスの威光", type: "attack", rarity: "OG", baseEffect: 180, desc: "180ダメージ" },
+            // OG (回復)
+            { id: "og4", name: "完全なる再生", type: "heal", rarity: "OG", baseEffect: 160, desc: "160回復" },
+            // OG (アシスト)
+            { id: "og5", name: "オーバーライド", type: "assist", rarity: "OG", baseEffect: 6.0, desc: "次6倍+50バリア" }
         ];
 
         const RARITY_WEIGHTS = [
-            { rarity: "Common", chance: 40.0 }, { rarity: "Uncommon", chance: 30.0 }, { rarity: "Rare", chance: 15.0 },
-            { rarity: "Legend", chance: 8.0 }, { rarity: "Mythic", chance: 4.0 }, { rarity: "Godly", chance: 2.0 },
-            { rarity: "Volcano", chance: 0.8 }, { rarity: "Secret", chance: 0.15 }, { rarity: "Ultimate", chance: 0.04 },
-            { rarity: "OG", chance: 0.01 }
+            { rarity: "Common", chance: 45.0 },
+            { rarity: "Uncommon", chance: 30.0 },
+            { rarity: "Rare", chance: 15.0 },
+            { rarity: "Legend", chance: 7.0 },
+            { rarity: "Mythic", chance: 0.1 },
+            { rarity: "Godly", chance: 0.05 },
+            { rarity: "Volcano", chance: 0.03 },
+            { rarity: "Secret", chance: 0.01 },
+            { rarity: "Ultimate", chance: 0.005 },
+            { rarity: "OG", chance: 0.001 }
         ];
 
         const TYPING_WORDS = [
@@ -1263,7 +1275,6 @@
             { ja: "きりふだのかあどをつかえ", en: "kirihudanokaadowotukae" }
         ];
 
-        // ボス定義
         const BOSSES = [
             { name: "🔥 ファイアスライム", hp: 600, maxHp: 600, attack: 35, index: 0,
               dropRate: "10%", dropCard: "ファイアスライム",
@@ -1404,7 +1415,6 @@
             }
         ];
 
-        // --- グローバルステート ---
         window.playerData = { 
             packs: 10, inventory: {}, equipped: [], unlockedBosses: [0],
             storyClearedStage: 0, nickname: "匿名：冒険者"
@@ -1417,22 +1427,18 @@
             canSelectCard: true, playerHealOverTimeTurns: 0, enemyHealOverTimeTurns: 0
         };
         window.bossBattleState = { isActive: false, currentBoss: null };
-        
-        // トレード関連
         window.tradeState = {
-            currentTab: 'send',
+            currentTab: 'receive',
             selectedOfferCardId: null,
             pendingTradeId: null,
             notifications: []
         };
 
-        // --- データ管理 ---
         window.GameDataManager = {
             saveData: function() {
                 const statusEl = document.getElementById('save-status');
                 statusEl.textContent = '保存中...';
                 statusEl.style.color = 'orange';
-
                 set(ref(database, 'users/' + userId), {
                     packs: window.playerData.packs,
                     inventory: window.playerData.inventory,
@@ -1453,7 +1459,6 @@
                 const statusEl = document.getElementById('save-status');
                 statusEl.textContent = '読込中...';
                 statusEl.style.color = 'yellow';
-                
                 get(ref(database, 'users/' + userId)).then((snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
@@ -1502,7 +1507,6 @@
             }
         };
 
-        // --- UI管理 ---
         window.UIController = {
             updateGlobalHeader: function() { document.getElementById('display-packs').textContent = window.playerData.packs; },
             getCardById: function(id) { return ALL_CARDS.find(c => c.id === id); },
@@ -1690,14 +1694,13 @@
             }
         };
 
-        // --- トレードコントローラー ---
         window.TradeController = {
             currentTradeMode: null,
             selectedOfferCard: null,
             
             renderMainMenu: function() {
                 document.getElementById('current-nickname-display').textContent = window.playerData.nickname;
-                this.showSendTab();
+                this.showReceiveTab();
                 this.startTradeListener();
             },
             
@@ -1719,27 +1722,11 @@
                 });
             },
             
-            showSendTab: function() {
-                window.tradeState.currentTab = 'send';
-                document.querySelectorAll('.trade-tabs button').forEach((btn, i) => {
-                    btn.classList.remove('active');
-                    if (i === 0) btn.classList.add('active');
-                });
-                const area = document.getElementById('trade-content-area');
-                area.innerHTML = `
-                    <div style="text-align: center;">
-                        <p style="color: #aaa; margin-bottom: 20px; font-size: 18px;">出品するカードを1枚選んでください</p>
-                        <p style="color: #ffaa00; margin-bottom: 25px; font-size: 16px;">⚠️ 装備しているカードは出品できません</p>
-                        <button class="btn-success big-trade-btn" onclick="TradeController.showCardSelectForOffer()">📤 カードを選んで出品する</button>
-                    </div>
-                `;
-            },
-            
             showReceiveTab: function() {
                 window.tradeState.currentTab = 'receive';
                 document.querySelectorAll('.trade-tabs button').forEach((btn, i) => {
                     btn.classList.remove('active');
-                    if (i === 1) btn.classList.add('active');
+                    if (i === 0) btn.classList.add('active');
                 });
                 const area = document.getElementById('trade-content-area');
                 area.innerHTML = '<p style="text-align: center; font-size: 18px;">読み込み中...</p>';
@@ -1783,7 +1770,7 @@
                 window.tradeState.currentTab = 'notification';
                 document.querySelectorAll('.trade-tabs button').forEach((btn, i) => {
                     btn.classList.remove('active');
-                    if (i === 2) btn.classList.add('active');
+                    if (i === 1) btn.classList.add('active');
                 });
                 const area = document.getElementById('trade-content-area');
                 const notifications = window.tradeState.notifications;
@@ -1920,6 +1907,7 @@
                     GameDataManager.saveData();
                     showCenterMessage(`「${card.name}」を出品しました！`, "#00ffcc");
                     window.tradeState.selectedOfferCardId = null;
+                    TradeController.showReceiveTab();
                 });
             },
             
@@ -2369,6 +2357,27 @@
                 let effectValue = card.baseEffect;
                 let logMsg = `🃏 【${card.name}】発動！ `;
                 
+                // こねたハンバーグの強化 (90~110回復)
+                if (card.id === "boss_kone_hanbagu") {
+                    effectValue = Math.floor(Math.random() * 21) + 90; // 90~110
+                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + effectValue);
+                    logMsg += `HPが 💖${effectValue} 回復！`;
+                    AudioController.playHeal();
+                    this.logBattle(logMsg);
+                    this.updateHPUI();
+                    this.resetTypingUI();
+                    window.battleState.activeCard = null;
+                    window.battleState.canSelectCard = true;
+                    UIController.updateBattleEffectsUI();
+                    if (window.battleState.boss.hp <= 0) {
+                        if (window.battleState.isBossBattle && window.battleState.boss.onDefeat) window.battleState.boss.onDefeat();
+                        this.endBattle(true, "ボスを撃破した！");
+                        return;
+                    }
+                    setTimeout(() => this.enemyTurn(), 1000);
+                    return;
+                }
+                
                 if (card.id === "story_pizza") {
                     window.battleState.playerHealOverTimeTurns = 2;
                     logMsg += `2ターンの間、毎ターン30回復する！`;
@@ -2378,9 +2387,9 @@
                     logMsg += `敵を2ターン凍結！ HPが30回復！`;
                     this.updateHPUI();
                 } else if (card.id === "story_secret_heal") {
-                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 35);
+                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 45);
                     window.battleState.playerHealOverTimeTurns = 2;
-                    logMsg += `35回復し、2ターンの間毎ターン30回復！`;
+                    logMsg += `45回復し、2ターンの間毎ターン30回復！`;
                     this.updateHPUI();
                 } else if (card.id === "story_power") {
                     const r = Math.random();
@@ -2388,12 +2397,12 @@
                     window.battleState.nextTurnMultiplier = mult;
                     logMsg += `次の攻撃が ${mult} 倍！ (${r < 0.75 ? '3.5倍' : '5倍'})`;
                 } else if (card.id === "boss_titan") {
-                    window.battleState.playerShield = (window.battleState.playerShield || 0) + 50;
-                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 50);
-                    logMsg += `50バリアを獲得し、50回復！`;
+                    window.battleState.playerShield = (window.battleState.playerShield || 0) + 60;
+                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 60);
+                    logMsg += `60バリアを獲得し、60回復！`;
                     this.updateHPUI();
                 } else if (card.id === "boss_lastboss") {
-                    effectValue = 150;
+                    effectValue = 180;
                 } else if (card.id === "r5") {
                     let resetCount = 5 - Math.floor(mistakes * 0.5);
                     resetCount = Math.max(1, resetCount);
@@ -2450,6 +2459,9 @@
                     } else if (card.name === "時止め") {
                         window.battleState.enemyFrozen = true;
                         logMsg += `敵のターンをスキップ！`;
+                    } else if (card.name.includes("バリア")) {
+                        window.battleState.playerShield = (window.battleState.playerShield || 0) + effectValue;
+                        logMsg += `${effectValue} バリアを獲得！`;
                     } else {
                         let mult = effectValue;
                         if (mistakes === 0) mult += 0.5;
