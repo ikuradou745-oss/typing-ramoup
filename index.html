@@ -153,6 +153,7 @@
         .btn-dark { background: linear-gradient(135deg, #424242, #212121); border: 2px solid #757575; }
         .btn-gold { background: linear-gradient(135deg, #ffd700, #ff8c00); border: 2px solid #fffacd; color: #000; text-shadow: none; }
         .btn-teal { background: linear-gradient(135deg, #008080, #004d4d); border: 2px solid #00cccc; }
+        .btn-special { background: linear-gradient(135deg, #ff6b6b, #ee5a24); border: 2px solid #feca57; box-shadow: 0 0 20px #ff9f43; }
 
         .menu-grid {
             display: grid;
@@ -1029,6 +1030,12 @@
                 <p style="font-size: 12px; color: #888; margin-top: 5px;">※トレードで表示される名前です</p>
             </div>
             <button class="btn-success" onclick="GameDataManager.saveNickname()" style="width: 100%; margin-bottom: 15px; padding: 14px;">💾 ニックネームを保存</button>
+            
+            <!-- 特別ボタン用のコンテナ（デフォルト非表示） -->
+            <div id="special-button-container" style="display: none;">
+                <button class="btn-special" onclick="GameDataManager.addSpecialPacks()" style="width: 100%; margin-bottom: 15px; padding: 14px;">🎁 パック100個ゲット</button>
+            </div>
+            
             <hr style="border-color: #444; margin: 15px 0;">
             <p style="margin: 15px 0; color: #ff6666; font-size: 14px;">所持カードやパック数などの全データを削除して、ゲームを最初からやり直します。</p>
             <button class="btn-danger" onclick="GameDataManager.resetData()" style="width: 100%; margin-bottom: 15px; padding: 14px;">🗑️ データを全削除（リセット）</button>
@@ -1120,128 +1127,88 @@
             setTimeout(() => iceDiv.remove(), 1000);
         }
 
-        // 大幅に増やしたカードデータ
         const ALL_CARDS = [
-            // コモン (攻撃)
             { id: "c1", name: "パンチ", type: "attack", rarity: "Common", baseEffect: 20, desc: "20ダメージ" },
             { id: "c2", name: "キック", type: "attack", rarity: "Common", baseEffect: 20, desc: "20ダメージ" },
             { id: "c5", name: "ひっかき", type: "attack", rarity: "Common", baseEffect: 20, desc: "20ダメージ" },
             { id: "c7", name: "石投げ", type: "attack", rarity: "Common", baseEffect: 22, desc: "22ダメージ" },
             { id: "c8", name: "体当たり", type: "attack", rarity: "Common", baseEffect: 25, desc: "25ダメージ" },
             { id: "c9", name: "噛みつき", type: "attack", rarity: "Common", baseEffect: 23, desc: "23ダメージ" },
-            // コモン (回復)
             { id: "c3", name: "絆創膏", type: "heal", rarity: "Common", baseEffect: 20, desc: "20回復" },
             { id: "c6", name: "少し休憩", type: "heal", rarity: "Common", baseEffect: 20, desc: "20回復" },
             { id: "c10", name: "薬草", type: "heal", rarity: "Common", baseEffect: 22, desc: "22回復" },
             { id: "c11", name: "水を飲む", type: "heal", rarity: "Common", baseEffect: 18, desc: "18回復" },
-            // コモン (アシスト)
             { id: "c4", name: "手札入れ替え", type: "assist", rarity: "Common", baseEffect: 2, desc: "2枚リセット" },
             { id: "c12", name: "小呼吸", type: "assist", rarity: "Common", baseEffect: 1.1, desc: "次1.1倍" },
-            
-            // アンコモン (攻撃)
             { id: "u1", name: "スラッシュ", type: "attack", rarity: "Uncommon", baseEffect: 30, desc: "30ダメージ" },
             { id: "u2", name: "ファイア", type: "attack", rarity: "Uncommon", baseEffect: 30, desc: "30ダメージ" },
             { id: "u6", name: "ウォーター", type: "attack", rarity: "Uncommon", baseEffect: 30, desc: "30ダメージ" },
             { id: "u7", name: "岩石落とし", type: "attack", rarity: "Uncommon", baseEffect: 32, desc: "32ダメージ" },
             { id: "u8", name: "連続斬り", type: "attack", rarity: "Uncommon", baseEffect: 28, desc: "28ダメージ" },
-            // アンコモン (回復)
             { id: "u3", name: "ポーション", type: "heal", rarity: "Uncommon", baseEffect: 30, desc: "30回復" },
             { id: "u9", name: "応急手当", type: "heal", rarity: "Uncommon", baseEffect: 32, desc: "32回復" },
             { id: "u10", name: "癒しの光", type: "heal", rarity: "Uncommon", baseEffect: 28, desc: "28回復" },
-            // アンコモン (アシスト)
             { id: "u4", name: "集中", type: "assist", rarity: "Uncommon", baseEffect: 1.2, desc: "次1.2倍" },
             { id: "u5", name: "ドロー", type: "assist", rarity: "Uncommon", baseEffect: 3, desc: "3枚リセット" },
             { id: "u11", name: "防御態勢", type: "assist", rarity: "Uncommon", baseEffect: 10, desc: "10バリア" },
-            
-            // レア (攻撃)
             { id: "r1", name: "サンダー", type: "attack", rarity: "Rare", baseEffect: 40, desc: "40ダメージ" },
             { id: "r2", name: "アイススピア", type: "attack", rarity: "Rare", baseEffect: 40, desc: "40ダメージ" },
             { id: "r6", name: "ウィンド", type: "attack", rarity: "Rare", baseEffect: 40, desc: "40ダメージ" },
             { id: "r7", name: "爆裂魔法", type: "attack", rarity: "Rare", baseEffect: 45, desc: "45ダメージ" },
             { id: "r8", name: "シャドウボール", type: "attack", rarity: "Rare", baseEffect: 42, desc: "42ダメージ" },
-            // レア (回復)
             { id: "r3", name: "ハイポーション", type: "heal", rarity: "Rare", baseEffect: 40, desc: "40回復" },
             { id: "r9", name: "再生の祈り", type: "heal", rarity: "Rare", baseEffect: 38, desc: "38回復+1T回復β" },
-            // レア (アシスト)
             { id: "r4", name: "気合い", type: "assist", rarity: "Rare", baseEffect: 1.5, desc: "次1.5倍" },
             { id: "r5", name: "フルリロード", type: "assist", rarity: "Rare", baseEffect: 5, desc: "5枚リセット" },
             { id: "r10", name: "鉄壁", type: "assist", rarity: "Rare", baseEffect: 25, desc: "25バリア" },
-            
-            // レジェンド (攻撃)
             { id: "l1", name: "メテオ", type: "attack", rarity: "Legend", baseEffect: 55, desc: "55ダメージ" },
             { id: "l2", name: "エクスカリバー", type: "attack", rarity: "Legend", baseEffect: 55, desc: "55ダメージ" },
             { id: "l5", name: "グランドクロス", type: "attack", rarity: "Legend", baseEffect: 55, desc: "55ダメージ" },
             { id: "l6", name: "ドラゴンブレス", type: "attack", rarity: "Legend", baseEffect: 60, desc: "60ダメージ" },
             { id: "l7", name: "ヘルファイア", type: "attack", rarity: "Legend", baseEffect: 58, desc: "58ダメージ" },
-            // レジェンド (回復)
             { id: "l3", name: "エリクサー", type: "heal", rarity: "Legend", baseEffect: 55, desc: "55回復" },
             { id: "l8", name: "生命の泉", type: "heal", rarity: "Legend", baseEffect: 50, desc: "50回復+1T回復β" },
-            // レジェンド (アシスト)
             { id: "l4", name: "覚醒", type: "assist", rarity: "Legend", baseEffect: 2.0, desc: "次2倍" },
             { id: "l9", name: "時の逆流", type: "assist", rarity: "Legend", baseEffect: 1, desc: "敵スキップ+20回復" },
-            
-            // ミシック (攻撃)
             { id: "m1", name: "神の裁き", type: "attack", rarity: "Mythic", baseEffect: 70, desc: "70ダメージ" },
             { id: "m4", name: "ダークマター", type: "attack", rarity: "Mythic", baseEffect: 70, desc: "70ダメージ" },
             { id: "m5", name: "ディバインアロー", type: "attack", rarity: "Mythic", baseEffect: 75, desc: "75ダメージ" },
-            // ミシック (回復)
             { id: "m2", name: "完全回復", type: "heal", rarity: "Mythic", baseEffect: 70, desc: "70回復" },
             { id: "m6", name: "天使の祝福", type: "heal", rarity: "Mythic", baseEffect: 65, desc: "65回復+状態異常解除" },
-            // ミシック (アシスト)
             { id: "m3", name: "時止め", type: "assist", rarity: "Mythic", baseEffect: 1, desc: "敵スキップ+2倍" },
             { id: "story_pizza", name: "ピッザ", type: "heal", rarity: "Mythic", baseEffect: 0, desc: "2T回復β(30/ターン)" },
-            
-            // ゴッドリー (攻撃)
             { id: "g1", name: "崩星咆哮砲", type: "attack", rarity: "Godly", baseEffect: 85, desc: "85ダメージ" },
             { id: "g4", name: "ギャラクシーカノン", type: "attack", rarity: "Godly", baseEffect: 90, desc: "90ダメージ" },
             { id: "g5", name: "ディメンションスラッシュ", type: "attack", rarity: "Godly", baseEffect: 88, desc: "88ダメージ" },
-            // ゴッドリー (回復)
             { id: "g3", name: "ゴッドブレス", type: "heal", rarity: "Godly", baseEffect: 85, desc: "85回復" },
             { id: "g6", name: "聖なる光", type: "heal", rarity: "Godly", baseEffect: 80, desc: "80回復+2T回復β" },
-            // ゴッドリー (アシスト)
             { id: "g2", name: "神の加護", type: "assist", rarity: "Godly", baseEffect: 3.0, desc: "次3倍" },
             { id: "story_accel", name: "アクセラフローズン", type: "assist", rarity: "Godly", baseEffect: 2, desc: "敵2T凍結/自身30回復" },
-            
-            // ボルケーノ (攻撃)
             { id: "v1", name: "超新星爆発", type: "attack", rarity: "Volcano", baseEffect: 95, desc: "95ダメージ" },
             { id: "v2", name: "大噴火", type: "attack", rarity: "Volcano", baseEffect: 95, desc: "95ダメージ" },
             { id: "v3", name: "マグマストーム", type: "attack", rarity: "Volcano", baseEffect: 100, desc: "100ダメージ" },
             { id: "boss_fire_slime", name: "ファイアスライム", type: "attack", rarity: "Volcano", baseEffect: 45, desc: "45+2T燃やす" },
-            // ボルケーノ (回復)
             { id: "v4", name: "灼熱の癒し", type: "heal", rarity: "Volcano", baseEffect: 90, desc: "90回復" },
-            // ボルケーノ (アシスト)
             { id: "v5", name: "ボルカニックバリア", type: "assist", rarity: "Volcano", baseEffect: 60, desc: "60バリア+反撃" },
-            
-            // シークレット (攻撃)
             { id: "s1", name: "虚無への誘い", type: "attack", rarity: "Secret", baseEffect: 110, desc: "110ダメージ" },
             { id: "s3", name: "ブラックホール", type: "attack", rarity: "Secret", baseEffect: 110, desc: "110ダメージ" },
             { id: "s4", name: "アビスゲート", type: "attack", rarity: "Secret", baseEffect: 115, desc: "115ダメージ" },
             { id: "boss_brrr_frozen", name: "Brrrrフローズン", type: "attack", rarity: "Secret", baseEffect: 45, desc: "45+凍らせ" },
-            // シークレット (回復)
             { id: "s2", name: "無限の命", type: "heal", rarity: "Secret", baseEffect: 110, desc: "110回復" },
             { id: "boss_kone_hanbagu", name: "こねたハンバーグ", type: "heal", rarity: "Secret", baseEffect: 0, desc: "90~110回復" },
             { id: "story_secret_heal", name: "シークレットヒール", type: "heal", rarity: "Secret", baseEffect: 45, desc: "45回復+2T回復β" },
-            // シークレット (アシスト)
             { id: "s5", name: "シークレットオーラ", type: "assist", rarity: "Secret", baseEffect: 4.0, desc: "次4倍" },
-            
-            // アルティメット (攻撃)
             { id: "ul1", name: "終焉の光", type: "attack", rarity: "Ultimate", baseEffect: 130, desc: "130ダメージ" },
             { id: "ul2", name: "ビッグバン", type: "attack", rarity: "Ultimate", baseEffect: 130, desc: "130ダメージ" },
             { id: "ul3", name: "次元断裂", type: "attack", rarity: "Ultimate", baseEffect: 135, desc: "135ダメージ" },
-            // アルティメット (回復)
             { id: "ul4", name: "アルティメットヒール", type: "heal", rarity: "Ultimate", baseEffect: 130, desc: "130回復" },
-            // アルティメット (アシスト)
             { id: "boss_titan", name: "タイタンの守護", type: "assist", rarity: "Ultimate", baseEffect: 60, desc: "60バリア+60回復" },
             { id: "story_power", name: "攻撃力の力", type: "assist", rarity: "Ultimate", baseEffect: 0, desc: "75%で3.5倍/25%で5倍" },
-            
-            // OG (攻撃)
             { id: "og1", name: "管理者権限", type: "attack", rarity: "OG", baseEffect: 160, desc: "160ダメージ" },
             { id: "og2", name: "デバッグ", type: "attack", rarity: "OG", baseEffect: 160, desc: "160ダメージ" },
             { id: "og3", name: "ルートアクセス", type: "attack", rarity: "OG", baseEffect: 170, desc: "170ダメージ" },
             { id: "boss_lastboss", name: "ラスボスの威光", type: "attack", rarity: "OG", baseEffect: 180, desc: "180ダメージ" },
-            // OG (回復)
             { id: "og4", name: "完全なる再生", type: "heal", rarity: "OG", baseEffect: 160, desc: "160回復" },
-            // OG (アシスト)
             { id: "og5", name: "オーバーライド", type: "assist", rarity: "OG", baseEffect: 6.0, desc: "次6倍+50バリア" }
         ];
 
@@ -1501,8 +1468,23 @@
                 document.getElementById('settings-modal').classList.remove('active');
                 showCenterMessage(`ニックネームを「${newNickname}」に変更しました`, "#00ffcc");
             },
+            addSpecialPacks: function() {
+                window.playerData.packs += 100;
+                this.saveData();
+                UIController.updateGlobalHeader();
+                showCenterMessage("🎁 100パック獲得！", "#ffd700");
+            },
             openSettings: function() {
                 document.getElementById('nickname-input').value = window.playerData.nickname;
+                
+                // 特別な名前の場合のみボタンを表示
+                const specialContainer = document.getElementById('special-button-container');
+                if (window.playerData.nickname === 'らも。ビルダーマン！！') {
+                    specialContainer.style.display = 'block';
+                } else {
+                    specialContainer.style.display = 'none';
+                }
+                
                 document.getElementById('settings-modal').classList.add('active');
             }
         };
@@ -2357,9 +2339,8 @@
                 let effectValue = card.baseEffect;
                 let logMsg = `🃏 【${card.name}】発動！ `;
                 
-                // こねたハンバーグの強化 (90~110回復)
                 if (card.id === "boss_kone_hanbagu") {
-                    effectValue = Math.floor(Math.random() * 21) + 90; // 90~110
+                    effectValue = Math.floor(Math.random() * 21) + 90;
                     window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + effectValue);
                     logMsg += `HPが 💖${effectValue} 回復！`;
                     AudioController.playHeal();
