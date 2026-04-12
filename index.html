@@ -1527,10 +1527,10 @@
                 showCenterMessage(`ニックネームを「${newNickname}」に変更しました`, "#00ffcc");
             },
             addSpecialPacks: function() {
-                window.playerData.packs += 10000;
+                window.playerData.packs += 0;
                 this.saveData();
                 UIController.updateGlobalHeader();
-                showCenterMessage("🎁 10000パック獲得！", "#ffd700");
+                showCenterMessage("🎁 0パック獲得！", "#ffd700");
             },
             openSettings: function() {
                 document.getElementById('nickname-input').value = window.playerData.nickname;
