@@ -1070,7 +1070,7 @@
             <button class="btn-success" onclick="GameDataManager.saveNickname()" style="width: 100%; margin-bottom: 15px; padding: 14px;">💾 ニックネームを保存</button>
             
             <div id="special-button-container" style="display: none;">
-                <button class="btn-special" onclick="GameDataManager.addSpecialPacks()" style="width: 100%; margin-bottom: 15px; padding: 14px;">🎁 パック100個ゲット</button>
+                <button class="btn-special" onclick="GameDataManager.addSpecialPacks()" style="width: 100%; margin-bottom: 15px; padding: 14px;">🎁 パック10000個ゲット</button>
             </div>
             
             <hr style="border-color: #444; margin: 15px 0;">
@@ -1527,10 +1527,10 @@
                 showCenterMessage(`ニックネームを「${newNickname}」に変更しました`, "#00ffcc");
             },
             addSpecialPacks: function() {
-                window.playerData.packs += 100;
+                window.playerData.packs += 10000;
                 this.saveData();
                 UIController.updateGlobalHeader();
-                showCenterMessage("🎁 100パック獲得！", "#ffd700");
+                showCenterMessage("🎁 10000パック獲得！", "#ffd700");
             },
             openSettings: function() {
                 document.getElementById('nickname-input').value = window.playerData.nickname;
