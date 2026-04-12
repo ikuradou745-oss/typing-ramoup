@@ -153,17 +153,19 @@
         .btn-dark { background: linear-gradient(135deg, #424242, #212121); border: 2px solid #757575; }
         .btn-gold { background: linear-gradient(135deg, #ffd700, #ff8c00); border: 2px solid #fffacd; color: #000; text-shadow: none; }
         .btn-teal { background: linear-gradient(135deg, #008080, #004d4d); border: 2px solid #00cccc; }
+        .btn-special { background: linear-gradient(135deg, #ff6b6b, #ee5a24); border: 2px solid #feca57; box-shadow: 0 0 20px #ff9f43; }
+        .btn-craft { background: linear-gradient(135deg, #8e44ad, #9b59b6); border: 2px solid #d2b4de; }
 
         .menu-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 20px;
             width: 100%;
-            max-width: 700px;
+            max-width: 1000px;
         }
         .menu-grid button {
             height: 90px;
-            font-size: 22px;
+            font-size: 20px;
         }
 
         .tab-bar-container {
@@ -430,6 +432,8 @@
         .effect-freeze { border-color: #00ffff; color: #88ffff; }
         .effect-heal { border-color: #00ff88; color: #88ffbb; }
         .effect-shield { border-color: #1e90ff; color: #88ccff; }
+        .effect-firegamma { border-color: #ff4500; color: #ff8c00; }
+        .effect-healgama { border-color: #32cd32; color: #98fb98; }
 
         .typing-area {
             background: linear-gradient(180deg, rgba(15, 52, 96, 0.9), rgba(22, 33, 62, 0.9));
@@ -790,6 +794,33 @@
             font-size: 22px !important;
             padding: 18px 40px !important;
         }
+
+        .craft-recipe {
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #9b59b6;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+        .craft-recipe h3 {
+            color: #d2b4de;
+            margin-bottom: 15px;
+        }
+        .craft-requirements {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .craft-result {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #9b59b6;
+        }
     </style>
 </head>
 <body>
@@ -811,7 +842,15 @@
             <button class="btn-purple" onclick="GameController.switchScreen('equip-screen'); UIController.renderEquipScreen();">🛡️ カードを装備</button>
             <button class="btn-gold" onclick="GameController.switchScreen('story-mode-screen'); StoryController.renderMap();">📖 ストーリーモード</button>
             <button class="btn-teal" onclick="GameController.switchScreen('trade-screen'); TradeController.renderMainMenu();">🔄 トレード</button>
+            <button class="btn-craft" onclick="GameController.switchScreen('craft-screen'); CraftController.renderScreen();">🔨 クラフト</button>
         </div>
+    </div>
+
+    <div id="craft-screen" class="screen">
+        <h2>🔨 クラフト</h2>
+        <p style="color: #aaa; margin-bottom: 20px;">材料カードを消費して、強力なカードを作成できます</p>
+        <div id="craft-recipes-container" style="width: 100%; max-width: 600px;"></div>
+        <button class="btn-dark" style="margin-top: 20px;" onclick="GameController.switchScreen('home-screen')">⬅️ ホームに戻る</button>
     </div>
 
     <div id="trade-screen" class="screen">
@@ -1029,6 +1068,11 @@
                 <p style="font-size: 12px; color: #888; margin-top: 5px;">※トレードで表示される名前です</p>
             </div>
             <button class="btn-success" onclick="GameDataManager.saveNickname()" style="width: 100%; margin-bottom: 15px; padding: 14px;">💾 ニックネームを保存</button>
+            
+            <div id="special-button-container" style="display: none;">
+                <button class="btn-special" onclick="GameDataManager.addSpecialPacks()" style="width: 100%; margin-bottom: 15px; padding: 14px;">🎁 パック100個ゲット</button>
+            </div>
+            
             <hr style="border-color: #444; margin: 15px 0;">
             <p style="margin: 15px 0; color: #ff6666; font-size: 14px;">所持カードやパック数などの全データを削除して、ゲームを最初からやり直します。</p>
             <button class="btn-danger" onclick="GameDataManager.resetData()" style="width: 100%; margin-bottom: 15px; padding: 14px;">🗑️ データを全削除（リセット）</button>
@@ -1120,130 +1164,105 @@
             setTimeout(() => iceDiv.remove(), 1000);
         }
 
-        // 大幅に増やしたカードデータ
+        // カードデータ（倍率調整済み、クラフト専用カード追加）
         const ALL_CARDS = [
-            // コモン (攻撃)
+            // コモン
             { id: "c1", name: "パンチ", type: "attack", rarity: "Common", baseEffect: 20, desc: "20ダメージ" },
             { id: "c2", name: "キック", type: "attack", rarity: "Common", baseEffect: 20, desc: "20ダメージ" },
             { id: "c5", name: "ひっかき", type: "attack", rarity: "Common", baseEffect: 20, desc: "20ダメージ" },
             { id: "c7", name: "石投げ", type: "attack", rarity: "Common", baseEffect: 22, desc: "22ダメージ" },
             { id: "c8", name: "体当たり", type: "attack", rarity: "Common", baseEffect: 25, desc: "25ダメージ" },
             { id: "c9", name: "噛みつき", type: "attack", rarity: "Common", baseEffect: 23, desc: "23ダメージ" },
-            // コモン (回復)
             { id: "c3", name: "絆創膏", type: "heal", rarity: "Common", baseEffect: 20, desc: "20回復" },
             { id: "c6", name: "少し休憩", type: "heal", rarity: "Common", baseEffect: 20, desc: "20回復" },
             { id: "c10", name: "薬草", type: "heal", rarity: "Common", baseEffect: 22, desc: "22回復" },
             { id: "c11", name: "水を飲む", type: "heal", rarity: "Common", baseEffect: 18, desc: "18回復" },
-            // コモン (アシスト)
             { id: "c4", name: "手札入れ替え", type: "assist", rarity: "Common", baseEffect: 2, desc: "2枚リセット" },
             { id: "c12", name: "小呼吸", type: "assist", rarity: "Common", baseEffect: 1.1, desc: "次1.1倍" },
-            
-            // アンコモン (攻撃)
+            // アンコモン
             { id: "u1", name: "スラッシュ", type: "attack", rarity: "Uncommon", baseEffect: 30, desc: "30ダメージ" },
             { id: "u2", name: "ファイア", type: "attack", rarity: "Uncommon", baseEffect: 30, desc: "30ダメージ" },
             { id: "u6", name: "ウォーター", type: "attack", rarity: "Uncommon", baseEffect: 30, desc: "30ダメージ" },
             { id: "u7", name: "岩石落とし", type: "attack", rarity: "Uncommon", baseEffect: 32, desc: "32ダメージ" },
             { id: "u8", name: "連続斬り", type: "attack", rarity: "Uncommon", baseEffect: 28, desc: "28ダメージ" },
-            // アンコモン (回復)
             { id: "u3", name: "ポーション", type: "heal", rarity: "Uncommon", baseEffect: 30, desc: "30回復" },
             { id: "u9", name: "応急手当", type: "heal", rarity: "Uncommon", baseEffect: 32, desc: "32回復" },
             { id: "u10", name: "癒しの光", type: "heal", rarity: "Uncommon", baseEffect: 28, desc: "28回復" },
-            // アンコモン (アシスト)
             { id: "u4", name: "集中", type: "assist", rarity: "Uncommon", baseEffect: 1.2, desc: "次1.2倍" },
             { id: "u5", name: "ドロー", type: "assist", rarity: "Uncommon", baseEffect: 3, desc: "3枚リセット" },
             { id: "u11", name: "防御態勢", type: "assist", rarity: "Uncommon", baseEffect: 10, desc: "10バリア" },
-            
-            // レア (攻撃)
+            // レア
             { id: "r1", name: "サンダー", type: "attack", rarity: "Rare", baseEffect: 40, desc: "40ダメージ" },
             { id: "r2", name: "アイススピア", type: "attack", rarity: "Rare", baseEffect: 40, desc: "40ダメージ" },
             { id: "r6", name: "ウィンド", type: "attack", rarity: "Rare", baseEffect: 40, desc: "40ダメージ" },
             { id: "r7", name: "爆裂魔法", type: "attack", rarity: "Rare", baseEffect: 45, desc: "45ダメージ" },
             { id: "r8", name: "シャドウボール", type: "attack", rarity: "Rare", baseEffect: 42, desc: "42ダメージ" },
-            // レア (回復)
             { id: "r3", name: "ハイポーション", type: "heal", rarity: "Rare", baseEffect: 40, desc: "40回復" },
             { id: "r9", name: "再生の祈り", type: "heal", rarity: "Rare", baseEffect: 38, desc: "38回復+1T回復β" },
-            // レア (アシスト)
             { id: "r4", name: "気合い", type: "assist", rarity: "Rare", baseEffect: 1.5, desc: "次1.5倍" },
             { id: "r5", name: "フルリロード", type: "assist", rarity: "Rare", baseEffect: 5, desc: "5枚リセット" },
             { id: "r10", name: "鉄壁", type: "assist", rarity: "Rare", baseEffect: 25, desc: "25バリア" },
-            
-            // レジェンド (攻撃)
+            // レジェンド
             { id: "l1", name: "メテオ", type: "attack", rarity: "Legend", baseEffect: 55, desc: "55ダメージ" },
             { id: "l2", name: "エクスカリバー", type: "attack", rarity: "Legend", baseEffect: 55, desc: "55ダメージ" },
             { id: "l5", name: "グランドクロス", type: "attack", rarity: "Legend", baseEffect: 55, desc: "55ダメージ" },
             { id: "l6", name: "ドラゴンブレス", type: "attack", rarity: "Legend", baseEffect: 60, desc: "60ダメージ" },
             { id: "l7", name: "ヘルファイア", type: "attack", rarity: "Legend", baseEffect: 58, desc: "58ダメージ" },
-            // レジェンド (回復)
             { id: "l3", name: "エリクサー", type: "heal", rarity: "Legend", baseEffect: 55, desc: "55回復" },
             { id: "l8", name: "生命の泉", type: "heal", rarity: "Legend", baseEffect: 50, desc: "50回復+1T回復β" },
-            // レジェンド (アシスト)
-            { id: "l4", name: "覚醒", type: "assist", rarity: "Legend", baseEffect: 2.0, desc: "次2倍" },
+            { id: "l4", name: "覚醒", type: "assist", rarity: "Legend", baseEffect: 1.8, desc: "次1.8倍" },
             { id: "l9", name: "時の逆流", type: "assist", rarity: "Legend", baseEffect: 1, desc: "敵スキップ+20回復" },
-            
-            // ミシック (攻撃)
+            // ミシック
             { id: "m1", name: "神の裁き", type: "attack", rarity: "Mythic", baseEffect: 70, desc: "70ダメージ" },
             { id: "m4", name: "ダークマター", type: "attack", rarity: "Mythic", baseEffect: 70, desc: "70ダメージ" },
             { id: "m5", name: "ディバインアロー", type: "attack", rarity: "Mythic", baseEffect: 75, desc: "75ダメージ" },
-            // ミシック (回復)
             { id: "m2", name: "完全回復", type: "heal", rarity: "Mythic", baseEffect: 70, desc: "70回復" },
             { id: "m6", name: "天使の祝福", type: "heal", rarity: "Mythic", baseEffect: 65, desc: "65回復+状態異常解除" },
-            // ミシック (アシスト)
             { id: "m3", name: "時止め", type: "assist", rarity: "Mythic", baseEffect: 1, desc: "敵スキップ+2倍" },
             { id: "story_pizza", name: "ピッザ", type: "heal", rarity: "Mythic", baseEffect: 0, desc: "2T回復β(30/ターン)" },
-            
-            // ゴッドリー (攻撃)
+            // ゴッドリー
             { id: "g1", name: "崩星咆哮砲", type: "attack", rarity: "Godly", baseEffect: 85, desc: "85ダメージ" },
             { id: "g4", name: "ギャラクシーカノン", type: "attack", rarity: "Godly", baseEffect: 90, desc: "90ダメージ" },
             { id: "g5", name: "ディメンションスラッシュ", type: "attack", rarity: "Godly", baseEffect: 88, desc: "88ダメージ" },
-            // ゴッドリー (回復)
             { id: "g3", name: "ゴッドブレス", type: "heal", rarity: "Godly", baseEffect: 85, desc: "85回復" },
             { id: "g6", name: "聖なる光", type: "heal", rarity: "Godly", baseEffect: 80, desc: "80回復+2T回復β" },
-            // ゴッドリー (アシスト)
-            { id: "g2", name: "神の加護", type: "assist", rarity: "Godly", baseEffect: 3.0, desc: "次3倍" },
+            { id: "g2", name: "神の加護", type: "assist", rarity: "Godly", baseEffect: 2.2, desc: "次2.2倍" },
             { id: "story_accel", name: "アクセラフローズン", type: "assist", rarity: "Godly", baseEffect: 2, desc: "敵2T凍結/自身30回復" },
-            
-            // ボルケーノ (攻撃)
+            // ボルケーノ
             { id: "v1", name: "超新星爆発", type: "attack", rarity: "Volcano", baseEffect: 95, desc: "95ダメージ" },
             { id: "v2", name: "大噴火", type: "attack", rarity: "Volcano", baseEffect: 95, desc: "95ダメージ" },
             { id: "v3", name: "マグマストーム", type: "attack", rarity: "Volcano", baseEffect: 100, desc: "100ダメージ" },
             { id: "boss_fire_slime", name: "ファイアスライム", type: "attack", rarity: "Volcano", baseEffect: 45, desc: "45+2T燃やす" },
-            // ボルケーノ (回復)
             { id: "v4", name: "灼熱の癒し", type: "heal", rarity: "Volcano", baseEffect: 90, desc: "90回復" },
-            // ボルケーノ (アシスト)
             { id: "v5", name: "ボルカニックバリア", type: "assist", rarity: "Volcano", baseEffect: 60, desc: "60バリア+反撃" },
-            
-            // シークレット (攻撃)
+            // シークレット
             { id: "s1", name: "虚無への誘い", type: "attack", rarity: "Secret", baseEffect: 110, desc: "110ダメージ" },
             { id: "s3", name: "ブラックホール", type: "attack", rarity: "Secret", baseEffect: 110, desc: "110ダメージ" },
             { id: "s4", name: "アビスゲート", type: "attack", rarity: "Secret", baseEffect: 115, desc: "115ダメージ" },
-            { id: "boss_brrr_frozen", name: "Brrrrフローズン", type: "attack", rarity: "Secret", baseEffect: 45, desc: "45+凍らせ" },
-            // シークレット (回復)
+            { id: "boss_brrr_frozen", name: "Brrrrフローズン", type: "attack", rarity: "Secret", baseEffect: 45, desc: "45+凍らせ(10ダメージ)" },
             { id: "s2", name: "無限の命", type: "heal", rarity: "Secret", baseEffect: 110, desc: "110回復" },
             { id: "boss_kone_hanbagu", name: "こねたハンバーグ", type: "heal", rarity: "Secret", baseEffect: 0, desc: "90~110回復" },
             { id: "story_secret_heal", name: "シークレットヒール", type: "heal", rarity: "Secret", baseEffect: 45, desc: "45回復+2T回復β" },
-            // シークレット (アシスト)
-            { id: "s5", name: "シークレットオーラ", type: "assist", rarity: "Secret", baseEffect: 4.0, desc: "次4倍" },
-            
-            // アルティメット (攻撃)
+            { id: "s5", name: "シークレットオーラ", type: "assist", rarity: "Secret", baseEffect: 2.5, desc: "次2.5倍" },
+            // アルティメット
             { id: "ul1", name: "終焉の光", type: "attack", rarity: "Ultimate", baseEffect: 130, desc: "130ダメージ" },
             { id: "ul2", name: "ビッグバン", type: "attack", rarity: "Ultimate", baseEffect: 130, desc: "130ダメージ" },
             { id: "ul3", name: "次元断裂", type: "attack", rarity: "Ultimate", baseEffect: 135, desc: "135ダメージ" },
-            // アルティメット (回復)
             { id: "ul4", name: "アルティメットヒール", type: "heal", rarity: "Ultimate", baseEffect: 130, desc: "130回復" },
-            // アルティメット (アシスト)
             { id: "boss_titan", name: "タイタンの守護", type: "assist", rarity: "Ultimate", baseEffect: 60, desc: "60バリア+60回復" },
             { id: "story_power", name: "攻撃力の力", type: "assist", rarity: "Ultimate", baseEffect: 0, desc: "75%で3.5倍/25%で5倍" },
-            
-            // OG (攻撃)
+            { id: "craft_volcano_rush", name: "ボルケーノラッシュ", type: "attack", rarity: "Ultimate", baseEffect: 65, desc: "65ダメージ+3T火γ(35)" },
+            // OG
             { id: "og1", name: "管理者権限", type: "attack", rarity: "OG", baseEffect: 160, desc: "160ダメージ" },
             { id: "og2", name: "デバッグ", type: "attack", rarity: "OG", baseEffect: 160, desc: "160ダメージ" },
             { id: "og3", name: "ルートアクセス", type: "attack", rarity: "OG", baseEffect: 170, desc: "170ダメージ" },
             { id: "boss_lastboss", name: "ラスボスの威光", type: "attack", rarity: "OG", baseEffect: 180, desc: "180ダメージ" },
-            // OG (回復)
             { id: "og4", name: "完全なる再生", type: "heal", rarity: "OG", baseEffect: 160, desc: "160回復" },
-            // OG (アシスト)
-            { id: "og5", name: "オーバーライド", type: "assist", rarity: "OG", baseEffect: 6.0, desc: "次6倍+50バリア" }
+            { id: "og5", name: "オーバーライド", type: "assist", rarity: "OG", baseEffect: 5.0, desc: "次5倍+50バリア" },
+            { id: "craft_yaita_hanbagu", name: "焼いたハンバーグ", type: "heal", rarity: "OG", baseEffect: 0, desc: "70~90回復+2T回復γ(35)" }
         ];
+
+        // クラフト専用カードはパックから出ないようにフィルタリングで対応
 
         const RARITY_WEIGHTS = [
             { rarity: "Common", chance: 45.0 },
@@ -1310,6 +1329,7 @@
                           window.playerData.inventory[card.id]++;
                           GameDataManager.saveData();
                           BattleController.logBattle("🎉 ボスから『ファイアスライム』カードを入手した！");
+                          showCenterMessage("🎉 カードがドロップした！", "#ffd700");
                       }
                   }
               }
@@ -1334,6 +1354,7 @@
                           window.playerData.inventory[card.id]++;
                           GameDataManager.saveData();
                           BattleController.logBattle("🎉 ボスから『こねたハンバーグ』カードを入手した！");
+                          showCenterMessage("🎉 カードがドロップした！", "#ffd700");
                       }
                   }
               }
@@ -1343,7 +1364,8 @@
               special: (battleState) => {
                   if (Math.random() < 0.5) {
                       battleState.playerFrozen = true;
-                      BattleController.logBattle(`❄️ フローズンウィザードの技！ 氷結の呪文であなたは1ターン動けなくなる！`);
+                      battleState.playerHp = Math.max(0, battleState.playerHp - 10);
+                      BattleController.logBattle(`❄️ フローズンウィザードの技！ 氷結の呪文であなたは1ターン動けなくなり、10ダメージ！`);
                       showCenterMessage("❄️ BrrBrr フローズン！", "#00ffff");
                       showIceEffect();
                       AudioController.playFreeze();
@@ -1359,6 +1381,7 @@
                           window.playerData.inventory[card.id]++;
                           GameDataManager.saveData();
                           BattleController.logBattle("🎉 ボスから『Brrrrフローズン』カードを入手した！");
+                          showCenterMessage("🎉 カードがドロップした！", "#ffd700");
                       }
                   }
               }
@@ -1381,6 +1404,7 @@
                           window.playerData.inventory[card.id]++;
                           GameDataManager.saveData();
                           BattleController.logBattle("🎉 ボスから『タイタンの守護』(Ultimate) カードを入手した！");
+                          showCenterMessage("🎉 カードがドロップした！", "#ffd700");
                       }
                   }
               }
@@ -1409,6 +1433,7 @@
                           window.playerData.inventory[card.id]++;
                           GameDataManager.saveData();
                           BattleController.logBattle("🎉 ボスから『ラスボスの威光』(OG) カードを入手した！");
+                          showCenterMessage("🎉 カードがドロップした！", "#ffd700");
                       }
                   }
               }
@@ -1424,7 +1449,7 @@
             isActive: false, difficulty: '', boss: { hp: 0, maxHp: 0, attack: 0, name: "", special: null, shield: 0, onDefeat: null, dropRate: "" },
             playerHp: 350, playerMaxHp: 350, playerShield: 0, hand: [], activeCard: null, currentWord: null, typedIndex: 0, mistakes: 0, 
             typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false,
-            canSelectCard: true, playerHealOverTimeTurns: 0, enemyHealOverTimeTurns: 0
+            canSelectCard: true, playerHealOverTimeTurns: 0, playerHealGammaTurns: 0, enemyFireGammaTurns: 0
         };
         window.bossBattleState = { isActive: false, currentBoss: null };
         window.tradeState = {
@@ -1501,8 +1526,20 @@
                 document.getElementById('settings-modal').classList.remove('active');
                 showCenterMessage(`ニックネームを「${newNickname}」に変更しました`, "#00ffcc");
             },
+            addSpecialPacks: function() {
+                window.playerData.packs += 100;
+                this.saveData();
+                UIController.updateGlobalHeader();
+                showCenterMessage("🎁 100パック獲得！", "#ffd700");
+            },
             openSettings: function() {
                 document.getElementById('nickname-input').value = window.playerData.nickname;
+                const specialContainer = document.getElementById('special-button-container');
+                if (window.playerData.nickname === 'らも。ビルダーマン！！') {
+                    specialContainer.style.display = 'block';
+                } else {
+                    specialContainer.style.display = 'none';
+                }
                 document.getElementById('settings-modal').classList.add('active');
             }
         };
@@ -1620,6 +1657,7 @@
                 if (bs.playerBurnTurns > 0) playerHtml += `<span class="effect-icon effect-burn">🔥 ${bs.playerBurnTurns}</span>`;
                 if (bs.playerFrozen) playerHtml += `<span class="effect-icon effect-freeze">❄️ 凍結</span>`;
                 if (bs.playerHealOverTimeTurns > 0) playerHtml += `<span class="effect-icon effect-heal">💚 ${bs.playerHealOverTimeTurns}</span>`;
+                if (bs.playerHealGammaTurns > 0) playerHtml += `<span class="effect-icon effect-healgama">✨ ${bs.playerHealGammaTurns}</span>`;
                 playerEffectsDiv.innerHTML = playerHtml;
                 
                 let bossHtml = '';
@@ -1632,6 +1670,7 @@
                     document.getElementById('boss-shield-container').style.display = 'none';
                 }
                 if (bs.enemyBurnTurns > 0) bossHtml += `<span class="effect-icon effect-burn">🔥 ${bs.enemyBurnTurns}</span>`;
+                if (bs.enemyFireGammaTurns > 0) bossHtml += `<span class="effect-icon effect-firegamma">💥 ${bs.enemyFireGammaTurns}</span>`;
                 if (bs.enemyFrozen) bossHtml += `<span class="effect-icon effect-freeze">❄️ 凍結</span>`;
                 bossEffectsDiv.innerHTML = bossHtml;
             }
@@ -1678,7 +1717,7 @@
                     cumulative += rw.chance;
                     if (rand <= cumulative) { selectedRarity = rw.rarity; break; }
                 }
-                let cardsOfRarity = ALL_CARDS.filter(c => c.rarity === selectedRarity && !c.id.startsWith("boss_") && !c.id.startsWith("story_"));
+                let cardsOfRarity = ALL_CARDS.filter(c => c.rarity === selectedRarity && !c.id.startsWith("boss_") && !c.id.startsWith("story_") && !c.id.startsWith("craft_"));
                 if (cardsOfRarity.length === 0) cardsOfRarity = ALL_CARDS.filter(c => c.rarity === "Common" && !c.id.startsWith("boss_"));
                 return cardsOfRarity[Math.floor(Math.random() * cardsOfRarity.length)];
             },
@@ -1691,6 +1730,108 @@
                     resultDiv.innerHTML += UIController.createCardHTML(UIController.getCardById(id), count);
                 }
                 document.getElementById('gacha-result').classList.add('active');
+            }
+        };
+
+        window.CraftController = {
+            recipes: [
+                {
+                    id: "volcano_rush",
+                    name: "ボルケーノラッシュ",
+                    resultCardId: "craft_volcano_rush",
+                    requirements: [
+                        { cardId: "v3", name: "マグマストーム", count: 3 },
+                        { cardId: "l7", name: "ヘルファイア", count: 10 }
+                    ]
+                },
+                {
+                    id: "yaita_hanbagu",
+                    name: "焼いたハンバーグ",
+                    resultCardId: "craft_yaita_hanbagu",
+                    requirements: [
+                        { cardId: "boss_kone_hanbagu", name: "こねたハンバーグ", count: 10 }
+                    ]
+                }
+            ],
+            
+            renderScreen: function() {
+                const container = document.getElementById('craft-recipes-container');
+                container.innerHTML = '';
+                
+                this.recipes.forEach(recipe => {
+                    const resultCard = UIController.getCardById(recipe.resultCardId);
+                    if (!resultCard) return;
+                    
+                    let canCraft = true;
+                    let requirementsHtml = '';
+                    
+                    recipe.requirements.forEach(req => {
+                        const owned = window.playerData.inventory[req.cardId] || 0;
+                        const hasEnough = owned >= req.count;
+                        if (!hasEnough) canCraft = false;
+                        requirementsHtml += `
+                            <span style="display: flex; align-items: center; gap: 5px;">
+                                <span style="color: ${hasEnough ? '#88ff88' : '#ff8888'};">${req.name}</span>
+                                <span style="color: #ccc;">x${req.count}</span>
+                                <span style="color: #aaa;">(所持: ${owned})</span>
+                            </span>
+                        `;
+                    });
+                    
+                    const recipeHtml = `
+                        <div class="craft-recipe">
+                            <h3>${recipe.name}</h3>
+                            <div class="craft-requirements">
+                                ${requirementsHtml}
+                            </div>
+                            <div style="font-size: 24px; margin: 10px 0;">⬇️</div>
+                            <div class="craft-result">
+                                <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                                    ${UIController.createCardHTML(resultCard)}
+                                </div>
+                                <button class="btn-craft" ${canCraft ? `onclick="CraftController.craft('${recipe.id}')"` : 'disabled'}>
+                                    🔨 クラフトする
+                                </button>
+                                ${!canCraft ? '<p style="color: #ff8888; margin-top: 10px;">材料が足りません</p>' : ''}
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += recipeHtml;
+                });
+            },
+            
+            craft: function(recipeId) {
+                const recipe = this.recipes.find(r => r.id === recipeId);
+                if (!recipe) return;
+                
+                // 材料チェック
+                for (const req of recipe.requirements) {
+                    const owned = window.playerData.inventory[req.cardId] || 0;
+                    if (owned < req.count) {
+                        alert(`${req.name}が足りません`);
+                        return;
+                    }
+                }
+                
+                // 材料消費
+                for (const req of recipe.requirements) {
+                    window.playerData.inventory[req.cardId] -= req.count;
+                    if (window.playerData.inventory[req.cardId] <= 0) {
+                        delete window.playerData.inventory[req.cardId];
+                    }
+                }
+                
+                // 結果カード追加
+                const resultCardId = recipe.resultCardId;
+                if (!window.playerData.inventory[resultCardId]) window.playerData.inventory[resultCardId] = 0;
+                window.playerData.inventory[resultCardId]++;
+                
+                GameDataManager.saveData();
+                
+                const resultCard = UIController.getCardById(resultCardId);
+                showCenterMessage(`🎉 ${resultCard.name} を作成しました！`, "#ffd700");
+                
+                this.renderScreen();
             }
         };
 
@@ -2084,7 +2225,8 @@
                     special = (bs) => {
                         if (Math.random() < 0.25) {
                             bs.playerFrozen = true;
-                            BattleController.logBattle(`❄️ ${name} の凍結攻撃！ あなたは凍りついた！`);
+                            bs.playerHp = Math.max(0, bs.playerHp - 10);
+                            BattleController.logBattle(`❄️ ${name} の凍結攻撃！ あなたは凍りつき、10ダメージ！`);
                             showCenterMessage(`❄️ BrrBrr フローズン！`, "#00ffff");
                             showIceEffect();
                             AudioController.playFreeze();
@@ -2162,7 +2304,7 @@
                     playerHp: 350, playerMaxHp: 350, playerShield: 0, hand: [], activeCard: null, currentWord: null,
                     typedIndex: 0, mistakes: 0, typingStartTime: 0, nextTurnMultiplier: 1.0,
                     enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false,
-                    canSelectCard: true, playerHealOverTimeTurns: 0, enemyHealOverTimeTurns: 0
+                    canSelectCard: true, playerHealOverTimeTurns: 0, playerHealGammaTurns: 0, enemyFireGammaTurns: 0
                 };
                 
                 document.getElementById('boss-name').innerHTML = stageData.name;
@@ -2221,7 +2363,7 @@
                     playerHp: 350, playerMaxHp: 350, playerShield: 0, hand: [], activeCard: null, currentWord: null,
                     typedIndex: 0, mistakes: 0, typingStartTime: 0, nextTurnMultiplier: 1.0,
                     enemyFrozen: false, playerBurnTurns: 0, enemyBurnTurns: 0, playerFrozen: false,
-                    canSelectCard: true, playerHealOverTimeTurns: 0, enemyHealOverTimeTurns: 0
+                    canSelectCard: true, playerHealOverTimeTurns: 0, playerHealGammaTurns: 0, enemyFireGammaTurns: 0
                 };
                 if (isBossBattle && bossData) {
                     window.battleState.boss.name = bossData.name;
@@ -2357,28 +2499,33 @@
                 let effectValue = card.baseEffect;
                 let logMsg = `🃏 【${card.name}】発動！ `;
                 
-                // こねたハンバーグの強化 (90~110回復)
-                if (card.id === "boss_kone_hanbagu") {
-                    effectValue = Math.floor(Math.random() * 21) + 90; // 90~110
+                if (card.id === "craft_volcano_rush") {
+                    let finalDamage = 65;
+                    if (window.battleState.boss.shield > 0) {
+                        if (finalDamage >= window.battleState.boss.shield) {
+                            finalDamage -= window.battleState.boss.shield;
+                            window.battleState.boss.shield = 0;
+                        } else {
+                            window.battleState.boss.shield -= finalDamage;
+                            finalDamage = 0;
+                        }
+                    }
+                    window.battleState.boss.hp = Math.max(0, window.battleState.boss.hp - finalDamage);
+                    window.battleState.enemyFireGammaTurns = 3;
+                    logMsg += `敵に 💥65 ダメージ！ 3ターン火γ(毎ターン35ダメージ)を付与！`;
+                    AudioController.playAttack();
+                } else if (card.id === "craft_yaita_hanbagu") {
+                    effectValue = Math.floor(Math.random() * 21) + 70;
+                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + effectValue);
+                    window.battleState.playerHealGammaTurns = 2;
+                    logMsg += `HPが 💖${effectValue} 回復！ 2ターン回復γ(毎ターン35回復)を獲得！`;
+                    AudioController.playHeal();
+                } else if (card.id === "boss_kone_hanbagu") {
+                    effectValue = Math.floor(Math.random() * 21) + 90;
                     window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + effectValue);
                     logMsg += `HPが 💖${effectValue} 回復！`;
                     AudioController.playHeal();
-                    this.logBattle(logMsg);
-                    this.updateHPUI();
-                    this.resetTypingUI();
-                    window.battleState.activeCard = null;
-                    window.battleState.canSelectCard = true;
-                    UIController.updateBattleEffectsUI();
-                    if (window.battleState.boss.hp <= 0) {
-                        if (window.battleState.isBossBattle && window.battleState.boss.onDefeat) window.battleState.boss.onDefeat();
-                        this.endBattle(true, "ボスを撃破した！");
-                        return;
-                    }
-                    setTimeout(() => this.enemyTurn(), 1000);
-                    return;
-                }
-                
-                if (card.id === "story_pizza") {
+                } else if (card.id === "story_pizza") {
                     window.battleState.playerHealOverTimeTurns = 2;
                     logMsg += `2ターンの間、毎ターン30回復する！`;
                 } else if (card.id === "story_accel") {
@@ -2426,7 +2573,7 @@
                     return;
                 }
                 
-                if (card.type === 'attack' && !card.id.startsWith("story_") && card.id !== "boss_titan") {
+                if (card.type === 'attack' && !card.id.startsWith("story_") && !card.id.startsWith("craft_") && card.id !== "boss_titan") {
                     if (mistakes === 0) effectValue += 5;
                     else effectValue = Math.max(1, effectValue - mistakes);
                     if (timeTaken <= 1000) effectValue += 10;
@@ -2441,13 +2588,13 @@
                     logMsg += `敵に 💥${finalDamage} ダメージ！`;
                     window.battleState.nextTurnMultiplier = 1.0;
                     AudioController.playAttack();
-                } else if (card.type === 'heal' && !card.id.startsWith("story_") && card.id !== "boss_titan") {
+                } else if (card.type === 'heal' && !card.id.startsWith("story_") && !card.id.startsWith("craft_") && card.id !== "boss_titan") {
                     if (mistakes === 0) effectValue += 5;
                     else effectValue = Math.max(1, effectValue - mistakes);
                     window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + effectValue);
                     logMsg += `HPが 💖${effectValue} 回復！`;
                     AudioController.playHeal();
-                } else if (card.type === 'assist' && !card.id.startsWith("story_") && card.id !== "boss_titan") {
+                } else if (card.type === 'assist' && !card.id.startsWith("story_") && !card.id.startsWith("craft_") && card.id !== "boss_titan") {
                     if (card.name.includes("リセット") || card.name.includes("ドロー") || card.name.includes("入れ替え")) {
                         let resetCount = card.baseEffect;
                         if (card.id === "u5") resetCount = Math.max(1, 3 - Math.floor(mistakes * 0.5));
@@ -2495,6 +2642,12 @@
                     window.battleState.playerHealOverTimeTurns--;
                     this.updateHPUI();
                 }
+                if (window.battleState.playerHealGammaTurns > 0) {
+                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 35);
+                    this.logBattle(`✨ 回復効果γ！ 35回復！`);
+                    window.battleState.playerHealGammaTurns--;
+                    this.updateHPUI();
+                }
                 if (window.battleState.playerBurnTurns > 0) {
                     let burnDamage = 20;
                     if (window.battleState.playerShield > 0) {
@@ -2532,6 +2685,30 @@
                     }
                     this.logBattle(`🔥 ボスが燃えた！ 20ダメージ！`);
                     window.battleState.enemyBurnTurns--;
+                    this.updateHPUI();
+                    UIController.updateBattleEffectsUI();
+                    if (window.battleState.boss.hp <= 0) { 
+                        if (window.battleState.isBossBattle && window.battleState.boss.onDefeat) window.battleState.boss.onDefeat();
+                        this.endBattle(true, "ボスを撃破した！"); 
+                        return; 
+                    }
+                }
+                if (window.battleState.enemyFireGammaTurns > 0) {
+                    let fireDamage = 35;
+                    if (window.battleState.boss.shield > 0) {
+                        if (window.battleState.boss.shield >= fireDamage) {
+                            window.battleState.boss.shield -= fireDamage;
+                            fireDamage = 0;
+                        } else {
+                            fireDamage -= window.battleState.boss.shield;
+                            window.battleState.boss.shield = 0;
+                        }
+                    }
+                    if (fireDamage > 0) {
+                        window.battleState.boss.hp = Math.max(0, window.battleState.boss.hp - fireDamage);
+                    }
+                    this.logBattle(`💥 火γ！ 35ダメージ！`);
+                    window.battleState.enemyFireGammaTurns--;
                     this.updateHPUI();
                     UIController.updateBattleEffectsUI();
                     if (window.battleState.boss.hp <= 0) { 
@@ -2665,6 +2842,7 @@
                 if (screenId === 'equip-screen') UIController.renderEquipScreen();
                 if (screenId === 'story-mode-screen') StoryController.renderMap();
                 if (screenId === 'trade-screen') TradeController.renderMainMenu();
+                if (screenId === 'craft-screen') CraftController.renderScreen();
             },
             checkAndStartBattle: function() {
                 const uniqueCardCount = Object.keys(window.playerData.inventory).length;
