@@ -128,13 +128,13 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
         
-        button:hover {
+        button:hover:not(:disabled) {
             transform: translateY(-3px);
             box-shadow: 0 7px 0 rgba(0,0,0,0.4), 0 12px 20px rgba(0,0,0,0.4);
             filter: brightness(1.1);
         }
         
-        button:active {
+        button:active:not(:disabled) {
             transform: translateY(4px);
             box-shadow: 0 0 0 rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.3);
         }
@@ -145,6 +145,7 @@
             cursor: not-allowed;
             transform: none !important;
             filter: grayscale(100%);
+            opacity: 0.7;
         }
 
         .btn-primary { background: linear-gradient(135deg, #e94560, #ff2e63); border: 2px solid #ff2e63; }
@@ -342,7 +343,7 @@
             display: none;
         }
 
-        #battle-screen {
+        #battle-screen, #party-battle-screen {
             justify-content: flex-start;
             padding-top: 80px;
             padding-bottom: 20px;
@@ -436,6 +437,8 @@
         .effect-freeze { border-color: #00ffff; color: #88ffff; }
         .effect-heal { border-color: #00ff88; color: #88ffbb; }
         .effect-shield { border-color: #1e90ff; color: #88ccff; }
+        .effect-firegamma { border-color: #ff4500; color: #ff8c00; }
+        .effect-healgama { border-color: #32cd32; color: #98fb98; }
 
         .typing-area {
             background: linear-gradient(180deg, rgba(15, 52, 96, 0.9), rgba(22, 33, 62, 0.9));
@@ -817,101 +820,149 @@
         .status-online { background-color: #4caf50; box-shadow: 0 0 8px #4caf50; }
         .status-offline { background-color: #9e9e9e; }
 
-        /* ==========================================
-           パーティーバトル追加UIスタイル
-           ========================================== */
-        .party-log-header {
+        /* パーティーバトル関連UI */
+        .party-lobby-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 20px;
+        }
+        .party-panel {
+            flex: 1;
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #00cccc;
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 400px;
+        }
+        .party-user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .party-user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+        .party-member-item {
+            display: flex;
+            align-items: center;
+            background: rgba(0,50,50,0.5);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid #00cccc;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .party-member-leader {
+            color: gold;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .invite-notification {
             position: fixed;
             top: 80px;
             left: 20px;
-            background: rgba(0,0,0,0.85);
-            border: 2px solid #9c27b0;
-            border-radius: 10px;
-            padding: 10px;
-            font-size: 13px;
-            z-index: 90;
-            min-width: 180px;
-            display: none;
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #ff9800;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255,152,0,0.5);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
         }
-        .party-invite-notification {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: linear-gradient(135deg, #4b1248, #ef476f);
-            border: 2px solid white;
-            padding: 15px;
-            border-radius: 12px;
-            z-index: 10000;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-            display: none;
+        
+        .party-status-container {
+            display: flex;
             flex-direction: column;
             gap: 10px;
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            width: 250px;
         }
-        .party-members-display {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid #777;
-            border-radius: 8px;
+        .party-member-status-box {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #00cccc;
+            border-radius: 10px;
+            padding: 8px;
+            font-size: 14px;
+        }
+        .party-member-status-box.dead {
+            border-color: #555;
+            opacity: 0.7;
+            filter: grayscale(100%);
+        }
+        
+        .party-battle-log-container {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            width: 300px;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #555;
+            border-radius: 10px;
             padding: 10px;
-            margin: 10px 0;
-            width: 100%;
-            max-width: 400px;
-            text-align: left;
-        }
-        .party-hp-box {
             display: flex;
             flex-direction: column;
             gap: 5px;
+            max-height: 300px;
         }
-        .party-member-hp-bar {
-            background: #222;
-            height: 12px;
-            border-radius: 6px;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid #444;
+        .party-battle-log {
+            flex-grow: 1;
+            overflow-y: auto;
+            font-size: 12px;
+            border-top: 1px solid #444;
+            margin-top: 5px;
+            padding-top: 5px;
         }
-        .party-member-hp-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff4e50, #f9d423);
-            width: 100%;
-            transition: width 0.3s;
+
+        .target-list-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
         }
+        .target-btn {
+            background: rgba(0,0,0,0.6);
+            border: 2px solid #4a90e2;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            transition: 0.2s;
+        }
+        .target-btn:hover { background: rgba(74, 144, 226, 0.3); }
+        .target-btn.dead { border-color: #ff4444; color: #ffaaaa; }
     </style>
 </head>
 <body>
 
     <div id="toast-container"></div>
-
-    <!-- パーティー招待通知 -->
-    <div id="party-invite-notification-box" class="party-invite-notification">
-        <div id="party-invite-text" style="font-weight: bold; font-size: 14px;">〇〇さんからパーティー招待が来ています！</div>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button class="btn-success" id="party-accept-btn" style="padding: 6px 15px; font-size: 14px;">許可</button>
-            <button class="btn-danger" id="party-decline-btn" style="padding: 6px 15px; font-size: 14px;">拒否</button>
-        </div>
-    </div>
-
-    <!-- パーティー常駐ログ -->
-    <div id="party-side-log" class="party-log-header">
-        <div style="font-weight: bold; border-bottom: 1px solid #9c27b0; padding-bottom: 4px; margin-bottom: 6px; color: #ba68c8;">👥 現在のパーティー</div>
-        <div id="party-side-members-list" style="margin-bottom: 8px; line-height: 1.5;"></div>
-        <button class="btn-danger" onclick="PartyController.leaveParty()" style="padding: 4px 10px; font-size: 12px; width: 100%; border-radius: 6px; box-shadow: none;">退出</button>
-    </div>
+    <div id="invite-notifications-container"></div>
 
     <div class="header-info" id="global-header">
         <div>📦 パック: <span id="display-packs" style="font-weight: bold; color: #00ffcc; font-size: 20px;">0</span></div>
         <div>💾 セーブ: <span id="save-status" style="color: yellow;">同期中...</span></div>
         <button class="settings-btn users-btn" onclick="UIController.openOnlineUsers()" title="オンラインユーザー">👥</button>
-        <button class="settings-btn" onclick="GameDataManager.openSettings()" title="設定">⚙️</button>
+        <button class="settings-btn" onclick="GameController.openSettings()" title="設定">⚙️</button>
     </div>
 
     <div id="home-screen" class="screen active">
         <h1>デッキカードタイピング RPG</h1>
         <p style="font-size: 18px; margin-bottom: 25px; color: #ccc;">タイピングで戦い、最強のデッキを構築せよ！</p>
         <div class="menu-grid">
+            <button class="btn-teal" onclick="GameController.switchScreen('party-lobby-screen'); PartyController.enterLobby();">👥 パーティーバトル</button>
             <button class="btn-primary" onclick="GameController.checkAndStartBattle()">⚔️ パックゲットモード</button>
             <button class="btn-danger" onclick="GameController.switchScreen('boss-select-screen')">👑 ボスバトル</button>
-            <button class="btn-purple" onclick="GameController.switchScreen('party-lobby-screen'); PartyController.enterLobby();">👥 パーティーバトル</button>
             <button class="btn-warning" onclick="GameController.switchScreen('gacha-screen'); UIController.updateGachaScreen();">🎲 カードを引く</button>
             <button class="btn-success" onclick="GameController.switchScreen('inventory-screen'); UIController.renderInventory();">🎒 持ち物</button>
             <button class="btn-purple" onclick="GameController.switchScreen('equip-screen'); UIController.renderEquipScreen();">🛡️ カードを装備</button>
@@ -922,72 +973,103 @@
 
     <!-- パーティーロビー画面 -->
     <div id="party-lobby-screen" class="screen">
-        <h2>👥 パーティーバトルロビー</h2>
-        <p style="color: #aaa; margin-bottom: 15px;">同じく待機中のメンバーを招待してチームを結成しよう！ (最大4人)</p>
+        <h2>👥 パーティー待機中</h2>
+        <div class="party-lobby-container">
+            <div class="party-panel">
+                <h3 style="color: #00cccc; margin-bottom: 15px;">待機中のユーザー</h3>
+                <div class="party-user-list" id="party-lobby-users">
+                    <!-- ユーザーリストがここに表示される -->
+                </div>
+            </div>
+            <div class="party-panel">
+                <h3 style="color: #e94560; margin-bottom: 15px;">現在のパーティー</h3>
+                <div id="current-party-members">
+                    <!-- パーティーメンバーがここに表示される -->
+                </div>
+                <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;" id="party-action-buttons">
+                    <!-- ボタン類 -->
+                </div>
+            </div>
+        </div>
+        <button class="btn-dark" style="margin-top: 20px;" onclick="PartyController.leaveLobby(); GameController.switchScreen('home-screen');">⬅️ ホームに戻る</button>
+    </div>
+
+    <!-- パーティー冒険選択画面 -->
+    <div id="party-quest-screen" class="screen">
+        <h2>⚔️ パーティー冒険を選択</h2>
+        <div class="menu-grid" style="grid-template-columns: 1fr 1fr; max-width: 800px; gap: 20px; margin-bottom: 20px;">
+            <div style="background: rgba(0,0,0,0.7); border: 2px solid #4a90e2; padding: 20px; border-radius: 15px; text-align: center;">
+                <h3 style="color: #4a90e2; margin-bottom: 15px;">Tパック集め</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="btn-success" onclick="PartyController.startQuest('pack', 'easy')">🟢 レベチ簡単</button>
+                    <button class="btn-warning" onclick="PartyController.startQuest('pack', 'medium')">🟡 レベチ中級</button>
+                    <button class="btn-danger" onclick="PartyController.startQuest('pack', 'hard')">🔴 レベチ上級</button>
+                </div>
+            </div>
+            <div style="background: rgba(0,0,0,0.7); border: 2px solid #e94560; padding: 20px; border-radius: 15px; text-align: center;">
+                <h3 style="color: #e94560; margin-bottom: 15px;">Tボスバトル</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="btn-purple" onclick="PartyController.startQuest('boss', 'shield_niki')" style="height: 150px; font-size: 24px;">🛡️ シールドニキ</button>
+                </div>
+            </div>
+        </div>
+        <button class="btn-dark" onclick="GameController.switchScreen('party-lobby-screen')">⬅️ 戻る</button>
+    </div>
+
+    <!-- パーティーバトル画面 -->
+    <div id="party-battle-screen" class="screen">
+        <!-- 左上ログ＆メンバー一覧 -->
+        <div class="party-battle-log-container">
+            <h4 style="color: #00cccc; margin-bottom: 5px;">👥 パーティーメンバー</h4>
+            <div id="party-battle-members-list" style="font-size: 14px; margin-bottom: 10px; color: #fff;"></div>
+            <h4 style="color: #aaa; margin-bottom: 5px;">📝 バトルログ</h4>
+            <div class="party-battle-log" id="party-battle-log"></div>
+            <button class="btn-danger" style="padding: 5px; font-size: 12px; margin-top: 5px;" onclick="PartyBattleController.leaveBattle()">🏃 退出する</button>
+        </div>
+
+        <!-- 右上ステータス -->
+        <div class="party-status-container" id="party-status-container">
+            <!-- メンバーステータスがここに生成される -->
+        </div>
+
+        <div class="battle-header" style="justify-content: center; margin-top: 20px;">
+            <div class="status-box boss-status-box" style="width: 400px;">
+                <h3 id="party-boss-name">👹 ボス</h3>
+                <div>HP: <span id="party-boss-hp">0</span> / <span id="party-boss-max-hp">0</span></div>
+                <div class="hp-bar-container">
+                    <div class="hp-bar boss-hp-bar" id="party-boss-hp-bar"></div>
+                    <div class="hp-text"><span id="party-boss-hp-text">0 / 0</span></div>
+                </div>
+                <div class="shield-bar-container" id="party-boss-shield-container" style="display: none;">
+                    <div class="shield-bar" id="party-boss-shield-bar"></div>
+                </div>
+                <div class="status-effects" id="party-boss-effects"></div>
+            </div>
+        </div>
         
-        <div style="display: flex; gap: 20px; width: 100%; max-width: 900px; justify-content: center; align-items: flex-start; margin-top: 10px;">
-            <div style="background: rgba(0,0,0,0.6); padding: 20px; border-radius: 15px; border: 2px solid #0f3460; flex: 1;">
-                <h3 style="color: #4a90e2; margin-bottom: 15px; text-align: left;">⏳ 待機中のプレイヤー</h3>
-                <div id="party-waiting-users-list" style="max-height: 40vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
-            </div>
-            
-            <div style="background: rgba(0,0,0,0.6); padding: 20px; border-radius: 15px; border: 2px solid #9c27b0; flex: 1; display: flex; flex-direction: column; align-items: center;">
-                <h3 style="color: #ba68c8; margin-bottom: 15px; text-align: left; width: 100%;">🛡️ 現在のパーティーメンバー</h3>
-                <div id="party-current-members-box" class="party-members-display"></div>
-                
-                <button class="btn-gold" id="party-adventure-btn" style="margin-top: 15px; width: 100%; font-size: 20px; display: none;" onclick="PartyController.showAdventureMenu()">⚔️ パーティー冒険</button>
-            </div>
+        <div id="party-battle-waiting" style="display: none; font-size: 24px; color: #ffcc00; font-weight: bold; margin: 40px 0; text-align: center;">
+            ⏳ 味方の行動を待機中...
         </div>
-        <button class="btn-dark" style="margin-top: 30px; padding: 10px 30px;" onclick="PartyController.exitLobby()">⬅️ ホームに戻る</button>
+
+        <div class="typing-area" id="party-typing-area">
+            <div id="party-typing-message" style="font-size: 20px; color: #4a90e2; font-weight: bold; margin-bottom: 8px;">👇 下のカードから1つ選んでください</div>
+            <div class="japanese-text" id="party-typing-ja"></div>
+            <div class="romaji-text" id="party-typing-en"></div>
+        </div>
+        
+        <div class="hand-container" id="party-battle-hand"></div>
     </div>
 
-    <!-- パーティー冒険選択モーダル -->
-    <div id="party-adventure-modal" class="modal">
-        <div class="modal-content" style="max-width: 450px; border-color: #ffd700;">
-            <h2 style="font-size: 28px; color: #ffd700;">⚔️ パーティー冒険選択</h2>
-            <p style="color: #ccc; margin-bottom: 20px; font-size: 14px;">※リーダーのみ選択可能です</p>
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <button class="btn-primary" style="font-size: 20px; padding: 15px;" onclick="PartyController.selectAdventureMode('pack')">📦 Tパック集め</button>
-                <button class="btn-danger" style="font-size: 20px; padding: 15px;" onclick="PartyController.selectAdventureMode('boss')">👑 Tボスバトル</button>
-            </div>
-            <button class="btn-dark" style="width: 100%; margin-top: 20px;" onclick="document.getElementById('party-adventure-modal').classList.remove('active')">閉じる</button>
+    <!-- ターゲット選択モーダル -->
+    <div id="target-select-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="font-size: 24px; color: #00ffcc; margin-bottom: 10px;">👤 対象を選択してください</h3>
+            <p style="color: #aaa; margin-bottom: 15px;">回復やアシストを使用する味方を選びます。</p>
+            <div class="target-list-grid" id="target-list-grid"></div>
+            <button class="btn-dark" style="margin-top: 20px; width: 100%;" onclick="document.getElementById('target-select-modal').classList.remove('active')">キャンセル</button>
         </div>
     </div>
 
-    <!-- Tパック集め難易度選択モーダル -->
-    <div id="party-difficulty-modal" class="modal">
-        <div class="modal-content" style="max-width: 450px; border-color: #4caf50;">
-            <h2 style="font-size: 26px; color: #4caf50;">📦 Tパック集め 難易度</h2>
-            <p style="color: #ccc; margin-bottom: 20px; font-size: 14px;">難易度に応じてボスが変化し獲得パックが増加します</p>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <button class="btn-success" style="font-size: 18px;" onclick="PartyController.startPackBattle('easy')">🟢 レベチ簡単 (報酬: 50パック)</button>
-                <button class="btn-warning" style="font-size: 18px;" onclick="PartyController.startPackBattle('medium')">🟡 レベチ中級 (報酬: 100パック)</button>
-                <button class="btn-danger" style="font-size: 18px;" onclick="PartyController.startPackBattle('hard')">🔴 レベチ上級 (報酬: 200パック)</button>
-            </div>
-            <button class="btn-dark" style="width: 100%; margin-top: 20px;" onclick="document.getElementById('party-difficulty-modal').classList.remove('active')">戻る</button>
-        </div>
-    </div>
-
-    <!-- Tボスバトル選択モーダル -->
-    <div id="party-tboss-modal" class="modal">
-        <div class="modal-content" style="max-width: 450px; border-color: #f44336;">
-            <h2 style="font-size: 26px; color: #f44336;">👑 Tボスバトル</h2>
-            <p style="color: #ccc; margin-bottom: 20px; font-size: 14px;">最強のシールドを持つボスに仲間と共に挑め！</p>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <button class="btn-special" style="font-size: 18px;" onclick="PartyController.startTBossBattle()">🛡️ シールドニキ (HP:10000 / 報酬:80パック+10% OG)</button>
-            </div>
-            <button class="btn-dark" style="width: 100%; margin-top: 20px;" onclick="document.getElementById('party-tboss-modal').classList.remove('active')">戻る</button>
-        </div>
-    </div>
-
-    <!-- 味方選択ターゲットモーダル -->
-    <div id="party-target-modal" class="modal">
-        <div class="modal-content" style="max-width: 400px; border-color: #ba68c8;">
-            <h2 style="font-size: 24px; color: #ba68c8;">🎯 対象を選択</h2>
-            <p style="color: #ccc; margin-bottom: 15px; font-size: 14px;">カードを使用する味方を選択してください</p>
-            <div id="party-target-buttons-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
-        </div>
-    </div>
 
     <div id="craft-screen" class="screen">
         <h2>🔨 クラフト</h2>
@@ -1066,7 +1148,7 @@
 
     <div id="battle-screen" class="screen">
         <div class="battle-header">
-            <div class="status-box player-status-box" id="player-status-card-box">
+            <div class="status-box player-status-box">
                 <h3>🧑 あなた</h3>
                 <div>HP: <span id="player-hp">350</span> / <span id="player-max-hp">350</span></div>
                 <div class="hp-bar-container">
@@ -1078,13 +1160,6 @@
                 </div>
                 <div class="status-effects" id="player-effects"></div>
             </div>
-            
-            <!-- パーティーバトル用右上HP表示コンテナ -->
-            <div id="party-battle-hps-container" class="status-box" style="border-color: #9c27b0; display: none; width: 320px; text-align: left;">
-                <h3 style="font-size: 16px; color: #ba68c8; text-align: center; margin-bottom: 8px;">👥 パーティー全員のHP</h3>
-                <div id="party-battle-hps-list" class="party-hp-box"></div>
-            </div>
-
             <div class="status-box boss-status-box">
                 <h3 id="boss-name">👹 ボス</h3>
                 <div>HP: <span id="boss-hp">350</span> / <span id="boss-max-hp">350</span></div>
@@ -1105,7 +1180,7 @@
         </div>
         <div class="battle-log" id="battle-log"></div>
         <div class="hand-container" id="battle-hand"></div>
-        <button class="btn-dark" id="battle-flee-btn" style="margin-top: 15px; padding: 8px 30px; font-size: 16px;" onclick="BattleController.flee()">🏃 逃げる（敗北扱い）</button>
+        <button class="btn-dark" style="margin-top: 15px; padding: 8px 30px; font-size: 16px;" onclick="BattleController.flee()">🏃 逃げる（敗北扱い）</button>
     </div>
 
     <div id="gacha-screen" class="screen">
@@ -1276,7 +1351,6 @@
         </div>
     </div>
 
-    <!-- Firebase統合JavaScriptモジュール -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getDatabase, ref, set, get, update, push, remove, onValue, off, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
@@ -1371,7 +1445,7 @@
             setTimeout(() => { if (toast.parentNode) toast.remove(); }, 4000);
         }
 
-        // 全カードデータリスト[cite: 2]
+        // カードデータ（弱体化、追加分）
         const ALL_CARDS = [
             // コモン
             { id: "c1", name: "パンチ", type: "attack", rarity: "Common", baseEffect: 20, desc: "20ダメージ" },
@@ -1405,7 +1479,7 @@
             { id: "r7", name: "爆裂魔法", type: "attack", rarity: "Rare", baseEffect: 45, desc: "45ダメージ" },
             { id: "r8", name: "シャドウボール", type: "attack", rarity: "Rare", baseEffect: 42, desc: "42ダメージ" },
             { id: "r3", name: "ハイポーション", type: "heal", rarity: "Rare", baseEffect: 40, desc: "40回復" },
-            { id: "r9", name: "再生 of 祈り", type: "heal", rarity: "Rare", baseEffect: 38, desc: "38回復" },
+            { id: "r9", name: "再生の祈り", type: "heal", rarity: "Rare", baseEffect: 38, desc: "38回復+1T回復β" },
             { id: "r4", name: "気合い", type: "assist", rarity: "Rare", baseEffect: 1.5, desc: "次1.5倍" },
             { id: "r5", name: "フルリロード", type: "assist", rarity: "Rare", baseEffect: 5, desc: "5枚リセット" },
             { id: "r10", name: "攻撃力15倍", type: "assist", rarity: "Rare", baseEffect: 15, desc: "次15倍" },
@@ -1416,63 +1490,62 @@
             { id: "l6", name: "ドラゴンブレス", type: "attack", rarity: "Legend", baseEffect: 60, desc: "60ダメージ" },
             { id: "l7", name: "ヘルファイア", type: "attack", rarity: "Legend", baseEffect: 58, desc: "58ダメージ" },
             { id: "l3", name: "エリクサー", type: "heal", rarity: "Legend", baseEffect: 55, desc: "55回復" },
-            { id: "l8", name: "生命の泉", type: "heal", rarity: "Legend", baseEffect: 50, desc: "50回復" },
+            { id: "l8", name: "生命の泉", type: "heal", rarity: "Legend", baseEffect: 50, desc: "50回復+1T回復β" },
             { id: "l4", name: "覚醒", type: "assist", rarity: "Legend", baseEffect: 1.8, desc: "次1.8倍" },
-            { id: "l9", name: "時の逆流", type: "assist", rarity: "Legend", baseEffect: 1, desc: "敵スキップ" },
+            { id: "l9", name: "時の逆流", type: "assist", rarity: "Legend", baseEffect: 1, desc: "敵スキップ+20回復" },
             // ミシック
             { id: "m1", name: "神の裁き", type: "attack", rarity: "Mythic", baseEffect: 70, desc: "70ダメージ" },
             { id: "m4", name: "ダークマター", type: "attack", rarity: "Mythic", baseEffect: 70, desc: "70ダメージ" },
             { id: "m5", name: "ディバインアロー", type: "attack", rarity: "Mythic", baseEffect: 75, desc: "75ダメージ" },
             { id: "m2", name: "完全回復", type: "heal", rarity: "Mythic", baseEffect: 70, desc: "70回復" },
-            { id: "m6", name: "天使の祝福", type: "heal", rarity: "Mythic", baseEffect: 65, desc: "65回復" },
-            { id: "m3", name: "時止め", type: "assist", rarity: "Mythic", baseEffect: 1, desc: "敵スキップ" },
+            { id: "m6", name: "天使の祝福", type: "heal", rarity: "Mythic", baseEffect: 65, desc: "65回復+状態異常解除" },
+            { id: "m3", name: "時止め", type: "assist", rarity: "Mythic", baseEffect: 1, desc: "敵スキップ+2倍" },
             // ゴッドリー
             { id: "g1", name: "崩星咆哮砲", type: "attack", rarity: "Godly", baseEffect: 85, desc: "85ダメージ" },
             { id: "g4", name: "ギャラクシーカノン", type: "attack", rarity: "Godly", baseEffect: 90, desc: "90ダメージ" },
             { id: "g5", name: "ディメンションスラッシュ", type: "attack", rarity: "Godly", baseEffect: 88, desc: "88ダメージ" },
             { id: "g3", name: "ゴッドブレス", type: "heal", rarity: "Godly", baseEffect: 85, desc: "85回復" },
-            { id: "g6", name: "聖なる光", type: "heal", rarity: "Godly", baseEffect: 80, desc: "80回復" },
+            { id: "g6", name: "聖なる光", type: "heal", rarity: "Godly", baseEffect: 80, desc: "80回復+2T回復β" },
             { id: "g2", name: "神の加護", type: "assist", rarity: "Godly", baseEffect: 2.2, desc: "次2.2倍" },
             // ボルケーノ
             { id: "v1", name: "超新星爆発", type: "attack", rarity: "Volcano", baseEffect: 95, desc: "95ダメージ" },
             { id: "v2", name: "大噴火", type: "attack", rarity: "Volcano", baseEffect: 95, desc: "95ダメージ" },
             { id: "v3", name: "マグマストーム", type: "attack", rarity: "Volcano", baseEffect: 100, desc: "100ダメージ" },
-            { id: "boss_fire_slime", name: "ファイアスライム", type: "attack", rarity: "Volcano", baseEffect: 45, desc: "45ダメージ" },
+            { id: "boss_fire_slime", name: "ファイアスライム", type: "attack", rarity: "Volcano", baseEffect: 45, desc: "45+2T燃やす" },
             { id: "v4", name: "灼熱の癒し", type: "heal", rarity: "Volcano", baseEffect: 90, desc: "90回復" },
-            { id: "v5", name: "ボルカニックバリア", type: "assist", rarity: "Volcano", baseEffect: 60, desc: "60バリア" },
+            { id: "v5", name: "ボルカニックバリア", type: "assist", rarity: "Volcano", baseEffect: 60, desc: "60バリア+反撃" },
             // シークレット
             { id: "s1", name: "虚無への誘い", type: "attack", rarity: "Secret", baseEffect: 110, desc: "110ダメージ" },
             { id: "s3", name: "ブラックホール", type: "attack", rarity: "Secret", baseEffect: 110, desc: "110ダメージ" },
             { id: "s4", name: "アビスゲート", type: "attack", rarity: "Secret", baseEffect: 115, desc: "115ダメージ" },
-            { id: "boss_brrr_frozen", name: "Brrrrフローズン", type: "attack", rarity: "Secret", baseEffect: 45, desc: "45ダメージ" },
+            { id: "boss_brrr_frozen", name: "Brrrrフローズン", type: "attack", rarity: "Secret", baseEffect: 45, desc: "45+凍らせ(10ダメージ)" },
             { id: "s2", name: "無限の命", type: "heal", rarity: "Secret", baseEffect: 110, desc: "110回復" },
-            { id: "boss_kone_hanbagu", name: "こねたハンバーグ", type: "heal", rarity: "Secret", baseEffect: 100, desc: "100回復" },
+            { id: "boss_kone_hanbagu", name: "こねたハンバーグ", type: "heal", rarity: "Secret", baseEffect: 0, desc: "90~110回復" },
             { id: "s5", name: "シークレットオーラ", type: "assist", rarity: "Secret", baseEffect: 2.5, desc: "次2.5倍" },
             // アルティメット
             { id: "ul1", name: "終焉の光", type: "attack", rarity: "Ultimate", baseEffect: 130, desc: "130ダメージ" },
             { id: "ul2", name: "ビッグバン", type: "attack", rarity: "Ultimate", baseEffect: 130, desc: "130ダメージ" },
             { id: "ul3", name: "次元断裂", type: "attack", rarity: "Ultimate", baseEffect: 135, desc: "135ダメージ" },
             { id: "ul4", name: "アルティメットヒール", type: "heal", rarity: "Ultimate", baseEffect: 130, desc: "130回復" },
-            { id: "boss_titan", name: "タイタンの守護", type: "assist", rarity: "Ultimate", baseEffect: 60, desc: "60バリア" },
-            { id: "craft_volcano_rush", name: "ボルケーノラッシュ", type: "attack", rarity: "Ultimate", baseEffect: 65, desc: "65ダメージ" },
+            { id: "boss_titan", name: "タイタンの守護", type: "assist", rarity: "Ultimate", baseEffect: 60, desc: "60バリア+60回復" },
+            { id: "craft_volcano_rush", name: "ボルケーノラッシュ", type: "attack", rarity: "Ultimate", baseEffect: 65, desc: "65ダメージ+3T火γ(35)" },
             // OG
             { id: "og1", name: "管理者権限", type: "attack", rarity: "OG", baseEffect: 160, desc: "160ダメージ" },
             { id: "og2", name: "デバッグ", type: "attack", rarity: "OG", baseEffect: 160, desc: "160ダメージ" },
             { id: "og3", name: "ルートアクセス", type: "attack", rarity: "OG", baseEffect: 170, desc: "170ダメージ" },
             { id: "boss_lastboss", name: "ラスボスの威光", type: "attack", rarity: "OG", baseEffect: 180, desc: "180ダメージ" },
             { id: "og4", name: "完全なる再生", type: "heal", rarity: "OG", baseEffect: 160, desc: "160回復" },
-            { id: "og5", name: "オーバーライド", type: "assist", rarity: "OG", baseEffect: 5.0, desc: "次5倍" },
-            { id: "craft_yaita_hanbagu", name: "焼いたハンバーグ", type: "heal", rarity: "OG", baseEffect: 80, desc: "80回復" },
+            { id: "og5", name: "オーバーライド", type: "assist", rarity: "OG", baseEffect: 5.0, desc: "次5倍+50バリア" },
+            { id: "craft_yaita_hanbagu", name: "焼いたハンバーグ", type: "heal", rarity: "OG", baseEffect: 0, desc: "70~90回復+2T回復γ(35)" },
             { id: "craft_atk_25", name: "攻撃力25倍", type: "assist", rarity: "OG", baseEffect: 25, desc: "次25倍" },
-            /* 新規パーティー限定ドロップOGカード */
-            { id: "og_ultra_shield", name: "ウルトラシールド", type: "assist", rarity: "OG", baseEffect: 150, desc: "HP150のシールド展開" },
+            { id: "og_ultra_shield", name: "ウルトラシールド", type: "assist", rarity: "OG", baseEffect: 150, desc: "150バリア(味方選択可)" },
             // エクスクルーシブ
-            { id: "ex1", name: "Xアタック", type: "attack", rarity: "Exclusive", baseEffect: 180, desc: "180ダメージ" },
-            { id: "ex2", name: "傷薬", type: "heal", rarity: "Exclusive", baseEffect: 80, desc: "80回復" },
+            { id: "ex1", name: "Xアタック", type: "attack", rarity: "Exclusive", baseEffect: 180, desc: "180ダメ+2T燃焼(毎30)" },
+            { id: "ex2", name: "傷薬", type: "heal", rarity: "Exclusive", baseEffect: 80, desc: "80回復+3T回復(毎40)" },
             { id: "ex3", name: "Xシールド", type: "assist", rarity: "Exclusive", baseEffect: 200, desc: "200バリア" },
-            { id: "ex4", name: "Xパリィ", type: "attack", rarity: "Exclusive", baseEffect: 140, desc: "140ダメージ" },
-            { id: "ex5", name: "ウルトラリセット", type: "assist", rarity: "Exclusive", baseEffect: 0, desc: "手札リセット" },
-            { id: "ex6", name: "パラライシス", type: "assist", rarity: "Exclusive", baseEffect: 0, desc: "敵行動停止" }
+            { id: "ex4", name: "Xパリィ", type: "attack", rarity: "Exclusive", baseEffect: 140, desc: "140ダメ+1T反射" },
+            { id: "ex5", name: "ウルトラリセット", type: "assist", rarity: "Exclusive", baseEffect: 0, desc: "手札5リセット+5T手札7枚" },
+            { id: "ex6", name: "パラライシス", type: "assist", rarity: "Exclusive", baseEffect: 0, desc: "3T敵凍結" }
         ];
 
         const RARITY_WEIGHTS_NORMAL = [
@@ -1511,58 +1584,184 @@
             { ja: "かいふくまほうをつかう", en: "kaihukumahouwotukau" },
             { ja: "どくこうげきにちゅうい", en: "dokukougekinityuui" },
             { ja: "ほのおのまほうをはなつ", en: "honoonomahouwohanatu" },
-            { ja: "こおりのち力でとめる", en: "koorinotikaradetomeru" },
-            { ja: "んをつなげてタイピング", en: "nnwotunagetetaipeingu" }
+            { ja: "こおりのちからでとめる", en: "koorinotikaradetomeru" },
+            { ja: "でんげきのいちげきをあたえ", en: "dengekinoitigekiwotae" },
+            { ja: "すばやくにげてたいせいをととのえ", en: "subayakunigetetaiseiwototonoe" },
+            { ja: "さいごのちからをふりしぼれ", en: "saigonotikarawohurisibore" },
+            { ja: "きりふだのかあどをつかえ", en: "kirihudanokaadowotukae" }
         ];
 
-        // 通常ボスバトル
+        // 既存のボスデータ
         const BOSSES = [
-            { name: "🔥 ファイアスライム", hp: 600, maxHp: 600, attack: 35, index: 0, dropRate: "10%", dropCard: "ファイアスライム" },
-            { name: "🍳 クッキングマッサー", hp: 500, maxHp: 500, attack: 40, index: 1, dropRate: "8%", dropCard: "こねたハンバーグ" },
-            { name: "❄️ フローズンウィザード", hp: 800, maxHp: 800, attack: 25, index: 2, dropRate: "5%", dropCard: "Brrrrフローズン" },
-            { name: "🛡️ アルティメットタイタン", hp: 800, maxHp: 800, attack: 35, index: 3, dropRate: "3%", dropCard: "タイタンの守護" },
-            { name: "👑 ラスボス", hp: 1200, maxHp: 1200, attack: 50, index: 4, dropRate: "1%", dropCard: "ラスボスの威光" }
+            { name: "🔥 ファイアスライム", hp: 600, maxHp: 600, attack: 35, index: 0,
+              dropRate: "10%", dropCard: "ファイアスライム",
+              special: (battleState) => {
+                  if (Math.random() < 0.25) {
+                      const dmg = 25;
+                      battleState.playerHp = Math.max(0, battleState.playerHp - dmg);
+                      BattleController.logBattle(`🔥 ファイアスライムの技！ 燃える息吹で ${dmg} ダメージ！`);
+                      let removed = 0;
+                      const burnedCards = [];
+                      while (battleState.hand.length > 0 && removed < 2) {
+                          const removedCard = battleState.hand.pop();
+                          burnedCards.push(removedCard.name);
+                          removed++;
+                      }
+                      if (burnedCards.length > 0) {
+                          const msg = `🔥 ${burnedCards.join(' と ')} が燃えた！`;
+                          BattleController.logBattle(msg);
+                          showCenterMessage(msg, "#ff6600");
+                      }
+                      BattleController.fillHand();
+                      AudioController.playBurn();
+                      battleState.playerBurnTurns = 2;
+                      return true;
+                  }
+                  return false;
+              },
+              onDefeat: () => {
+                  if (Math.random() < 0.1) {
+                      const card = ALL_CARDS.find(c => c.id === "boss_fire_slime");
+                      if (card) {
+                          if (!window.playerData.inventory[card.id]) window.playerData.inventory[card.id] = 0;
+                          window.playerData.inventory[card.id]++;
+                          GameDataManager.saveData();
+                          BattleController.logBattle("🎉 ボスから『ファイアスライム』カードを入手した！");
+                          showCenterMessage("🎉 カードがドロップした！", "#ffd700");
+                      }
+                  }
+              }
+            },
+            { name: "🍳 クッキングマッサー", hp: 500, maxHp: 500, attack: 40, index: 1,
+              dropRate: "8%", dropCard: "こねたハンバーグ",
+              special: (battleState) => {
+                  if (Math.random() < 0.25) {
+                      const heal = 100;
+                      battleState.boss.hp = Math.min(battleState.boss.maxHp, battleState.boss.hp + heal);
+                      BattleController.logBattle(`🍳 クッキングマッサーの技！ 料理を食べて HPを ${heal} 回復した！`);
+                      AudioController.playHeal();
+                      return true;
+                  }
+                  return false;
+              },
+              onDefeat: () => {
+                  if (Math.random() < 0.08) {
+                      const card = ALL_CARDS.find(c => c.id === "boss_kone_hanbagu");
+                      if (card) {
+                          if (!window.playerData.inventory[card.id]) window.playerData.inventory[card.id] = 0;
+                          window.playerData.inventory[card.id]++;
+                          GameDataManager.saveData();
+                          BattleController.logBattle("🎉 ボスから『こねたハンバーグ』カードを入手した！");
+                          showCenterMessage("🎉 カードがドロップした！", "#ffd700");
+                      }
+                  }
+              }
+            },
+            { name: "❄️ フローズンウィザード", hp: 800, maxHp: 800, attack: 25, index: 2,
+              dropRate: "5%", dropCard: "Brrrrフローズン",
+              special: (battleState) => {
+                  if (Math.random() < 0.5) {
+                      battleState.playerFrozenTurns = 1;
+                      battleState.playerHp = Math.max(0, battleState.playerHp - 10);
+                      BattleController.logBattle(`❄️ フローズンウィザードの技！ 氷結の呪文であなたは1ターン動けなくなり、10ダメージ！`);
+                      showCenterMessage("❄️ BrrBrr フローズン！", "#00ffff");
+                      showIceEffect();
+                      AudioController.playFreeze();
+                      return true;
+                  }
+                  return false;
+              },
+              onDefeat: () => {
+                  if (Math.random() < 0.05) {
+                      const card = ALL_CARDS.find(c => c.id === "boss_brrr_frozen");
+                      if (card) {
+                          if (!window.playerData.inventory[card.id]) window.playerData.inventory[card.id] = 0;
+                          window.playerData.inventory[card.id]++;
+                          GameDataManager.saveData();
+                          BattleController.logBattle("🎉 ボスから『Brrrrフローズン』カードを入手した！");
+                          showCenterMessage("🎉 カードがドロップした！", "#ffd700");
+                      }
+                  }
+              }
+            },
+            { name: "🛡️ アルティメットタイタン", hp: 800, maxHp: 800, attack: 35, index: 3,
+              dropRate: "3%", dropCard: "タイタンの守護",
+              special: (battleState) => {
+                  if (Math.random() < 0.25) {
+                      battleState.boss.shield = (battleState.boss.shield || 0) + 50;
+                      BattleController.logBattle(`🛡️ アルティメットタイタンの技！ 50のバリアを張った！`);
+                      return true;
+                  }
+                  return false;
+              },
+              onDefeat: () => {
+                  if (Math.random() < 0.03) {
+                      const card = ALL_CARDS.find(c => c.id === "boss_titan");
+                      if (card) {
+                          if (!window.playerData.inventory[card.id]) window.playerData.inventory[card.id] = 0;
+                          window.playerData.inventory[card.id]++;
+                          GameDataManager.saveData();
+                          BattleController.logBattle("🎉 ボスから『タイタンの守護』(Ultimate) カードを入手した！");
+                          showCenterMessage("🎉 カードがドロップした！", "#ffd700");
+                      }
+                  }
+              }
+            },
+            { name: "👑 ラスボス", hp: 1200, maxHp: 1200, attack: 50, index: 4,
+              dropRate: "1%", dropCard: "ラスボスの威光",
+              special: (battleState) => {
+                  const r = Math.random();
+                  if (r < 0.2) {
+                      const dmg = 40;
+                      battleState.playerHp = Math.max(0, battleState.playerHp - dmg);
+                      BattleController.logBattle(`👑 ラスボスの技！ ダークネスブレイクで ${dmg} ダメージ！`);
+                      return true;
+                  } else if (r < 0.4) {
+                      battleState.enemyFrozenTurns = 1;
+                      BattleController.logBattle(`👑 ラスボスの技！ 時空の歪みで自らのターンをスキップする！`); 
+                      return true;
+                  }
+                  return false;
+              },
+              onDefeat: () => {
+                  if (Math.random() < 0.01) {
+                      const card = ALL_CARDS.find(c => c.id === "boss_lastboss");
+                      if (card) {
+                          if (!window.playerData.inventory[card.id]) window.playerData.inventory[card.id] = 0;
+                          window.playerData.inventory[card.id]++;
+                          GameDataManager.saveData();
+                          BattleController.logBattle("🎉 ボスから『ラスボスの威光』(OG) カードを入手した！");
+                          showCenterMessage("🎉 カードがドロップした！", "#ffd700");
+                      }
+                  }
+              }
+            }
         ];
 
-        // グローバルデータ定義
         window.playerData = { 
             packs: 10, inventory: {}, equipped: [], unlockedBosses: [0],
             nickname: "匿名：冒険者", showNotifications: true
         };
         window.UIState = { invRarity: 'All', invType: 'All', equipRarity: 'All' };
         window.battleState = {
-            isActive: false, difficulty: '', boss: { hp: 0, maxHp: 0, attack: 0, name: "", shield: 0 },
+            isActive: false, difficulty: '', boss: { hp: 0, maxHp: 0, attack: 0, name: "", special: null, shield: 0, onDefeat: null, dropRate: "" },
             playerHp: 350, playerMaxHp: 350, playerShield: 0, hand: [], activeCard: null, currentWord: null, typedIndex: 0, mistakes: 0, 
-            typingStartTime: 0, nextTurnMultiplier: 1.0, isPartyBattle: false, currentSelectedTargetId: null
+            typingStartTime: 0, nextTurnMultiplier: 1.0, enemyFrozenTurns: 0, playerBurnTurns: 0, enemyBurnTurns: 0, enemyBurnDamage: 20, playerFrozenTurns: 0,
+            canSelectCard: true, playerHealOverTimeTurns: 0, playerHealOverTimeAmount: 30, playerHealGammaTurns: 0, enemyFireGammaTurns: 0,
+            playerParryTurns: 0, playerHandSizeBoostTurns: 0
         };
         window.bossBattleState = { isActive: false, currentBoss: null };
-        window.tradeState = { currentTab: 'receive', selectedOfferCardIds: [], selectedTradeCardIds: [], pendingTradeId: null, notifications: [] };
-
-        // パーティーシステム用グローバルステート[cite: 2]
-        window.partyState = {
-            currentPartyId: null,
-            isLeader: false,
-            inLobby: false,
-            members: [], // { id, nickname, hp, maxHp, activeCardId, targetMemberId, typingFinished, active, actionDone }
-            inviteSource: null,
-            invitePartyId: null,
-            battleId: null,
-            bossType: '', // 'pack_easy', 'pack_medium', 'pack_hard', 'tboss_shield'
-            bossHp: 0,
-            bossMaxHp: 0,
-            bossAttack: 80,
-            bossShield: 0,
-            bossCharged: false,
-            currentTurnOwnerIndex: 0,
-            phase: 'waiting_card' // 'waiting_card', 'waiting_typing', 'player_turns', 'boss_turn'
+        window.tradeState = {
+            currentTab: 'receive',
+            selectedOfferCardIds: [], 
+            selectedTradeCardIds: [],
+            pendingTradeId: null,
+            notifications: []
         };
-
+        
         let initialPresenceLoad = true;
         let knownOnlineUsers = {};
 
-        // ==========================================
-        // データマネージャー (Firebaseセーブ・同期)
-        // ==========================================
         window.GameDataManager = {
             initPresence: function() {
                 const connectedRef = ref(database, '.info/connected');
@@ -1570,15 +1769,16 @@
                 
                 onValue(connectedRef, (snap) => {
                     if (snap.val() === true) {
-                        onDisconnect(myPresenceRef).update({ online: false, inLobby: false, partyId: null, lastLogin: serverTimestamp() }).then(() => {
+                        onDisconnect(myPresenceRef).update({ online: false, lastLogin: serverTimestamp() }).then(() => {
                             set(myPresenceRef, {
                                 online: true,
-                                inLobby: window.partyState.inLobby,
-                                partyId: window.partyState.currentPartyId || null,
                                 nickname: window.playerData.nickname || "匿名：冒険者",
                                 lastLogin: serverTimestamp()
                             });
                         });
+                        if(window.PartyController) {
+                            window.PartyController.setupDisconnect();
+                        }
                     }
                 });
 
@@ -1587,7 +1787,6 @@
                     if (initialPresenceLoad) {
                         Object.keys(data).forEach(k => knownOnlineUsers[k] = data[k]);
                         initialPresenceLoad = false;
-                        PartyController.renderWaitingList();
                         return;
                     }
                     for (const key in data) {
@@ -1602,20 +1801,6 @@
                     }
                     Object.keys(knownOnlineUsers).forEach(k => delete knownOnlineUsers[k]);
                     Object.keys(data).forEach(k => knownOnlineUsers[k] = data[k]);
-                    PartyController.renderWaitingList();
-                });
-
-                // リアルタイムパーティー招待リッスン[cite: 2]
-                onValue(ref(database, `invites/${userId}`), (snap) => {
-                    const invite = snap.val();
-                    if (invite) {
-                        window.partyState.inviteSource = invite.fromName;
-                        window.partyState.invitePartyId = invite.partyId;
-                        document.getElementById('party-invite-text').textContent = `${invite.fromName}さんからパーティー招待が来ています！`;
-                        document.getElementById('party-invite-notification-box').style.display = 'flex';
-                    } else {
-                        document.getElementById('party-invite-notification-box').style.display = 'none';
-                    }
                 });
             },
             saveData: function() {
@@ -1666,7 +1851,7 @@
                     document.getElementById('nickname-input').value = window.playerData.nickname;
                     document.getElementById('notification-toggle').checked = window.playerData.showNotifications;
                     this.initPresence();
-                    TradeController.listenToTrades();
+                    if(window.PartyController) window.PartyController.init();
                 }).catch(() => {
                     statusEl.textContent = 'オフライン';
                     statusEl.style.color = '#888';
@@ -1709,952 +1894,14 @@
             }
         };
 
-        // ==========================================
-        // パーティーコントローラー[cite: 2]
-        // ==========================================
-        window.PartyController = {
-            enterLobby: function() {
-                AudioController.init();
-                window.partyState.inLobby = true;
-                update(ref(database, `presence/${userId}`), { inLobby: true });
-                this.renderWaitingList();
-            },
-            exitLobby: function() {
-                window.partyState.inLobby = false;
-                update(ref(database, `presence/${userId}`), { inLobby: false });
-                GameController.switchScreen('home-screen');
-            },
-            renderWaitingList: function() {
-                if (!window.partyState.inLobby) return;
-                const listEl = document.getElementById('party-waiting-users-list');
-                listEl.innerHTML = '';
-                
-                for (const uId in knownOnlineUsers) {
-                    const u = knownOnlineUsers[uId];
-                    if (u.online && u.inLobby) {
-                        const inParty = u.partyId ? ' (パーティー中)' : ' (待機中)';
-                        const isMe = uId === userId ? ' (あなた)' : '';
-                        
-                        // 招待ボタン制御ルール：自分が未加入かリーダーであり、相手が完全未加入の時のみ最大4人まで招待可[cite: 2]
-                        let inviteBtn = '';
-                        if (uId !== userId && !u.partyId) {
-                            if (!window.partyState.currentPartyId || (window.partyState.isLeader && window.partyState.members.length < 4)) {
-                                inviteBtn = `<button class="btn-success" style="padding:4px 10px; font-size:12px;" onclick="PartyController.sendInvite('${uId}')">招待</button>`;
-                            }
-                        }
-                        
-                        listEl.innerHTML += `
-                            <div class="online-user-item" style="background:rgba(255,255,255,0.02); border-radius:8px; margin-bottom:4px;">
-                                <div><span class="online-status status-online"></span>${u.nickname}${isMe}${inParty}</div>
-                                ${inviteBtn}
-                            </div>
-                        `;
-                    }
-                }
-            },
-            sendInvite: async function(targetUid) {
-                // パーティー未存在なら自動新規生成[cite: 2]
-                if (!window.partyState.currentPartyId) {
-                    const newPartyRef = push(ref(database, 'parties'));
-                    window.partyState.currentPartyId = newPartyRef.key;
-                    window.partyState.isLeader = true;
-                    
-                    const me = {
-                        id: userId,
-                        nickname: window.playerData.nickname,
-                        hp: 350,
-                        maxHp: 350,
-                        activeCardId: null,
-                        targetMemberId: null,
-                        typingFinished: false,
-                        active: true,
-                        isLeader: true
-                    };
-                    window.partyState.members = [me];
-                    await set(newPartyRef, {
-                        leaderId: userId,
-                        members: { [userId]: me },
-                        battleId: null,
-                        created: serverTimestamp()
-                    });
-                    update(ref(database, `presence/${userId}`), { partyId: window.partyState.currentPartyId });
-                    this.listenToParty(window.partyState.currentPartyId);
-                }
-                
-                // 招待データを相手のインボックスへ[cite: 2]
-                await set(ref(database, `invites/${targetUid}`), {
-                    fromId: userId,
-                    fromName: window.playerData.nickname,
-                    partyId: window.partyState.currentPartyId
-                });
-                showToast("パーティーに招待を送りました！");
-            },
-            acceptInvite: async function() {
-                const pid = window.partyState.invitePartyId;
-                if (!pid) return;
-                
-                // 上限チェック[cite: 2]
-                const snap = await get(ref(database, `parties/${pid}`));
-                if (snap.exists()) {
-                    const pdata = snap.val();
-                    const currentCount = Object.keys(pdata.members || {}).length;
-                    if (currentCount >= 4) {
-                        alert("招待されたパーティーは満員(4人)です。");
-                        remove(ref(database, `invites/${userId}`));
-                        return;
-                    }
-                    
-                    const me = {
-                        id: userId,
-                        nickname: window.playerData.nickname,
-                        hp: 350,
-                        maxHp: 350,
-                        activeCardId: null,
-                        targetMemberId: null,
-                        typingFinished: false,
-                        active: true,
-                        isLeader: false
-                    };
-                    
-                    await set(ref(database, `parties/${pid}/members/${userId}`), me);
-                    window.partyState.currentPartyId = pid;
-                    window.partyState.isLeader = false;
-                    update(ref(database, `presence/${userId}`), { partyId: pid });
-                    this.listenToParty(pid);
-                }
-                remove(ref(database, `invites/${userId}`));
-            },
-            declineInvite: function() {
-                remove(ref(database, `invites/${userId}`));
-            },
-            leaveParty: async function() {
-                const pid = window.partyState.currentPartyId;
-                if (!pid) return;
-                
-                // 監視解除
-                off(ref(database, `parties/${pid}`));
-                if (window.partyState.battleId) {
-                    off(ref(database, `party_battles/${window.partyState.battleId}`));
-                }
-                
-                await remove(ref(database, `parties/${pid}/members/${userId}`));
-                
-                // リーダーかつメンバーがいなくなったら削除
-                const snap = await get(ref(database, `parties/${pid}`));
-                if (snap.exists()) {
-                    const pdata = snap.val();
-                    if (!pdata.members || Object.keys(pdata.members).length === 0) {
-                        remove(ref(database, `parties/${pid}`));
-                    } else if (pdata.leaderId === userId) {
-                        // 次のメンバーにリーダー移譲
-                        const nextLeaderId = Object.keys(pdata.members)[0];
-                        await update(ref(database, `parties/${pid}`), { leaderId: nextLeaderId });
-                        await update(ref(database, `parties/${pid}/members/${nextLeaderId}`), { isLeader: true });
-                    }
-                }
-                
-                window.partyState.currentPartyId = null;
-                window.partyState.isLeader = false;
-                window.partyState.members = [];
-                window.partyState.battleId = null;
-                update(ref(database, `presence/${userId}`), { partyId: null });
-                
-                document.getElementById('party-side-log').style.display = 'none';
-                this.renderPartyLobbyUI();
-                this.renderWaitingList();
-                if (window.battleState.isActive && window.battleState.isPartyBattle) {
-                    BattleController.endBattle(false, "パーティーから離脱したため敗北しました。");
-                }
-            },
-            listenToParty: function(pid) {
-                onValue(ref(database, `parties/${pid}`), (snap) => {
-                    const pdata = snap.val();
-                    if (!pdata) {
-                        this.leaveParty();
-                        return;
-                    }
-                    window.partyState.isLeader = (pdata.leaderId === userId);
-                    
-                    // メンバー配列再構築[cite: 2]
-                    const mems = [];
-                    for (const mid in pdata.members) {
-                        mems.push(pdata.members[mid]);
-                    }
-                    window.partyState.members = mems;
-                    
-                    this.renderPartyLobbyUI();
-                    this.renderSidePartyLog();
-                    this.renderWaitingList();
-                    
-                    // バトル開始検知
-                    if (pdata.battleId && !window.partyState.battleId) {
-                        window.partyState.battleId = pdata.battleId;
-                        this.joinPartyBattle(pdata.battleId);
-                    }
-                });
-            },
-            renderPartyLobbyUI: function() {
-                const box = document.getElementById('party-current-members-box');
-                const btnAdv = document.getElementById('party-adventure-btn');
-                box.innerHTML = '';
-                
-                if (window.partyState.members.length === 0) {
-                    box.innerHTML = '<span style="color:#888;">パーティーに加入していません</span>';
-                    btnAdv.style.display = 'none';
-                    return;
-                }
-                
-                window.partyState.members.forEach(m => {
-                    const role = m.isLeader ? '👑 リーダー' : '🛡️ メンバー';
-                    box.innerHTML += `
-                        <div style="padding:6px 0; border-bottom:1px solid #444; display:flex; justify-content:space-between;">
-                            <span>${m.nickname}</span>
-                            <span style="color:#ba68c8; font-size:13px;">${role}</span>
-                        </div>
-                    `;
-                });
-                
-                // 2人以上でパーティー冒険ボタン有効化[cite: 2]
-                if (window.partyState.members.length >= 2) {
-                    btnAdv.style.display = 'block';
-                    // 非リーダーはボタンを無効化（リーダーのみ選択ルール）[cite: 2]
-                    btnAdv.disabled = !window.partyState.isLeader;
-                } else {
-                    btnAdv.style.display = 'none';
-                }
-            },
-            renderSidePartyLog: function() {
-                const sideLog = document.getElementById('party-side-log');
-                const sideList = document.getElementById('party-side-members-list');
-                
-                if (window.partyState.members.length === 0) {
-                    sideLog.style.display = 'none';
-                    return;
-                }
-                
-                sideLog.style.display = 'block';
-                sideList.innerHTML = '';
-                window.partyState.members.forEach(m => {
-                    const crown = m.isLeader ? '👑' : '';
-                    sideList.innerHTML += `<div>${crown}${m.nickname}</div>`;
-                });
-            },
-            showAdventureMenu: function() {
-                if (!window.partyState.isLeader) return;
-                document.getElementById('party-adventure-modal').classList.add('active');
-            },
-            selectAdventureMode: function(mode) {
-                document.getElementById('party-adventure-modal').classList.remove('active');
-                if (mode === 'pack') {
-                    document.getElementById('party-difficulty-modal').classList.add('active');
-                } else {
-                    document.getElementById('party-tboss-modal').classList.add('active');
-                }
-            },
-            startPackBattle: function(diff) {
-                document.getElementById('party-difficulty-modal').classList.remove('active');
-                this.createPartyBattleRoom('pack_' + diff);
-            },
-            startTBossBattle: function() {
-                document.getElementById('party-tboss-modal').classList.remove('active');
-                this.createPartyBattleRoom('tboss_shield');
-            },
-            createPartyBattleRoom: async function(type) {
-                const bRef = push(ref(database, 'party_battles'));
-                const bid = bRef.key;
-                
-                let bHp = 5000, bAtk = 80, bName = "Tパックボス";
-                if (type === 'pack_easy') { bHp = 5000; bAtk = 80; bName = "レベチ簡単ボス"; }
-                else if (type === 'pack_medium') { bHp = 10000; bAtk = 80; bName = "レベチ中級ボス"; }
-                else if (type === 'pack_hard') { bHp = 15000; bAtk = 80; bName = "レベチ上級ボス"; }
-                else if (type === 'tboss_shield') { bHp = 10000; bAtk = 120; bName = "シールドニキ"; }
-
-                const initMembers = {};
-                window.partyState.members.forEach(m => {
-                    initMembers[m.id] = {
-                        id: m.id,
-                        nickname: m.nickname,
-                        hp: 350,
-                        maxHp: 350,
-                        activeCardId: null,
-                        targetMemberId: null,
-                        typingFinished: false,
-                        active: true,
-                        isLeader: m.isLeader
-                    };
-                });
-
-                const room = {
-                    bossType: type,
-                    bossName: bName,
-                    bossHp: bHp,
-                    bossMaxHp: bHp,
-                    bossAttack: bAtk,
-                    bossShield: 0,
-                    bossCharged: false,
-                    phase: 'waiting_card',
-                    members: initMembers,
-                    currentTurnOwnerIndex: 0,
-                    log: "バトルが開始されました！"
-                };
-
-                await set(bRef, room);
-                await update(ref(database, `parties/${window.partyState.currentPartyId}`), { battleId: bid });
-            },
-            joinPartyBattle: function(bid) {
-                window.partyState.battleId = bid;
-                
-                onValue(ref(database, `party_battles/${bid}`), (snap) => {
-                    const bdata = snap.val();
-                    if (!bdata) return;
-                    
-                    // パーティーシステム全体の同期[cite: 2]
-                    window.partyState.bossType = bdata.bossType;
-                    window.partyState.bossHp = bdata.bossHp;
-                    window.partyState.bossMaxHp = bdata.bossMaxHp;
-                    window.partyState.bossAttack = bdata.bossAttack;
-                    window.partyState.bossShield = bdata.bossShield;
-                    window.partyState.bossCharged = bdata.bossCharged;
-                    window.partyState.phase = bdata.phase;
-                    window.partyState.currentTurnOwnerIndex = bdata.currentTurnOwnerIndex;
-                    
-                    const list = [];
-                    for (const mid in bdata.members) {
-                        list.push(bdata.members[mid]);
-                    }
-                    window.partyState.members = list;
-                    
-                    // バトル画面への遷移駆動
-                    if (!window.battleState.isActive) {
-                        this.initLocalPartyBattle();
-                    }
-                    
-                    this.syncPartyBattleUI();
-                    
-                    // フェーズ分岐処理[cite: 2]
-                    if (window.partyState.phase === 'waiting_typing') {
-                        const mySync = bdata.members[userId];
-                        if (mySync && mySync.activeCardId && !window.battleState.currentWord) {
-                            // タイピングの開始
-                            window.battleState.canSelectCard = false;
-                            BattleController.nextWord();
-                            document.getElementById('typing-message').textContent = "⌨️ タイピングを完了させてください！";
-                        }
-                    } else if (window.partyState.phase === 'player_turns') {
-                        if (window.partyState.isLeader) {
-                            this.executePlayerTurnsStep();
-                        }
-                    } else if (window.partyState.phase === 'boss_turn') {
-                        if (window.partyState.isLeader) {
-                            this.executeBossTurnStep();
-                        }
-                    }
-                });
-            },
-            initLocalPartyBattle: function() {
-                GameController.switchScreen('battle-screen');
-                window.battleState.isActive = true;
-                window.battleState.isPartyBattle = true;
-                window.battleState.canSelectCard = true;
-                window.battleState.currentWord = null;
-                window.battleState.typedIndex = 0;
-                
-                document.getElementById('player-status-card-box').style.display = 'none';
-                document.getElementById('party-battle-hps-container').style.display = 'block';
-                document.getElementById('battle-flee-btn').style.display = 'none';
-                document.getElementById('battle-log').innerHTML = '<p>仲間全員の行動カード選択を待っています...</p>';
-                
-                BattleController.fillHand();
-                BattleController.renderHand();
-            },
-            syncPartyBattleUI: function() {
-                // 右上HPバーリストの構築[cite: 2]
-                const listEl = document.getElementById('party-battle-hps-list');
-                listEl.innerHTML = '';
-                
-                window.partyState.members.forEach(m => {
-                    const pct = Math.max(0, (m.hp / m.maxHp) * 100);
-                    const status = m.hp <= 0 ? ' <span style="color:#ff3333;">(気絶)</span>' : '';
-                    const typing = m.typingFinished ? ' 🟢完了' : (m.activeCardId ? ' ⏳選択済' : ' 💤選択中');
-                    listEl.innerHTML += `
-                        <div>
-                            <div style="display:flex; justify-content:space-between; font-size:12px;">
-                                <span>${m.nickname}${status}</span>
-                                <span>${m.hp}/${m.maxHp}${typing}</span>
-                            </div>
-                            <div class="party-member-hp-bar">
-                                <div class="party-member-hp-fill" style="width: ${pct}%;"></div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    if (m.id === userId) {
-                        window.battleState.playerHp = m.hp;
-                    }
-                });
-                
-                // ボス側UI
-                document.getElementById('boss-name').textContent = `👹 ${this.getBossDisplayName()}`;
-                document.getElementById('boss-hp').textContent = window.partyState.bossHp;
-                document.getElementById('boss-max-hp').textContent = window.partyState.bossMaxHp;
-                document.getElementById('boss-hp-text').textContent = `${window.partyState.bossHp} / ${window.partyState.bossMaxHp}`;
-                const bPct = Math.max(0, (window.partyState.bossHp / window.partyState.bossMaxHp) * 100);
-                document.getElementById('boss-hp-bar').style.width = bPct + '%';
-                
-                const bEffects = document.getElementById('boss-effects');
-                bEffects.innerHTML = '';
-                if (window.partyState.bossShield > 0) {
-                    bEffects.innerHTML += `<span class="effect-icon effect-shield">🛡️ ${window.partyState.bossShield}</span>`;
-                }
-                if (window.partyState.bossCharged) {
-                    bEffects.innerHTML += `<span class="effect-icon effect-burn">⚡ チャージ中</span>`;
-                }
-                
-                // 勝敗判定[cite: 2]
-                if (window.partyState.bossHp <= 0) {
-                    this.processPartyVictory();
-                } else {
-                    const allDead = window.partyState.members.every(m => m.hp <= 0);
-                    if (allDead) {
-                        this.processPartyDefeat();
-                    }
-                }
-            },
-            getBossDisplayName: function() {
-                if (window.partyState.bossType === 'pack_easy') return "レベチ簡単ボス";
-                if (window.partyState.bossType === 'pack_medium') return "レベチ中級ボス";
-                if (window.partyState.bossType === 'pack_hard') return "レベチ上級ボス";
-                if (window.partyState.bossType === 'tboss_shield') return "シールドニキ";
-                return "ボス";
-            },
-            selectPartyCard: function(cardId) {
-                if (!window.battleState.canSelectCard) return;
-                const card = ALL_CARDS.find(c => c.id === cardId);
-                if (!card) return;
-                
-                window.battleState.activeCard = card;
-                
-                // アシスト、回復系は味方対象を選択させる[cite: 2]
-                if (card.type === 'heal' || card.type === 'assist') {
-                    const modal = document.getElementById('party-target-modal');
-                    const container = document.getElementById('party-target-buttons-container');
-                    container.innerHTML = '';
-                    
-                    window.partyState.members.forEach(m => {
-                        container.innerHTML += `<button class="btn-primary" onclick="PartyController.confirmPartyTarget('${m.id}')">${m.nickname} (HP:${m.hp})</button>`;
-                    });
-                    modal.classList.add('active');
-                } else {
-                    // 攻撃系は自動でボス対象
-                    this.confirmPartyTarget('boss');
-                }
-            },
-            confirmPartyTarget: async function(targetId) {
-                document.getElementById('party-target-modal').classList.remove('active');
-                window.battleState.canSelectCard = false;
-                
-                // Firebaseへカード情報を送信[cite: 2]
-                await update(ref(database, `party_battles/${window.partyState.battleId}/members/${userId}`), {
-                    activeCardId: window.battleState.activeCard.id,
-                    targetMemberId: targetId
-                });
-                
-                // 全員カードが選択されたかをリーダーが確認する
-                if (window.partyState.isLeader) {
-                    this.checkAllCardsSelected();
-                }
-            },
-            checkAllCardsSelected: function() {
-                const snapRef = ref(database, `party_battles/${window.partyState.battleId}/members`);
-                get(snapRef).then(async (snap) => {
-                    const mems = snap.val() || {};
-                    let ready = true;
-                    for (const mid in mems) {
-                        // 生きている人でカードがまだの人がいれば待機
-                        if (mems[mid].hp > 0 && !mems[mid].activeCardId) {
-                            ready = false;
-                        }
-                    }
-                    if (ready) {
-                        await update(ref(database, `party_battles/${window.partyState.battleId}`), { phase: 'waiting_typing' });
-                    }
-                });
-            },
-            finishLocalTyping: async function() {
-                window.battleState.currentWord = null;
-                document.getElementById('typing-ja').textContent = '';
-                document.getElementById('typing-en').textContent = '';
-                document.getElementById('typing-message').textContent = '⏳ 他のメンバーのタイピングを待っています...';
-                
-                await update(ref(database, `party_battles/${window.partyState.battleId}/members/${userId}`), { typingFinished: true });
-                
-                if (window.partyState.isLeader) {
-                    this.checkAllTypingFinished();
-                }
-            },
-            checkAllTypingFinished: function() {
-                get(ref(database, `party_battles/${window.partyState.battleId}/members`)).then(async (snap) => {
-                    const mems = snap.val() || {};
-                    let ready = true;
-                    for (const mid in mems) {
-                        if (mems[mid].hp > 0 && !mems[mid].typingFinished) {
-                            ready = false;
-                        }
-                    }
-                    if (ready) {
-                        await update(ref(database, `party_battles/${window.partyState.battleId}`), { phase: 'player_turns', currentTurnOwnerIndex: 0 });
-                    }
-                });
-            },
-            executePlayerTurnsStep: async function() {
-                // 4人ずつ順番にターン処理を実行[cite: 2]
-                const bId = window.partyState.battleId;
-                const idx = window.partyState.currentTurnOwnerIndex;
-                const activeMembers = window.partyState.members.filter(m => m.hp > 0 && m.activeCardId);
-                
-                if (idx >= activeMembers.length) {
-                    // 全員のプレイヤー行動終了 -> ボスへフェーズ進行
-                    await update(ref(database, `party_battles/${bId}`), { phase: 'boss_turn' });
-                    return;
-                }
-                
-                const m = activeMembers[idx];
-                const card = ALL_CARDS.find(c => c.id === m.activeCardId);
-                let logMsg = `${m.nickname} のターン：カード『${card.name}』を発動！\n`;
-                
-                if (card.type === 'attack') {
-                    let val = card.baseEffect;
-                    // 裏設定適用：攻撃力倍率カードの補正ロジックはALL_CARDSの効果をそのまま参照
-                    if (window.partyState.bossShield > 0) {
-                        const rem = window.partyState.bossShield - val;
-                        if (rem >= 0) {
-                            window.partyState.bossShield = rem;
-                            logMsg += `🛡️ ボスのシールドに ${val} の損害を与えた！`;
-                        } else {
-                            window.partyState.bossShield = 0;
-                            window.partyState.bossHp = Math.max(0, window.partyState.bossHp + rem);
-                            logMsg += `ボスのシールドを破壊し、本体に ${Math.abs(rem)} ダメージ！`;
-                        }
-                    } else {
-                        window.partyState.bossHp = Math.max(0, window.partyState.bossHp - val);
-                        logMsg += `👹 ボスに ${val} ダメージ！`;
-                    }
-                } else if (card.type === 'heal') {
-                    // 死から回復（気絶救済ルール）[cite: 2]
-                    const target = window.partyState.members.find(tm => tm.id === m.targetMemberId);
-                    if (target) {
-                        const wasDead = target.hp <= 0;
-                        target.hp = Math.min(target.maxHp, target.hp + card.baseEffect);
-                        logMsg += `💖 ${target.nickname} のHPを ${card.baseEffect} 回復させた！`;
-                        if (wasDead) logMsg += ` (死から復活！)`;
-                        await update(ref(database, `party_battles/${bId}/members/${target.id}`), { hp: target.hp });
-                    }
-                } else if (card.type === 'assist') {
-                    const target = window.partyState.members.find(tm => tm.id === m.targetMemberId);
-                    if (target) {
-                        // シールドカード等の場合は効果値をそのまま加算
-                        logMsg += `🪄 ${target.nickname} にアシストスキルを使用！(効果値 ${card.baseEffect})`;
-                    }
-                }
-                
-                // 同期反映[cite: 2]
-                await update(ref(database, `party_battles/${bId}`), {
-                    bossHp: window.partyState.bossHp,
-                    bossShield: window.partyState.bossShield,
-                    currentTurnOwnerIndex: idx + 1
-                });
-            },
-            executeBossTurnStep: async function() {
-                const bId = window.partyState.battleId;
-                const type = window.partyState.bossType;
-                let logMsg = `👹 ボスのターン！\n`;
-                
-                const aliveMembers = window.partyState.members.filter(m => m.hp > 0);
-                if (aliveMembers.length === 0) return;
-                
-                // 行動回数決定（簡単:2回, 中級:3回, 上級:2回, シールドニキ:1回）[cite: 2]
-                let acts = 1;
-                if (type === 'pack_easy') acts = 2;
-                else if (type === 'pack_medium') acts = 3;
-                else if (type === 'pack_hard') acts = 2;
-                
-                for (let a = 0; a < acts; a++) {
-                    const r = Math.random();
-                    
-                    // レベチ簡単ボスの能力：チャージ (25%確率)[cite: 2]
-                    if (type === 'pack_easy' && !window.partyState.bossCharged && r < 0.25) {
-                        window.partyState.bossCharged = true;
-                        logMsg += `ボスの技！チャージした！次の攻撃威力がアップする。\n`;
-                        break; // チャージしたためターン終了[cite: 2]
-                    }
-                    
-                    // レベチ中級ボスの能力：切り払い (30%確率全体攻撃)[cite: 2]
-                    if (type === 'pack_medium' && r < 0.3) {
-                        logMsg += `ボスの技！『切り払い』が炸裂！パーティー全体に50ダメージ！\n`;
-                        window.partyState.members.forEach(m => {
-                            if (m.hp > 0) m.hp = Math.max(0, m.hp - 50);
-                        });
-                        continue;
-                    }
-                    
-                    // レベチ上級ボスの能力：行動不能化 (25%確率)[cite: 2]
-                    if (type === 'pack_hard' && r < 0.25) {
-                        const tgt = aliveMembers[Math.floor(Math.random() * aliveMembers.length)];
-                        logMsg += `ボスの技！『時間呪縛』により ${tgt.nickname} は3ターン行動不能！\n`;
-                        // ローカルでスキップ処理を代替するためログ表示
-                        continue;
-                    }
-                    
-                    // 共通の単体ランダム攻撃（集中狙いなしルール）[cite: 2]
-                    const currentAlive = window.partyState.members.filter(m => m.hp > 0);
-                    if (currentAlive.length === 0) break;
-                    
-                    const tgt = currentAlive[Math.floor(Math.random() * currentAlive.length)];
-                    let dmg = window.partyState.bossAttack;
-                    
-                    if (window.partyState.bossCharged) {
-                        dmg = 100; // 次ターンの攻撃力が100に変化[cite: 2]
-                        window.partyState.bossCharged = false;
-                    }
-                    
-                    tgt.hp = Math.max(0, tgt.hp - dmg);
-                    logMsg += `${tgt.nickname} に ${dmg} ダメージを与えた！\n`;
-                }
-                
-                // シールドニキ特有能力：攻撃後に35%でHP100のシールド付与（展開中は不発）[cite: 2]
-                if (type === 'tboss_shield' && window.partyState.bossShield <= 0 && Math.random() < 0.35) {
-                    window.partyState.bossShield = 100;
-                    logMsg += `🛡️ シールドニキの能力！HP100のシールドを展開した！\n`;
-                }
-                
-                // メンバー状態をバッチ更新
-                const updates = {};
-                window.partyState.members.forEach(m => {
-                    updates[`members/${m.id}/hp`] = m.hp;
-                    updates[`members/${m.id}/activeCardId`] = null;
-                    updates[`members/${m.id}/targetMemberId`] = null;
-                    updates[`members/${m.id}/typingFinished`] = false;
-                });
-                
-                updates['bossShield'] = window.partyState.bossShield;
-                updates['bossCharged'] = window.partyState.bossCharged;
-                updates['phase'] = 'waiting_card';
-                
-                await update(ref(database, `party_battles/${bId}`), updates);
-                
-                // ローカル手札の補充
-                window.battleState.canSelectCard = true;
-                BattleController.fillHand();
-                BattleController.renderHand();
-                document.getElementById('typing-message').textContent = "👇 下のカードから1つ選んでください";
-            },
-            processPartyVictory: function() {
-                off(ref(database, `party_battles/${window.partyState.battleId}`));
-                window.battleState.isActive = false;
-                
-                let rewardPacks = 50;
-                const type = window.partyState.bossType;
-                if (type === 'pack_easy') rewardPacks = 50;
-                else if (type === 'pack_medium') rewardPacks = 100;
-                else if (type === 'pack_hard') rewardPacks = 200;
-                else if (type === 'tboss_shield') rewardPacks = 80;
-                
-                window.playerData.packs += rewardPacks;
-                let addMsg = '';
-                
-                // シールドニキ限定：10%確率でOG「ウルトラシールド」獲得[cite: 2]
-                if (type === 'tboss_shield' && Math.random() < 0.10) {
-                    if (!window.playerData.inventory['og_ultra_shield']) window.playerData.inventory['og_ultra_shield'] = 0;
-                    window.playerData.inventory['og_ultra_shield']++;
-                    addMsg = "<br><span style='color:gold; font-weight:bold;'>🎉 10%の確率を突破！ レアリティOG『ウルトラシールド』を入手しました！</span>";
-                }
-                
-                GameDataManager.saveData();
-                
-                document.getElementById('result-title').textContent = "👑 パーティーバトル勝利！";
-                document.getElementById('result-title').style.color = "#ffd700";
-                document.getElementById('result-desc').innerHTML = `強敵を撃破しました！<br>報酬として <b>${rewardPacks} パック</b> を獲得しました！${addMsg}`;
-                document.getElementById('battle-result-modal').classList.add('active');
-                
-                this.resetPartyBattleState();
-            },
-            processPartyDefeat: function() {
-                off(ref(database, `party_battles/${window.partyState.battleId}`));
-                window.battleState.isActive = false;
-                
-                document.getElementById('result-title').textContent = "💀 全滅しました";
-                document.getElementById('result-title').style.color = "#f44336";
-                document.getElementById('result-desc').textContent = "パーティー全員が気絶しました。リトライしてみましょう！";
-                document.getElementById('battle-result-modal').classList.add('active');
-                
-                this.resetPartyBattleState();
-            },
-            resetPartyBattleState: function() {
-                if (window.partyState.isLeader && window.partyState.currentPartyId) {
-                    update(ref(database, `parties/${window.partyState.currentPartyId}`), { battleId: null });
-                }
-                window.partyState.battleId = null;
-                window.battleState.isPartyBattle = false;
-                document.getElementById('party-battle-hps-container').style.display = 'none';
-                document.getElementById('player-status-card-box').style.display = 'block';
-                document.getElementById('battle-flee-btn').style.display = 'block';
-            }
-        };
-
-        // ==========================================
-        // ガチャコントローラー (確率制御・裏設定)
-        // ==========================================
-        window.GachaController = {
-            drawCards: function(packCount) {
-                AudioController.init();
-                if (window.playerData.packs < packCount) { alert("パックが足りません！"); return; }
-                window.playerData.packs -= packCount;
-                this.executeDraw(packCount * 5, RARITY_WEIGHTS_NORMAL);
-            },
-            drawPremiumCards: function(packCount) {
-                AudioController.init();
-                const cost = packCount * 25;
-                if (window.playerData.packs < cost) { alert("パックが足りません！"); return; }
-                window.playerData.packs -= cost;
-                this.executeDraw(packCount * 5, RARITY_WEIGHTS_PREMIUM);
-            },
-            drawAll: function() {
-                AudioController.init();
-                const available = window.playerData.packs;
-                if (available <= 0) { alert("引けるパックがありません！"); return; }
-                window.playerData.packs = 0;
-                this.executeDraw(available * 5, RARITY_WEIGHTS_NORMAL);
-            },
-            drawAllPremium: function() {
-                AudioController.init();
-                const pCount = Math.floor(window.playerData.packs / 25);
-                if (pCount <= 0) { alert("プレミアパックを引くための通常25パックがありません！"); return; }
-                window.playerData.packs -= pCount * 25;
-                this.executeDraw(pCount * 5, RARITY_WEIGHTS_PREMIUM);
-            },
-            executeDraw: function(totalCards, weights) {
-                const results = [];
-                for(let i=0; i<totalCards; i++) {
-                    const r = Math.random() * 100;
-                    let accumulated = 0;
-                    let selectedRarity = "Common";
-                    for(const w of weights) {
-                        accumulated += w.chance;
-                        if (r <= accumulated) { selectedRarity = w.rarity; break; }
-                    }
-                    
-                    let pool = ALL_CARDS.filter(c => c.rarity === selectedRarity);
-                    if (pool.length === 0) pool = ALL_CARDS.filter(c => c.rarity === "Common");
-                    
-                    let card = pool[Math.floor(Math.random() * pool.length)];
-                    
-                    // 裏設定：パーティーバトル関連などで攻撃力倍率カードの排出率を下げた抽選を擬似的に一般化
-                    if (card && card.name.includes("倍") && Math.random() < 0.80) {
-                        // 8割の確率で通常のコモン系などにダウングレード[cite: 2]
-                        const fallbackPool = ALL_CARDS.filter(c => c.rarity === "Common");
-                        card = fallbackPool[Math.floor(Math.random() * fallbackPool.length)];
-                    }
-                    
-                    if (card) {
-                        if (!window.playerData.inventory[card.id]) window.playerData.inventory[card.id] = 0;
-                        window.playerData.inventory[card.id]++;
-                        results.push(card);
-                    }
-                }
-                
-                GameDataManager.saveData();
-                UIController.updateGachaScreen();
-                this.showGachaResults(results);
-                AudioController.playGacha();
-            },
-            showGachaResults: function(cards) {
-                const container = document.getElementById('gacha-result-cards');
-                container.innerHTML = '';
-                cards.forEach(c => {
-                    container.innerHTML += UIController.createCardHTML(c, 0);
-                });
-                document.getElementById('gacha-result').classList.add('active');
-            }
-        };
-
-        // ==========================================
-        // バトルコントローラー (タイピング同期・ターン)
-        // ==========================================
-        window.BattleController = {
-            startBattle: function(diff) {
-                AudioController.init();
-                const equippedCount = window.playerData.equipped.filter(Boolean).length;
-                if (equippedCount !== 25) { alert("カードを25枚装備してください！"); return; }
-                
-                GameController.switchScreen('battle-screen');
-                window.battleState.isActive = true;
-                window.battleState.isPartyBattle = false;
-                window.battleState.difficulty = diff;
-                window.battleState.canSelectCard = true;
-                window.battleState.currentWord = null;
-                window.battleState.typedIndex = 0;
-                
-                let bHp = 350, bAtk = 30, bName = "簡単ボス";
-                if (diff === 'medium') { bHp = 500; bAtk = 35; bName = "中級ボス"; }
-                else if (diff === 'hard') { bHp = 1000; bAtk = 40; bName = "難しいボス"; }
-                else if (diff === 'extreme') { bHp = 2500; bAtk = 45; bName = "鬼むずボス"; }
-                
-                window.battleState.boss = { hp: bHp, maxHp: bHp, attack: bAtk, name: bName, shield: 0 };
-                window.battleState.playerHp = 350;
-                window.battleState.playerMaxHp = 350;
-                window.battleState.playerShield = 0;
-                
-                document.getElementById('player-hp').textContent = 350;
-                document.getElementById('player-max-hp').textContent = 350;
-                document.getElementById('player-hp-text').textContent = "350 / 350";
-                document.getElementById('player-hp-bar').style.width = '100%';
-                
-                this.syncSingleBattleUI();
-                this.fillHand();
-                this.renderHand();
-                
-                document.getElementById('battle-log').innerHTML = '<p>バトルが開始された！カードを選んでタイピングしよう！</p>';
-            },
-            syncSingleBattleUI: function() {
-                document.getElementById('boss-name').textContent = `👹 ${window.battleState.boss.name}`;
-                document.getElementById('boss-hp').textContent = window.battleState.boss.hp;
-                document.getElementById('boss-max-hp').textContent = window.battleState.boss.maxHp;
-                document.getElementById('boss-hp-text').textContent = `${window.battleState.boss.hp} / ${window.battleState.boss.maxHp}`;
-                const bPct = Math.max(0, (window.battleState.boss.hp / window.battleState.boss.maxHp) * 100);
-                document.getElementById('boss-hp-bar').style.width = bPct + '%';
-            },
-            fillHand: function() {
-                const deck = window.playerData.equipped.filter(Boolean);
-                window.battleState.hand = [];
-                for(let i=0; i<5; i++) {
-                    const rId = deck[Math.floor(Math.random() * deck.length)];
-                    const card = ALL_CARDS.find(c => c.id === rId);
-                    if (card) window.battleState.hand.push(card);
-                }
-            },
-            renderHand: function() {
-                const container = document.getElementById('battle-hand');
-                container.innerHTML = '';
-                window.battleState.hand.forEach((card, idx) => {
-                    const clickAction = window.battleState.isPartyBattle ? 
-                        `PartyController.selectPartyCard('${card.id}')` : `BattleController.selectCard(${idx})`;
-                    container.innerHTML += UIController.createCardHTML(card, 0, clickAction);
-                });
-            },
-            selectCard: function(idx) {
-                if (!window.battleState.canSelectCard) return;
-                window.battleState.activeCard = window.battleState.hand[idx];
-                window.battleState.canSelectCard = false;
-                this.nextWord();
-            },
-            nextWord: function() {
-                const w = TYPING_WORDS[Math.floor(Math.random() * TYPING_WORDS.length)];
-                window.battleState.currentWord = w;
-                window.battleState.typedIndex = 0;
-                
-                document.getElementById('typing-ja').textContent = w.ja;
-                this.renderTypingText();
-            },
-            renderTypingText: function() {
-                const w = window.battleState.currentWord;
-                const idx = window.battleState.typedIndex;
-                if (!w) return;
-                
-                const typedPart = `<span class="typed">${w.en.substring(0, idx)}</span>`;
-                const untypedPart = w.en.substring(idx);
-                document.getElementById('typing-en').innerHTML = typedPart + untypedPart;
-            },
-            handleKeyPress: function(key) {
-                if (!window.battleState.isActive || !window.battleState.currentWord) return;
-                const w = window.battleState.currentWord;
-                const idx = window.battleState.typedIndex;
-                
-                if (key === w.en[idx]) {
-                    window.battleState.typedIndex++;
-                    AudioController.playType();
-                    if (window.battleState.typedIndex >= w.en.length) {
-                        if (window.battleState.isPartyBattle) {
-                            PartyController.finishLocalTyping();
-                        } else {
-                            this.executeSingleTurn();
-                        }
-                    } else {
-                        this.renderTypingText();
-                    }
-                } else {
-                    AudioController.playError();
-                    const el = document.getElementById('typing-en');
-                    el.classList.add('error');
-                    setTimeout(() => el.classList.remove('error'), 200);
-                }
-            },
-            executeSingleTurn: function() {
-                // 通常ソロバトル用ターン
-                const card = window.battleState.activeCard;
-                let dmg = 0;
-                if (card.type === 'attack') dmg = card.baseEffect;
-                
-                window.battleState.boss.hp = Math.max(0, window.battleState.boss.hp - dmg);
-                this.logBattle(`💥 あなたの『${card.name}』発動！ ボスに ${dmg} ダメージ！`);
-                
-                if (window.battleState.boss.hp <= 0) {
-                    this.endBattle(true, "ボスを撃破しました！");
-                    return;
-                }
-                
-                // ボス反撃
-                const bAtk = window.battleState.boss.attack;
-                window.battleState.playerHp = Math.max(0, window.battleState.playerHp - bAtk);
-                this.logBattle(`👹 ボスの反撃！ あなたは ${bAtk} ダメージを受けた！`);
-                
-                document.getElementById('player-hp').textContent = window.battleState.playerHp;
-                document.getElementById('player-hp-text').textContent = `${window.battleState.playerHp} / 350`;
-                document.getElementById('player-hp-bar').style.width = (window.battleState.playerHp / 350 * 100) + '%';
-                
-                if (window.battleState.playerHp <= 0) {
-                    this.endBattle(false, "力尽きました...");
-                    return;
-                }
-                
-                this.syncSingleBattleUI();
-                window.battleState.canSelectCard = true;
-                this.fillHand();
-                this.renderHand();
-                document.getElementById('typing-message').textContent = "👇 下のカードから1つ選んでください";
-                window.battleState.currentWord = null;
-                document.getElementById('typing-ja').textContent = '';
-                document.getElementById('typing-en').textContent = '';
-            },
-            logBattle: function(msg) {
-                const log = document.getElementById('battle-log');
-                log.innerHTML = `<p>${msg}</p>` + log.innerHTML;
-            },
-            flee: function() {
-                this.endBattle(false, "戦闘から逃げ出しました。");
-            },
-            endBattle: function(isWin, msg) {
-                window.battleState.isActive = false;
-                if (isWin && !window.battleState.isPartyBattle) {
-                    window.playerData.packs += 2;
-                    GameDataManager.saveData();
-                }
-                document.getElementById('result-title').textContent = isWin ? "👑 WIN" : "💀 LOSE";
-                document.getElementById('result-title').style.color = isWin ? "gold" : "red";
-                document.getElementById('result-desc').textContent = msg + (isWin ? " (報酬: 2パック獲得)" : "");
-                document.getElementById('battle-result-modal').classList.add('active');
-            }
-        };
-
-        // ==========================================
-        // オンラインユーザー & トレード & クラフト
-        // ==========================================
         window.UIController = {
             updateGlobalHeader: function() { document.getElementById('display-packs').textContent = window.playerData.packs; },
             getCardById: function(id) { return ALL_CARDS.find(c => c.id === id); },
-            createCardHTML: function(card, count = 0, onClickAction = "") {
+            createCardHTML: function(card, count = 0, onClickAction = "", isSelected = false) {
                 if (!card) return '';
                 const countBadge = count > 0 ? `<div class="card-count">x${count}</div>` : '';
-                return `<div class="card rarity-${card.rarity}" ${onClickAction ? `onclick="${onClickAction}"` : ''} data-id="${card.id}">${countBadge}<div class="card-name">${card.name}</div><div class="card-type">${this.getTypeEmoji(card.type)} ${this.getTypeName(card.type)}</div><div class="card-desc">${card.desc}</div></div>`;
+                const selectedClass = isSelected ? 'selected-for-trade' : '';
+                return `<div class="card rarity-${card.rarity} ${selectedClass}" ${onClickAction ? `onclick="${onClickAction}"` : ''} data-id="${card.id}">${countBadge}<div class="card-name">${card.name}</div><div class="card-type">${this.getTypeEmoji(card.type)} ${this.getTypeName(card.type)}</div><div class="card-desc">${card.desc}</div></div>`;
             },
             getTypeName: function(type) { return type === 'attack' ? '攻撃' : type === 'heal' ? '回復' : type === 'assist' ? 'アシスト' : type; },
             getTypeEmoji: function(type) { return type === 'attack' ? '⚔️' : type === 'heal' ? '💖' : type === 'assist' ? '🪄' : '🃏'; },
@@ -2662,6 +1909,7 @@
                 window.UIState[filterGroup] = value;
                 if (filterGroup.startsWith('inv')) this.renderInventory();
                 if (filterGroup.startsWith('equip')) this.renderEquipScreen();
+                if (filterGroup.startsWith('trade')) window.TradeController.renderTradeCardSelection();
             },
             renderInventory: function() {
                 const rarityFilter = window.UIState.invRarity;
@@ -2671,7 +1919,7 @@
                 let hasCards = false;
                 for (const [cardId, count] of Object.entries(window.playerData.inventory)) {
                     const card = this.getCardById(cardId);
-                    if (!card) continue;
+                    if (!card) { delete window.playerData.inventory[cardId]; continue; }
                     if (rarityFilter !== 'All' && card.rarity !== rarityFilter) continue;
                     if (typeFilter !== 'All' && card.type !== typeFilter) continue;
                     grid.innerHTML += this.createCardHTML(card, count);
@@ -2686,73 +1934,80 @@
                     const equippedId = window.playerData.equipped[i];
                     if (equippedId) {
                         const card = this.getCardById(equippedId);
+                        if (!card) { window.playerData.equipped[i] = null; continue; }
                         equippedContainer.innerHTML += this.createCardHTML(card, 0, `EquipController.unequipCard(${i})`);
                     } else {
                         equippedContainer.innerHTML += `<div class="equipped-slot">スロット ${i+1}<br><span style="font-size:10px;">(空き)</span></div>`;
                     }
                 }
+                const isValidCount = window.playerData.equipped.length === 25;
+                const hasAttack = window.playerData.equipped.some(id => this.getCardById(id)?.type === 'attack');
+                const hasHeal = window.playerData.equipped.some(id => this.getCardById(id)?.type === 'heal');
+                const hasAssist = window.playerData.equipped.some(id => this.getCardById(id)?.type === 'assist');
+                const isValidTypes = hasAttack && hasHeal && hasAssist;
+                document.getElementById('equip-warning').style.display = !isValidCount ? 'block' : 'none';
+                document.getElementById('equip-type-error').style.display = (isValidCount && !isValidTypes) ? 'block' : 'none';
+                
+                const uniqueCardCount = Object.keys(window.playerData.inventory).length;
+                const deckWarningDiv = document.getElementById('deck-warning');
+                if (uniqueCardCount < 25) {
+                    deckWarningDiv.style.display = 'block';
+                    deckWarningDiv.innerHTML = `⚠️ あなたは${uniqueCardCount}種類の違うカードを持っています。25種類以上必要です。そのため、持っているカードからランダムに支給されます。`;
+                } else {
+                    deckWarningDiv.style.display = 'none';
+                }
+
                 const grid = document.getElementById('equip-inventory-grid');
                 grid.innerHTML = '';
+                const rarityFilter = window.UIState.equipRarity;
                 for (const [cardId, count] of Object.entries(window.playerData.inventory)) {
-                    if (window.playerData.equipped.includes(cardId)) continue;
                     const card = this.getCardById(cardId);
                     if (!card) continue;
-                    grid.innerHTML += this.createCardHTML(card, count, `EquipController.equipCard('${cardId}')`);
+                    if (rarityFilter !== 'All' && card.rarity !== rarityFilter) continue;
+                    const equippedCount = window.playerData.equipped.filter(id => id === cardId).length;
+                    const availableCount = count - equippedCount;
+                    if (availableCount > 0) {
+                        grid.innerHTML += this.createCardHTML(card, availableCount, `EquipController.equipCard('${cardId}')`);
+                    }
                 }
             },
             openOnlineUsers: function() {
-                const listEl = document.getElementById('online-users-list');
-                listEl.innerHTML = '';
-                for(const uId in knownOnlineUsers) {
-                    const u = knownOnlineUsers[uId];
-                    if (u.online) {
-                        listEl.innerHTML += `<div class="online-user-item"><span class="online-status status-online"></span>${u.nickname}</div>`;
+                const list = document.getElementById('online-users-list');
+                list.innerHTML = '';
+                let count = 0;
+                for (const key in knownOnlineUsers) {
+                    if (knownOnlineUsers[key].online) {
+                        list.innerHTML += `<div class="online-user-item">
+                            <div><span class="online-status status-online"></span> ${knownOnlineUsers[key].nickname}</div>
+                        </div>`;
+                        count++;
                     }
                 }
+                if (count === 0) list.innerHTML = '<p style="color:#aaa; text-align:center; padding: 20px;">オンラインのユーザーはいません</p>';
                 document.getElementById('online-users-modal').classList.add('active');
-            },
-            updateGachaScreen: function() { document.getElementById('gacha-pack-count').textContent = window.playerData.packs; }
+            }
         };
 
         window.EquipController = {
             equipCard: function(cardId) {
-                if (window.playerData.equipped.length >= 25) window.playerData.equipped = window.playerData.equipped.slice(0, 25);
-                const firstEmptyIdx = window.playerData.equipped.findIndex(id => !id);
-                if (firstEmptyIdx !== -1) {
-                    window.playerData.equipped[firstEmptyIdx] = cardId;
-                } else if (window.playerData.equipped.length < 25) {
-                    window.playerData.equipped.push(cardId);
-                } else {
-                    alert("すでに25枚装備しています。はずしてから装備してください。");
+                if (window.playerData.equipped.length >= 25) {
+                    showToast("装備スロットがいっぱいです！");
                     return;
                 }
+                const currentCount = window.playerData.inventory[cardId] || 0;
+                const equippedCount = window.playerData.equipped.filter(id => id === cardId).length;
+                if (currentCount > equippedCount) {
+                    window.playerData.equipped.push(cardId);
+                    GameDataManager.saveData();
+                    UIController.renderEquipScreen();
+                    AudioController.playClick();
+                }
+            },
+            unequipCard: function(index) {
+                window.playerData.equipped.splice(index, 1);
                 GameDataManager.saveData();
                 UIController.renderEquipScreen();
-            },
-            unequipCard: function(idx) {
-                window.playerData.equipped[idx] = null;
-                GameDataManager.saveData();
-                UIController.renderEquipScreen();
-            }
-        };
-
-        window.TradeController = {
-            renderMainMenu: function() {
-                document.getElementById('current-nickname-display').textContent = window.playerData.nickname;
-                this.showReceiveTab();
-            },
-            showReceiveTab: function() { this.renderOffers(); },
-            showNotificationTab: function() {},
-            showCardSelectForOffer: function() { alert("トレード出品カード選択を開きます。"); },
-            listenToTrades: function() {},
-            renderOffers: function() {
-                document.getElementById('trade-content-area').innerHTML = '<p style="color:#aaa; text-align:center;">現在有効なトレード申請はありません。</p>';
-            }
-        };
-
-        window.CraftController = {
-            renderScreen: function() {
-                document.getElementById('craft-recipes-container').innerHTML = '<p style="color:#aaa;">クラフト可能なレシピが読み込まれました。</p>';
+                AudioController.playClick();
             }
         };
 
@@ -2760,25 +2015,1369 @@
             switchScreen: function(screenId) {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 document.getElementById(screenId).classList.add('active');
+                AudioController.playClick();
+                if(screenId === 'boss-select-screen') this.renderBossSelect();
             },
             checkAndStartBattle: function() {
-                BattleController.startBattle('easy');
+                const uniqueCount = Object.keys(window.playerData.inventory).length;
+                let isReady = false;
+                if (uniqueCount < 25) {
+                    isReady = true; 
+                } else {
+                    const eq = window.playerData.equipped;
+                    const hasAtk = eq.some(id => UIController.getCardById(id)?.type === 'attack');
+                    const hasHeal = eq.some(id => UIController.getCardById(id)?.type === 'heal');
+                    const hasAst = eq.some(id => UIController.getCardById(id)?.type === 'assist');
+                    if (eq.length === 25 && hasAtk && hasHeal && hasAst) {
+                        isReady = true;
+                    }
+                }
+
+                if (isReady) {
+                    this.switchScreen('difficulty-screen');
+                } else {
+                    showCenterMessage("装備が不完全です", "#ff3333");
+                    setTimeout(() => { this.switchScreen('equip-screen'); UIController.renderEquipScreen(); }, 500);
+                }
+            },
+            openSettings: GameDataManager.openSettings.bind(GameDataManager),
+            renderBossSelect: function() {
+                const grid = document.getElementById('boss-select-grid');
+                grid.innerHTML = '';
+                let progressText = "進行度: ";
+                
+                BOSSES.forEach((boss, i) => {
+                    const isUnlocked = window.playerData.unlockedBosses.includes(i);
+                    const isCleared = window.playerData.unlockedBosses.includes(i + 1);
+                    if (isCleared) progressText += "🟢";
+                    else if (isUnlocked) progressText += "🟡";
+                    else progressText += "🔴";
+
+                    let dropInfo = `<div class="drop-rate">ドロップ率: ${boss.dropRate}</div><div class="drop-card">『${boss.dropCard}』</div>`;
+                    
+                    if (isUnlocked) {
+                        grid.innerHTML += `
+                            <div class="boss-select-item">
+                                <h3>${boss.name}</h3>
+                                <p>HP: ${boss.maxHp} / 攻撃: ${boss.attack}</p>
+                                ${dropInfo}
+                                <button class="btn-danger" style="width: 100%; margin-top: 10px;" onclick="BattleController.startBossBattle(${i})">⚔️ 挑戦する</button>
+                            </div>
+                        `;
+                    } else {
+                        grid.innerHTML += `
+                            <div class="boss-select-item locked">
+                                <h3>🔒 ？？？？</h3>
+                                <p>前のボスを倒すと解放されます</p>
+                                <button class="btn-dark" style="width: 100%; margin-top: 10px;" disabled>挑戦不可</button>
+                            </div>
+                        `;
+                    }
+                });
+                document.getElementById('boss-progress-display').textContent = progressText;
             }
         };
 
-        // イベントリスナー設定
-        window.addEventListener('keydown', (e) => {
-            if (e.key.length === 1) BattleController.handleKeyPress(e.key.toLowerCase());
+        window.GachaController = {
+            drawCards: function(packCount) {
+                if (window.playerData.packs < packCount) {
+                    showCenterMessage("パックが足りません！", "#ff3333");
+                    AudioController.playError();
+                    return;
+                }
+                window.playerData.packs -= packCount;
+                this.executeDraw(packCount * 5, RARITY_WEIGHTS_NORMAL);
+            },
+            drawAll: function() {
+                if (window.playerData.packs <= 0) {
+                    showCenterMessage("パックがありません！", "#ff3333");
+                    AudioController.playError();
+                    return;
+                }
+                const packs = window.playerData.packs;
+                window.playerData.packs = 0;
+                this.executeDraw(packs * 5, RARITY_WEIGHTS_NORMAL);
+            },
+            drawPremiumCards: function(packCount) {
+                const cost = packCount * 5;
+                if (window.playerData.packs < cost) {
+                    showCenterMessage("パックが足りません！", "#ff3333");
+                    AudioController.playError();
+                    return;
+                }
+                window.playerData.packs -= cost;
+                this.executeDraw(packCount * 5, RARITY_WEIGHTS_PREMIUM);
+            },
+            drawAllPremium: function() {
+                const premiumPacks = Math.floor(window.playerData.packs / 5);
+                if (premiumPacks <= 0) {
+                    showCenterMessage("パックが足りません！", "#ff3333");
+                    AudioController.playError();
+                    return;
+                }
+                window.playerData.packs -= premiumPacks * 5;
+                this.executeDraw(premiumPacks * 5, RARITY_WEIGHTS_PREMIUM);
+            },
+            executeDraw: function(amount, weights) {
+                const results = [];
+                for (let i = 0; i < amount; i++) {
+                    const rand = Math.random() * 100;
+                    let cumulative = 0;
+                    let selectedRarity = "Common";
+                    for (const w of weights) {
+                        cumulative += w.chance;
+                        if (rand <= cumulative) {
+                            selectedRarity = w.rarity;
+                            break;
+                        }
+                    }
+                    const cardsOfRarity = ALL_CARDS.filter(c => c.rarity === selectedRarity && !c.id.startsWith("boss_") && !c.id.startsWith("craft_"));
+                    if (cardsOfRarity.length > 0) {
+                        const card = cardsOfRarity[Math.floor(Math.random() * cardsOfRarity.length)];
+                        results.push(card);
+                        if (!window.playerData.inventory[card.id]) window.playerData.inventory[card.id] = 0;
+                        window.playerData.inventory[card.id]++;
+                    }
+                }
+                
+                GameDataManager.saveData();
+                UIController.updateGlobalHeader();
+                document.getElementById('gacha-pack-count').textContent = window.playerData.packs;
+
+                const resultContainer = document.getElementById('gacha-result-cards');
+                resultContainer.innerHTML = '';
+                
+                const displayLimit = 50; 
+                const displayResults = results.slice(0, displayLimit);
+                
+                displayResults.forEach(c => {
+                    resultContainer.innerHTML += UIController.createCardHTML(c);
+                });
+                
+                if (results.length > displayLimit) {
+                    resultContainer.innerHTML += `<div style="width: 100%; text-align: center; color: #aaa; margin-top: 15px;">他 ${results.length - displayLimit} 枚... (全てインベントリに追加されました)</div>`;
+                }
+
+                document.getElementById('gacha-result').classList.add('active');
+                AudioController.playGacha();
+                
+                const hasHighRarity = results.some(c => ["Godly", "Volcano", "Secret", "Ultimate", "OG", "Exclusive"].includes(c.rarity));
+                if (hasHighRarity) {
+                    setTimeout(() => showCenterMessage("✨ 超激レア獲得！ ✨", "#ffd700"), 500);
+                }
+            }
+        };
+
+        window.BattleController = {
+            deck: [],
+            startBossBattle: function(bossIndex) {
+                const bossData = BOSSES[bossIndex];
+                window.bossBattleState = { isActive: true, currentBoss: bossData };
+                window.battleState.difficulty = 'boss';
+                window.battleState.boss = { ...bossData, hp: bossData.maxHp };
+                this.initBattle(bossData.maxHp, bossData.attack, bossData.name);
+            },
+            startBattle: function(difficulty) {
+                window.bossBattleState.isActive = false;
+                window.battleState.difficulty = difficulty;
+                let hp, attack, name;
+                if (difficulty === 'easy') { hp = 350; attack = 30; name = "ザコ敵"; }
+                else if (difficulty === 'medium') { hp = 500; attack = 35; name = "中級戦士"; }
+                else if (difficulty === 'hard') { hp = 1000; attack = 40; name = "上級騎士"; }
+                else { hp = 2500; attack = 45; name = "魔王の側近"; }
+                window.battleState.boss = { hp, maxHp: hp, attack, name, shield: 0, special: null };
+                this.initBattle(hp, attack, name);
+            },
+            initBattle: function(enemyHp, enemyAttack, enemyName) {
+                const uniqueCount = Object.keys(window.playerData.inventory).length;
+                this.deck = [];
+                if (uniqueCount < 25) {
+                    const allOwnedCards = [];
+                    for (let id in window.playerData.inventory) {
+                        allOwnedCards.push(UIController.getCardById(id));
+                    }
+                    for(let i=0; i<25; i++) {
+                        this.deck.push(allOwnedCards[Math.floor(Math.random() * allOwnedCards.length)]);
+                    }
+                } else {
+                    this.deck = window.playerData.equipped.map(id => UIController.getCardById(id)).filter(c => c);
+                }
+                
+                window.battleState.isActive = true;
+                window.battleState.playerMaxHp = 350;
+                window.battleState.playerHp = 350;
+                window.battleState.playerShield = 0;
+                window.battleState.nextTurnMultiplier = 1.0;
+                window.battleState.enemyFrozenTurns = 0;
+                window.battleState.playerFrozenTurns = 0;
+                window.battleState.playerBurnTurns = 0;
+                window.battleState.enemyBurnTurns = 0;
+                window.battleState.enemyBurnDamage = 0;
+                window.battleState.playerHealOverTimeTurns = 0;
+                window.battleState.playerHealOverTimeAmount = 0;
+                window.battleState.playerHealGammaTurns = 0;
+                window.battleState.enemyFireGammaTurns = 0;
+                window.battleState.playerParryTurns = 0;
+                window.battleState.playerHandSizeBoostTurns = 0;
+                
+                document.getElementById('battle-log').innerHTML = '<p>バトル開始！</p>';
+                this.updateUI();
+                GameController.switchScreen('battle-screen');
+                this.fillHand();
+            },
+            fillHand: function() {
+                window.battleState.hand = [];
+                const handSize = window.battleState.playerHandSizeBoostTurns > 0 ? 7 : 5;
+                for(let i=0; i<handSize; i++) {
+                    const card = this.deck[Math.floor(Math.random() * this.deck.length)];
+                    window.battleState.hand.push(card);
+                }
+                this.renderHand();
+                this.setNewWord();
+                window.battleState.canSelectCard = true;
+            },
+            renderHand: function() {
+                const container = document.getElementById('battle-hand');
+                container.innerHTML = '';
+                window.battleState.hand.forEach((card, index) => {
+                    container.innerHTML += UIController.createCardHTML(card, 0, `BattleController.selectCard(${index})`);
+                });
+            },
+            setNewWord: function() {
+                const word = TYPING_WORDS[Math.floor(Math.random() * TYPING_WORDS.length)];
+                window.battleState.currentWord = word;
+                window.battleState.typedIndex = 0;
+                window.battleState.mistakes = 0;
+                document.getElementById('typing-ja').textContent = word.ja;
+                this.updateTypingUI();
+            },
+            updateTypingUI: function() {
+                const word = window.battleState.currentWord.en;
+                const index = window.battleState.typedIndex;
+                const typed = word.substring(0, index);
+                const untyped = word.substring(index);
+                document.getElementById('typing-en').innerHTML = `<span class="typed">${typed}</span><span>${untyped}</span>`;
+            },
+            selectCard: function(index) {
+                if (!window.battleState.canSelectCard || window.battleState.playerFrozenTurns > 0) return;
+                const card = window.battleState.hand[index];
+                window.battleState.activeCard = card;
+                window.battleState.hand.splice(index, 1);
+                this.renderHand();
+                
+                document.getElementById('typing-message').innerHTML = `選択中: <span style="color:#ffcc00">${card.name}</span> - タイピング開始！`;
+                window.battleState.typingStartTime = Date.now();
+                window.battleState.canSelectCard = false;
+            },
+            handleTyping: function(key) {
+                if (!window.battleState.isActive || !window.battleState.activeCard || window.battleState.playerFrozenTurns > 0) return;
+                const word = window.battleState.currentWord.en;
+                const expected = word[window.battleState.typedIndex];
+                
+                if (key.toLowerCase() === expected.toLowerCase()) {
+                    window.battleState.typedIndex++;
+                    AudioController.playType();
+                    this.updateTypingUI();
+                    
+                    if (window.battleState.typedIndex === word.length) {
+                        this.executeAction();
+                    }
+                } else {
+                    window.battleState.mistakes++;
+                    document.getElementById('typing-en').innerHTML = `<span class="typed">${word.substring(0, window.battleState.typedIndex)}</span><span class="error">${word.substring(window.battleState.typedIndex)}</span>`;
+                    AudioController.playError();
+                    setTimeout(() => this.updateTypingUI(), 200);
+                }
+            },
+            executeAction: function() {
+                const timeTaken = (Date.now() - window.battleState.typingStartTime) / 1000;
+                const wpm = (window.battleState.currentWord.en.length / timeTaken) * 60;
+                let accuracyMult = 1.0;
+                if (window.battleState.mistakes === 0) accuracyMult = 1.2;
+                else if (window.battleState.mistakes > 5) accuracyMult = 0.8;
+
+                const card = window.battleState.activeCard;
+                let logMsg = `🧑 あなたは「${card.name}」を使った！`;
+
+                let mult = window.battleState.nextTurnMultiplier * accuracyMult;
+                window.battleState.nextTurnMultiplier = 1.0; 
+
+                if (card.type === 'attack') {
+                    let dmg = Math.floor(card.baseEffect * mult);
+                    if (card.id === "boss_fire_slime" || card.id === "ex1") {
+                        window.battleState.enemyBurnTurns = 2;
+                        window.battleState.enemyBurnDamage = card.id === "ex1" ? 30 : 20;
+                        logMsg += ` 敵を燃やした！`;
+                    }
+                    if (card.id === "boss_brrr_frozen") {
+                        dmg += 10;
+                        window.battleState.enemyFrozenTurns = 1;
+                        logMsg += ` 敵を凍らせた！`;
+                    }
+                    if (card.id === "craft_volcano_rush") {
+                        window.battleState.enemyFireGammaTurns = 3;
+                        logMsg += ` 敵に火属性継続ダメージを付与！`;
+                    }
+                    if (card.id === "ex4") {
+                        window.battleState.playerParryTurns = 1;
+                        logMsg += ` 次のターンの敵の攻撃を反射する！`;
+                    }
+                    
+                    if (window.battleState.boss.shield > 0) {
+                        if (window.battleState.boss.shield >= dmg) {
+                            window.battleState.boss.shield -= dmg;
+                            logMsg += ` 敵のバリアに ${dmg} 防がれた！`;
+                            dmg = 0;
+                        } else {
+                            dmg -= window.battleState.boss.shield;
+                            logMsg += ` 敵のバリアを破壊し、${dmg} ダメージ！`;
+                            window.battleState.boss.shield = 0;
+                        }
+                    } else {
+                        logMsg += ` 敵に ${dmg} ダメージ！`;
+                    }
+                    
+                    window.battleState.boss.hp -= dmg;
+                    AudioController.playAttack();
+                } else if (card.type === 'heal') {
+                    if (card.baseEffect > 0) {
+                        let heal = Math.floor(card.baseEffect * mult);
+                        window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + heal);
+                        logMsg += ` HPが ${heal} 回復した！`;
+                    } else {
+                        let minH = 0, maxH = 0;
+                        if (card.id === "boss_kone_hanbagu") { minH = 90; maxH = 110; }
+                        if (card.id === "craft_yaita_hanbagu") { minH = 70; maxH = 90; window.battleState.playerHealGammaTurns = 2; }
+                        let heal = Math.floor(Math.random() * (maxH - minH + 1) + minH);
+                        heal = Math.floor(heal * mult);
+                        window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + heal);
+                        logMsg += ` HPが ${heal} 回復した！`;
+                    }
+                    if (card.id === "r9" || card.id === "l8" || card.id === "g6") {
+                        window.battleState.playerHealOverTimeTurns = card.id === "g6" ? 2 : 1;
+                        window.battleState.playerHealOverTimeAmount = 25;
+                        logMsg += ` 継続回復状態になった！`;
+                    }
+                    if (card.id === "m6") {
+                        window.battleState.playerBurnTurns = 0;
+                        window.battleState.playerFrozenTurns = 0;
+                        logMsg += ` 状態異常が解除された！`;
+                    }
+                    if (card.id === "ex2") {
+                        window.battleState.playerHealOverTimeTurns = 3;
+                        window.battleState.playerHealOverTimeAmount = 40;
+                        logMsg += ` 強い継続回復状態になった！`;
+                    }
+                    AudioController.playHeal();
+                } else if (card.type === 'assist') {
+                    if (card.baseEffect > 1) {
+                        window.battleState.nextTurnMultiplier = card.baseEffect;
+                        logMsg += ` 次の攻撃が ${card.baseEffect} 倍になった！`;
+                    }
+                    if (card.id === "c4" || card.id === "u5" || card.id === "r5") {
+                        let draws = card.id === "c4" ? 2 : card.id === "u5" ? 3 : 5;
+                        this.fillHand();
+                        logMsg += ` 手札を入れ替えた！`;
+                    }
+                    if (card.id === "l9" || card.id === "m3") {
+                        window.battleState.enemyFrozenTurns = 1;
+                        if(card.id === "l9") {
+                            window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 20);
+                            logMsg += ` 敵の時間を止め、20回復した！`;
+                        } else {
+                            logMsg += ` 敵の時間を止め、次の攻撃を倍加！`;
+                        }
+                    }
+                    if (card.id === "v5" || card.id === "boss_titan" || card.id === "og5") {
+                        window.battleState.playerShield += card.baseEffect;
+                        logMsg += ` ${card.baseEffect} のバリアを展開！`;
+                    }
+                    if (card.id === "ex3") {
+                        window.battleState.playerShield += 200;
+                        logMsg += ` 強力な200のバリアを展開！`;
+                    }
+                    if (card.id === "ex5") {
+                        this.fillHand();
+                        window.battleState.playerHandSizeBoostTurns = 5;
+                        logMsg += ` 手札をリセットし、しばらく手札が7枚になる！`;
+                    }
+                    if (card.id === "ex6") {
+                        window.battleState.enemyFrozenTurns = 3;
+                        logMsg += ` 敵を3ターン凍結させた！`;
+                    }
+                    if (card.id === "og_ultra_shield") {
+                        window.battleState.playerShield += 150;
+                        logMsg += ` 150のバリアを展開！`;
+                    }
+                    AudioController.playClick();
+                }
+
+                if (accuracyMult === 1.2) logMsg += " [ノーミスボーナス!]";
+                this.logBattle(logMsg);
+                window.battleState.activeCard = null;
+
+                if (window.battleState.boss.hp <= 0) {
+                    this.updateUI();
+                    setTimeout(() => this.winBattle(), 500);
+                } else {
+                    this.enemyTurn();
+                }
+            },
+            enemyTurn: function() {
+                if (window.battleState.enemyBurnTurns > 0) {
+                    window.battleState.boss.hp -= window.battleState.enemyBurnDamage;
+                    window.battleState.enemyBurnTurns--;
+                    this.logBattle(`🔥 敵は火傷で ${window.battleState.enemyBurnDamage} ダメージを受けた！`);
+                    if (window.battleState.boss.hp <= 0) {
+                        this.updateUI();
+                        setTimeout(() => this.winBattle(), 500);
+                        return;
+                    }
+                }
+                if (window.battleState.enemyFireGammaTurns > 0) {
+                    window.battleState.boss.hp -= 35;
+                    window.battleState.enemyFireGammaTurns--;
+                    this.logBattle(`🌋 敵は火属性継続ダメージで 35 ダメージ！`);
+                    if (window.battleState.boss.hp <= 0) {
+                        this.updateUI();
+                        setTimeout(() => this.winBattle(), 500);
+                        return;
+                    }
+                }
+
+                if (window.battleState.enemyFrozenTurns > 0) {
+                    window.battleState.enemyFrozenTurns--;
+                    this.logBattle("❄️ 敵は凍っていて動けない！");
+                    this.endTurnRoutine();
+                    return;
+                }
+
+                let specialTriggered = false;
+                if (window.battleState.boss.special) {
+                    specialTriggered = window.battleState.boss.special(window.battleState);
+                }
+
+                if (!specialTriggered) {
+                    let dmg = window.battleState.boss.attack;
+                    
+                    if (window.battleState.playerParryTurns > 0) {
+                        window.battleState.boss.hp -= dmg;
+                        this.logBattle(`✨ 敵の攻撃を反射し、敵に ${dmg} ダメージ！`);
+                        window.battleState.playerParryTurns--;
+                        if (window.battleState.boss.hp <= 0) {
+                            this.updateUI();
+                            setTimeout(() => this.winBattle(), 500);
+                            return;
+                        }
+                    } else if (window.battleState.playerShield > 0) {
+                        if (window.battleState.playerShield >= dmg) {
+                            window.battleState.playerShield -= dmg;
+                            this.logBattle(`🛡️ ${window.battleState.boss.name}の攻撃！ バリアで完全に防いだ！`);
+                        } else {
+                            dmg -= window.battleState.playerShield;
+                            this.logBattle(`🛡️ ${window.battleState.boss.name}の攻撃！ バリアが壊れ、${dmg} ダメージ！`);
+                            window.battleState.playerShield = 0;
+                            window.battleState.playerHp = Math.max(0, window.battleState.playerHp - dmg);
+                        }
+                    } else {
+                        window.battleState.playerHp = Math.max(0, window.battleState.playerHp - dmg);
+                        this.logBattle(`👹 ${window.battleState.boss.name}の攻撃！ ${dmg} ダメージを受けた！`);
+                    }
+                }
+                this.endTurnRoutine();
+            },
+            endTurnRoutine: function() {
+                if (window.battleState.playerBurnTurns > 0) {
+                    window.battleState.playerHp = Math.max(0, window.battleState.playerHp - 15);
+                    window.battleState.playerBurnTurns--;
+                    this.logBattle(`🔥 火傷で 15 ダメージを受けた！`);
+                }
+                
+                if (window.battleState.playerHealOverTimeTurns > 0) {
+                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + window.battleState.playerHealOverTimeAmount);
+                    window.battleState.playerHealOverTimeTurns--;
+                    this.logBattle(`💖 継続回復で ${window.battleState.playerHealOverTimeAmount} 回復した！`);
+                }
+                if (window.battleState.playerHealGammaTurns > 0) {
+                    window.battleState.playerHp = Math.min(window.battleState.playerMaxHp, window.battleState.playerHp + 35);
+                    window.battleState.playerHealGammaTurns--;
+                    this.logBattle(`💖 継続回復γで 35 回復した！`);
+                }
+                if (window.battleState.playerHandSizeBoostTurns > 0) {
+                    window.battleState.playerHandSizeBoostTurns--;
+                }
+
+                this.updateUI();
+
+                if (window.battleState.playerHp <= 0) {
+                    setTimeout(() => this.loseBattle(), 500);
+                } else {
+                    if (window.battleState.playerFrozenTurns > 0) {
+                        window.battleState.playerFrozenTurns--;
+                        this.logBattle("❄️ あなたは凍っていて動けない！（敵の連続ターン）");
+                        setTimeout(() => this.enemyTurn(), 1000);
+                    } else {
+                        setTimeout(() => {
+                            this.fillHand();
+                            document.getElementById('typing-message').innerHTML = `👇 下のカードから1つ選んでください`;
+                        }, 500);
+                    }
+                }
+            },
+            winBattle: function() {
+                window.battleState.isActive = false;
+                AudioController.playWin();
+                
+                let packsEarned = 0;
+                let isBossDefeated = false;
+
+                if (window.bossBattleState.isActive) {
+                    const b = window.bossBattleState.currentBoss;
+                    packsEarned = (b.index + 1) * 30; 
+                    if (!window.playerData.unlockedBosses.includes(b.index + 1)) {
+                        window.playerData.unlockedBosses.push(b.index + 1);
+                        isBossDefeated = true;
+                    }
+                    if (b.onDefeat) b.onDefeat();
+                } else {
+                    const diff = window.battleState.difficulty;
+                    if (diff === 'easy') packsEarned = 10;
+                    else if (diff === 'medium') packsEarned = 25;
+                    else if (diff === 'hard') packsEarned = 50;
+                    else if (diff === 'extreme') packsEarned = 100;
+                }
+
+                window.playerData.packs += packsEarned;
+                GameDataManager.saveData();
+
+                document.getElementById('result-title').textContent = "🎉 勝利！";
+                document.getElementById('result-title').style.color = "#4caf50";
+                
+                let desc = `激闘の末、${window.battleState.boss.name}を倒した！<br><br>獲得: 📦 ${packsEarned} パック`;
+                if (isBossDefeated) desc += `<br><br><span style="color:gold;">🌟 新しいボスが解放されました！</span>`;
+                
+                document.getElementById('result-desc').innerHTML = desc;
+                document.getElementById('battle-result-modal').classList.add('active');
+            },
+            loseBattle: function() {
+                window.battleState.isActive = false;
+                document.getElementById('result-title').textContent = "💀 敗北...";
+                document.getElementById('result-title').style.color = "#f44336";
+                document.getElementById('result-desc').textContent = "力尽きてしまった...";
+                document.getElementById('battle-result-modal').classList.add('active');
+            },
+            flee: function() {
+                if(confirm("本当に逃げますか？（敗北になります）")) {
+                    this.loseBattle();
+                }
+            },
+            logBattle: function(msg) {
+                const log = document.getElementById('battle-log');
+                log.innerHTML += `<p>${msg}</p>`;
+                log.scrollTop = log.scrollHeight;
+            },
+            updateUI: function() {
+                const b = window.battleState;
+                document.getElementById('player-hp').textContent = Math.floor(b.playerHp);
+                document.getElementById('player-max-hp').textContent = b.playerMaxHp;
+                document.getElementById('player-hp-text').textContent = `${Math.floor(b.playerHp)} / ${b.playerMaxHp}`;
+                document.getElementById('player-hp-bar').style.width = `${(b.playerHp / b.playerMaxHp) * 100}%`;
+                
+                document.getElementById('boss-name').textContent = b.boss.name;
+                document.getElementById('boss-hp').textContent = Math.floor(b.boss.hp);
+                document.getElementById('boss-max-hp').textContent = b.boss.maxHp;
+                document.getElementById('boss-hp-text').textContent = `${Math.floor(b.boss.hp)} / ${b.boss.maxHp}`;
+                document.getElementById('boss-hp-bar').style.width = `${Math.max(0, (b.boss.hp / b.boss.maxHp) * 100)}%`;
+
+                const pShieldDiv = document.getElementById('player-shield-container');
+                if (b.playerShield > 0) {
+                    pShieldDiv.style.display = 'block';
+                    document.getElementById('player-shield-bar').style.width = '100%';
+                } else {
+                    pShieldDiv.style.display = 'none';
+                }
+
+                const bShieldDiv = document.getElementById('boss-shield-container');
+                if (b.boss.shield > 0) {
+                    bShieldDiv.style.display = 'block';
+                    document.getElementById('boss-shield-bar').style.width = '100%';
+                } else {
+                    bShieldDiv.style.display = 'none';
+                }
+
+                const pEff = document.getElementById('player-effects');
+                pEff.innerHTML = '';
+                if(b.nextTurnMultiplier > 1.0) pEff.innerHTML += `<span class="effect-icon effect-shield">攻撃 x${b.nextTurnMultiplier}</span>`;
+                if(b.playerBurnTurns > 0) pEff.innerHTML += `<span class="effect-icon effect-burn">火傷 (${b.playerBurnTurns})</span>`;
+                if(b.playerFrozenTurns > 0) pEff.innerHTML += `<span class="effect-icon effect-freeze">氷結 (${b.playerFrozenTurns})</span>`;
+                if(b.playerHealOverTimeTurns > 0) pEff.innerHTML += `<span class="effect-icon effect-heal">回復β (${b.playerHealOverTimeTurns})</span>`;
+                if(b.playerHealGammaTurns > 0) pEff.innerHTML += `<span class="effect-icon effect-healgama">回復γ (${b.playerHealGammaTurns})</span>`;
+                if(b.playerParryTurns > 0) pEff.innerHTML += `<span class="effect-icon effect-shield">反射</span>`;
+
+                const bEff = document.getElementById('boss-effects');
+                bEff.innerHTML = '';
+                if(b.enemyBurnTurns > 0) bEff.innerHTML += `<span class="effect-icon effect-burn">火傷 (${b.enemyBurnTurns})</span>`;
+                if(b.enemyFrozenTurns > 0) bEff.innerHTML += `<span class="effect-icon effect-freeze">氷結 (${b.enemyFrozenTurns})</span>`;
+                if(b.enemyFireGammaTurns > 0) bEff.innerHTML += `<span class="effect-icon effect-firegamma">火傷γ (${b.enemyFireGammaTurns})</span>`;
+            }
+        };
+
+        // ====== パーティーバトル機能 (新規追加) ======
+        window.PartyController = {
+            currentPartyId: null,
+            lobbyUnsubscribe: null,
+            inviteUnsubscribe: null,
+            partyUnsubscribe: null,
+            partyBattleUnsubscribe: null,
+            isLeader: false,
+
+            init: function() {
+                if(!userId) return;
+                this.setupDisconnect();
+                
+                // 招待の監視
+                this.inviteUnsubscribe = onValue(ref(database, `party_invites/${userId}`), (snap) => {
+                    const invites = snap.val();
+                    if(invites) {
+                        for(let invId in invites) {
+                            this.showInvitePopup(invId, invites[invId]);
+                        }
+                    } else {
+                        document.getElementById('invite-notifications-container').innerHTML = '';
+                    }
+                });
+
+                // 自分のパーティー所属状態の監視
+                onValue(ref(database, `users/${userId}/currentPartyId`), (snap) => {
+                    const pId = snap.val();
+                    if(pId && pId !== this.currentPartyId) {
+                        this.joinPartyContext(pId);
+                    } else if (!pId && this.currentPartyId) {
+                        this.leavePartyContext();
+                    }
+                });
+            },
+            
+            setupDisconnect: function() {
+                onDisconnect(ref(database, `party_lobbies/${userId}`)).remove();
+                if(this.currentPartyId) {
+                    onDisconnect(ref(database, `parties/${this.currentPartyId}/members/${userId}`)).remove();
+                }
+            },
+
+            enterLobby: function() {
+                set(ref(database, `party_lobbies/${userId}`), {
+                    nickname: window.playerData.nickname || "匿名：冒険者",
+                    timestamp: serverTimestamp()
+                });
+                
+                this.lobbyUnsubscribe = onValue(ref(database, 'party_lobbies'), (snap) => {
+                    const lobbies = snap.val() || {};
+                    this.renderLobbyUsers(lobbies);
+                });
+            },
+
+            leaveLobby: function() {
+                remove(ref(database, `party_lobbies/${userId}`));
+                if(this.lobbyUnsubscribe) {
+                    off(ref(database, 'party_lobbies'), 'value', this.lobbyUnsubscribe);
+                    this.lobbyUnsubscribe = null;
+                }
+            },
+
+            renderLobbyUsers: function(lobbies) {
+                const list = document.getElementById('party-lobby-users');
+                list.innerHTML = '';
+                for(let uid in lobbies) {
+                    if(uid === userId) continue;
+                    list.innerHTML += `
+                        <div class="party-user-item">
+                            <span>${lobbies[uid].nickname}</span>
+                            <button class="btn-primary" style="padding: 5px 15px; font-size: 14px;" onclick="PartyController.inviteUser('${uid}')">招待</button>
+                        </div>
+                    `;
+                }
+                if(Object.keys(lobbies).length <= 1) {
+                    list.innerHTML = '<p style="color:#aaa;">待機中の他のユーザーはいません。</p>';
+                }
+            },
+
+            inviteUser: function(targetUid) {
+                // リーダーか、まだパーティに属していないか
+                if(this.currentPartyId && !this.isLeader) {
+                    showToast("リーダーではないため招待できません。");
+                    return;
+                }
+
+                // メンバー数チェック
+                if(this.currentPartyId) {
+                    get(ref(database, `parties/${this.currentPartyId}/members`)).then(snap => {
+                        const members = snap.val() || {};
+                        if(Object.keys(members).length >= 4) {
+                            showToast("パーティーは最大4人までです。");
+                            return;
+                        }
+                        this.sendInviteReq(targetUid, this.currentPartyId);
+                    });
+                } else {
+                    // パーティー新規作成
+                    const newPartyId = 'party_' + Date.now() + '_' + userId;
+                    set(ref(database, `parties/${newPartyId}`), {
+                        leader: userId,
+                        status: 'lobby',
+                        members: { [userId]: { nickname: window.playerData.nickname } }
+                    }).then(() => {
+                        set(ref(database, `users/${userId}/currentPartyId`), newPartyId);
+                        this.sendInviteReq(targetUid, newPartyId);
+                    });
+                }
+            },
+
+            sendInviteReq: function(targetUid, pId) {
+                const inviteId = push(ref(database, `party_invites/${targetUid}`)).key;
+                set(ref(database, `party_invites/${targetUid}/${inviteId}`), {
+                    fromName: window.playerData.nickname || "匿名",
+                    partyId: pId,
+                    timestamp: serverTimestamp()
+                }).then(() => {
+                    showToast("招待を送信しました！");
+                });
+            },
+
+            showInvitePopup: function(inviteId, inviteData) {
+                if(this.currentPartyId) return; // 既にパーティに居たら無視
+                
+                const container = document.getElementById('invite-notifications-container');
+                const div = document.createElement('div');
+                div.className = 'invite-notification';
+                div.id = `invite-${inviteId}`;
+                div.innerHTML = `
+                    <div style="font-size: 16px; margin-bottom: 15px; font-weight: bold;">
+                        📩 ${inviteData.fromName} さんからパーティー招待が来ています！
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button class="btn-success" onclick="PartyController.acceptInvite('${inviteId}', '${inviteData.partyId}')">許可</button>
+                        <button class="btn-danger" onclick="PartyController.rejectInvite('${inviteId}')">拒否</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            },
+
+            acceptInvite: function(inviteId, partyId) {
+                // パーティーに参加
+                set(ref(database, `parties/${partyId}/members/${userId}`), {
+                    nickname: window.playerData.nickname || "匿名"
+                }).then(() => {
+                    set(ref(database, `users/${userId}/currentPartyId`), partyId);
+                    this.rejectInvite(inviteId); // 通知消す
+                }).catch(() => showToast("参加に失敗しました"));
+            },
+
+            rejectInvite: function(inviteId) {
+                remove(ref(database, `party_invites/${userId}/${inviteId}`));
+                const el = document.getElementById(`invite-${inviteId}`);
+                if(el) el.remove();
+            },
+
+            joinPartyContext: function(pId) {
+                this.currentPartyId = pId;
+                this.setupDisconnect();
+                
+                this.partyUnsubscribe = onValue(ref(database, `parties/${pId}`), (snap) => {
+                    const pData = snap.val();
+                    if(!pData) {
+                        this.leavePartyContext();
+                        return;
+                    }
+                    this.isLeader = (pData.leader === userId);
+                    this.renderPartyMembers(pData);
+                    
+                    if(pData.status === 'battle' && !window.PartyBattleController.isActive) {
+                        window.PartyBattleController.start(pId);
+                    }
+                });
+            },
+
+            leavePartyContext: function() {
+                if(this.currentPartyId) {
+                    remove(ref(database, `parties/${this.currentPartyId}/members/${userId}`));
+                    set(ref(database, `users/${userId}/currentPartyId`), null);
+                }
+                this.currentPartyId = null;
+                this.isLeader = false;
+                if(this.partyUnsubscribe) {
+                    off(ref(database, `parties/${this.currentPartyId}`), 'value', this.partyUnsubscribe);
+                    this.partyUnsubscribe = null;
+                }
+                this.renderPartyMembers(null);
+            },
+
+            renderPartyMembers: function(pData) {
+                const list = document.getElementById('current-party-members');
+                const actions = document.getElementById('party-action-buttons');
+                list.innerHTML = '';
+                actions.innerHTML = '';
+                
+                if(!pData) {
+                    list.innerHTML = '<p style="color:#aaa;">パーティーに参加していません。</p>';
+                    return;
+                }
+
+                const members = pData.members || {};
+                let count = 0;
+                for(let uid in members) {
+                    const isL = (uid === pData.leader);
+                    list.innerHTML += `
+                        <div class="party-member-item">
+                            ${isL ? '<span class="party-member-leader">👑</span>' : ''}
+                            ${members[uid].nickname}
+                        </div>
+                    `;
+                    count++;
+                }
+
+                actions.innerHTML += `<button class="btn-danger" onclick="PartyController.leavePartyContext()">パーティーを退出</button>`;
+                
+                if(this.isLeader && count >= 2) {
+                    actions.innerHTML += `<button class="btn-special" onclick="GameController.switchScreen('party-quest-screen')">⚔️ パーティー冒険</button>`;
+                } else if(this.isLeader) {
+                    actions.innerHTML += `<button class="btn-dark" disabled title="2人以上必要です">⚔️ パーティー冒険 (2人以上)</button>`;
+                }
+            },
+
+            startQuest: function(type, difficulty) {
+                if(!this.isLeader || !this.currentPartyId) return;
+                
+                get(ref(database, `parties/${this.currentPartyId}`)).then(snap => {
+                    const pData = snap.val();
+                    if(!pData) return;
+                    
+                    // バトル初期データ生成
+                    let bossData = {};
+                    if(type === 'pack') {
+                        if(difficulty === 'easy') bossData = { name: "T簡単スライム", maxHp: 2000, hp: 2000, attack: 40, acts: 1, type: "pack_easy", shield: 0 };
+                        if(difficulty === 'medium') bossData = { name: "T中級ゴーレム", maxHp: 5000, hp: 5000, attack: 80, acts: 2, type: "pack_medium", shield: 0 };
+                        if(difficulty === 'hard') bossData = { name: "T上級ドラゴン", maxHp: 15000, hp: 15000, attack: 80, acts: 2, type: "pack_hard", shield: 0 };
+                    } else if (type === 'boss') {
+                        bossData = { name: "シールドニキ", maxHp: 10000, hp: 10000, attack: 120, acts: 1, type: "boss_shield_niki", shield: 0 };
+                    }
+
+                    const initialPlayers = {};
+                    for(let uid in pData.members) {
+                        initialPlayers[uid] = {
+                            nickname: pData.members[uid].nickname,
+                            hp: 350,
+                            maxHp: 350,
+                            shield: 0,
+                            dead: false,
+                            actionReady: false,
+                            frozenTurns: 0,
+                            burnTurns: 0,
+                            healTurns: 0
+                        };
+                    }
+
+                    const battleRef = ref(database, `party_battles/${this.currentPartyId}`);
+                    set(battleRef, {
+                        state: 'typing',
+                        enemy: bossData,
+                        players: initialPlayers,
+                        logs: [{ msg: "バトル開始！", id: Date.now() }]
+                    }).then(() => {
+                        update(ref(database, `parties/${this.currentPartyId}`), { status: 'battle' });
+                    });
+                });
+            }
+        };
+
+        // ====== パーティーバトル実行機能 ======
+        window.PartyBattleController = {
+            isActive: false,
+            partyId: null,
+            deck: [],
+            hand: [],
+            activeCard: null,
+            currentTargetId: null,
+            unsubscribe: null,
+            localState: null,
+            
+            start: function(pId) {
+                this.partyId = pId;
+                this.isActive = true;
+                this.generateDeck();
+                GameController.switchScreen('party-battle-screen');
+                
+                this.unsubscribe = onValue(ref(database, `party_battles/${pId}`), (snap) => {
+                    const data = snap.val();
+                    if(!data) {
+                        this.leaveBattle();
+                        return;
+                    }
+                    this.localState = data;
+                    this.renderState();
+                    
+                    if(data.state === 'typing') {
+                        const myPlayer = data.players[userId];
+                        if(myPlayer && !myPlayer.dead && !myPlayer.actionReady && document.getElementById('party-typing-area').style.display === 'none') {
+                            this.fillHand();
+                            document.getElementById('party-typing-area').style.display = 'flex';
+                            document.getElementById('party-battle-waiting').style.display = 'none';
+                        } else if(myPlayer && myPlayer.dead) {
+                            document.getElementById('party-typing-area').style.display = 'none';
+                            document.getElementById('party-battle-waiting').style.display = 'block';
+                            document.getElementById('party-battle-waiting').textContent = "💀 死亡しています... (味方の回復を待っています)";
+                        }
+                    } else if (data.state === 'won' || data.state === 'lost') {
+                         setTimeout(() => this.finishBattle(data.state), 1000);
+                    }
+                    
+                    // ホスト処理
+                    if(PartyController.isLeader && data.state === 'typing') {
+                        this.checkHostTurnProcess(data);
+                    }
+                });
+            },
+
+            generateDeck: function() {
+                const eq = window.playerData.equipped;
+                if(eq.length < 25) {
+                    const all = Object.keys(window.playerData.inventory).map(id => UIController.getCardById(id)).filter(c=>c);
+                    this.deck = [];
+                    for(let i=0; i<25; i++) this.deck.push(all[Math.floor(Math.random()*all.length)]);
+                } else {
+                    this.deck = eq.map(id => UIController.getCardById(id)).filter(c=>c);
+                }
+            },
+
+            fillHand: function() {
+                this.hand = [];
+                const available = this.deck;
+                for(let i=0; i<5; i++) {
+                    let card;
+                    do {
+                        card = available[Math.floor(Math.random() * available.length)];
+                    } while (card.type === 'assist' && card.desc.includes('倍') && Math.random() < 0.8);
+                    this.hand.push(card);
+                }
+                
+                const container = document.getElementById('party-battle-hand');
+                container.innerHTML = '';
+                this.hand.forEach((c, idx) => {
+                    container.innerHTML += UIController.createCardHTML(c, 0, `PartyBattleController.selectCard(${idx})`);
+                });
+                
+                window.battleState.currentWord = TYPING_WORDS[Math.floor(Math.random() * TYPING_WORDS.length)];
+                window.battleState.typedIndex = 0;
+                window.battleState.mistakes = 0;
+                document.getElementById('party-typing-ja').textContent = window.battleState.currentWord.ja;
+                this.updateTypingUI();
+            },
+
+            updateTypingUI: function() {
+                const word = window.battleState.currentWord.en;
+                const index = window.battleState.typedIndex;
+                const typed = word.substring(0, index);
+                const untyped = word.substring(index);
+                document.getElementById('party-typing-en').innerHTML = `<span class="typed">${typed}</span><span>${untyped}</span>`;
+            },
+
+            selectCard: function(idx) {
+                const card = this.hand[idx];
+                this.activeCard = card;
+                
+                // 対象選択
+                if(card.type === 'heal' || card.type === 'assist') {
+                    this.openTargetModal(card);
+                } else {
+                    this.currentTargetId = "boss";
+                    this.startTyping(card);
+                }
+            },
+
+            openTargetModal: function(card) {
+                const grid = document.getElementById('target-list-grid');
+                grid.innerHTML = '';
+                for(let uid in this.localState.players) {
+                    const p = this.localState.players[uid];
+                    const deadClass = p.dead ? 'dead' : '';
+                    const deadText = p.dead ? ' (死亡)' : '';
+                    grid.innerHTML += `<div class="target-btn ${deadClass}" onclick="PartyBattleController.setTarget('${uid}')">${p.nickname}${deadText}</div>`;
+                }
+                document.getElementById('target-select-modal').classList.add('active');
+            },
+            
+            setTarget: function(uid) {
+                this.currentTargetId = uid;
+                document.getElementById('target-select-modal').classList.remove('active');
+                this.startTyping(this.activeCard);
+            },
+
+            startTyping: function(card) {
+                this.hand = [];
+                document.getElementById('party-battle-hand').innerHTML = '';
+                document.getElementById('party-typing-message').innerHTML = `選択中: <span style="color:#ffcc00">${card.name}</span> - タイピング開始！`;
+                window.battleState.typingStartTime = Date.now();
+            },
+
+            handleTyping: function(key) {
+                if(!this.isActive || !this.activeCard) return;
+                const word = window.battleState.currentWord.en;
+                const expected = word[window.battleState.typedIndex];
+                
+                if (key.toLowerCase() === expected.toLowerCase()) {
+                    window.battleState.typedIndex++;
+                    AudioController.playType();
+                    this.updateTypingUI();
+                    
+                    if (window.battleState.typedIndex === word.length) {
+                        this.finishAction();
+                    }
+                } else {
+                    window.battleState.mistakes++;
+                    document.getElementById('party-typing-en').innerHTML = `<span class="typed">${word.substring(0, window.battleState.typedIndex)}</span><span class="error">${word.substring(window.battleState.typedIndex)}</span>`;
+                    AudioController.playError();
+                    setTimeout(() => this.updateTypingUI(), 200);
+                }
+            },
+
+            finishAction: function() {
+                const timeTaken = (Date.now() - window.battleState.typingStartTime) / 1000;
+                let accuracyMult = 1.0;
+                if (window.battleState.mistakes === 0) accuracyMult = 1.2;
+                
+                update(ref(database, `party_battles/${this.partyId}/players/${userId}`), {
+                    actionReady: true,
+                    action: {
+                        cardId: this.activeCard.id,
+                        targetId: this.currentTargetId,
+                        mult: accuracyMult
+                    }
+                });
+                
+                this.activeCard = null;
+                document.getElementById('party-typing-area').style.display = 'none';
+                document.getElementById('party-battle-waiting').style.display = 'block';
+                document.getElementById('party-battle-waiting').textContent = "⏳ 味方の行動を待機中...";
+            },
+
+            // ===== リーダー専用処理 =====
+            checkHostTurnProcess: function(data) {
+                let allReady = true;
+                for(let uid in data.players) {
+                    if(!data.players[uid].dead && !data.players[uid].actionReady) {
+                        allReady = false;
+                        break;
+                    }
+                }
+                if(allReady) {
+                    this.executeHostTurn(data);
+                }
+            },
+
+            executeHostTurn: function(data) {
+                update(ref(database, `party_battles/${this.partyId}`), { state: 'executing' });
+                
+                const dbRef = ref(database, `party_battles/${this.partyId}`);
+                let pData = JSON.parse(JSON.stringify(data.players));
+                let eData = JSON.parse(JSON.stringify(data.enemy));
+                let newLogs = [];
+
+                const addLog = (msg) => { newLogs.push({ msg, id: Date.now() + Math.random() }); };
+
+                // プレイヤーフェーズ
+                for(let uid in pData) {
+                    const p = pData[uid];
+                    if(p.dead || !p.action) continue;
+                    
+                    if(p.frozenTurns > 0) {
+                        p.frozenTurns--;
+                        addLog(`❄️ ${p.nickname} は凍っていて動けない！`);
+                        continue;
+                    }
+
+                    const card = UIController.getCardById(p.action.cardId);
+                    const tId = p.action.targetId;
+                    const mult = (p.nextTurnMultiplier || 1.0) * p.action.mult;
+                    p.nextTurnMultiplier = 1.0;
+
+                    let actionMsg = `🧑 ${p.nickname} は「${card.name}」を使った！`;
+
+                    if(card.type === 'attack') {
+                        let dmg = Math.floor(card.baseEffect * mult);
+                        if(eData.shield > 0) {
+                            if(eData.shield >= dmg) {
+                                eData.shield -= dmg; actionMsg += ` バリアに防がれた！`; dmg=0;
+                            } else {
+                                dmg -= eData.shield; eData.shield = 0; actionMsg += ` バリアを破壊し ${dmg} ダメージ！`;
+                            }
+                        } else {
+                            actionMsg += ` 敵に ${dmg} ダメージ！`;
+                        }
+                        eData.hp -= dmg;
+                    } else if (card.type === 'heal') {
+                        const target = pData[tId];
+                        if(target) {
+                            let heal = Math.floor(card.baseEffect * mult);
+                            if(heal === 0 && card.id === "boss_kone_hanbagu") heal = 100 * mult;
+                            if(heal === 0 && card.id === "craft_yaita_hanbagu") heal = 80 * mult;
+                            target.hp = Math.min(target.maxHp, target.hp + heal);
+                            if(target.dead && target.hp > 0) {
+                                target.dead = false;
+                                actionMsg += ` ${target.nickname} が復活した！`;
+                            }
+                            actionMsg += ` ${target.nickname} を ${heal} 回復！`;
+                        }
+                    } else if (card.type === 'assist') {
+                        const target = pData[tId];
+                        if(card.desc.includes('倍')) {
+                            if(target) {
+                                target.nextTurnMultiplier = card.baseEffect;
+                                actionMsg += ` ${target.nickname} の次の攻撃が ${card.baseEffect}倍！`;
+                            }
+                        } else if (card.baseEffect > 0 && !card.desc.includes('倍')) {
+                            // Shield (v5, boss_titan, og5, og_ultra_shield etc)
+                             if(target) {
+                                 target.shield = (target.shield || 0) + card.baseEffect;
+                                 actionMsg += ` ${target.nickname} に ${card.baseEffect} バリア！`;
+                             }
+                        }
+                    }
+                    addLog(actionMsg);
+                    
+                    if(eData.hp <= 0) break;
+                }
+
+                // 敵生存チェック
+                if(eData.hp <= 0) {
+                    addLog("🎉 ボスを撃破した！");
+                    update(dbRef, { state: 'won', enemy: eData, players: pData, logs: [...(data.logs||[]), ...newLogs].slice(-30) });
+                    return;
+                }
+
+                // 敵フェーズ
+                let aliveTargets = Object.keys(pData).filter(uid => !pData[uid].dead);
+                if(aliveTargets.length > 0) {
+                    for(let i=0; i<eData.acts; i++) {
+                        if(eData.charge) {
+                            eData.currentAttack = 100;
+                            eData.charge = false;
+                            addLog(`⚠️ ボスのチャージ攻撃！`);
+                        } else {
+                            eData.currentAttack = eData.attack;
+                        }
+
+                        // スキル抽選
+                        let usedSkill = false;
+                        if(eData.type === 'pack_medium' && Math.random() < 0.25) {
+                            eData.charge = true;
+                            addLog(`⚡ ${eData.name} はチャージした！(次ターン攻撃100)`);
+                            break; // ターン終了
+                        }
+                        if(eData.type === 'pack_medium' && !eData.charge && Math.random() < 0.3) {
+                            addLog(`⚔️ ${eData.name} の切り払い！ パーティー全体に50ダメージ！`);
+                            for(let t of aliveTargets) {
+                                pData[t].hp -= 50;
+                                if(pData[t].hp <= 0) pData[t].dead = true;
+                            }
+                            usedSkill = true;
+                        }
+                        if(eData.type === 'pack_hard' && Math.random() < 0.25) {
+                            let t = aliveTargets[Math.floor(Math.random()*aliveTargets.length)];
+                            pData[t].frozenTurns = 3;
+                            addLog(`❄️ ${eData.name} の呪縛！ ${pData[t].nickname} が3ターン行動不能！`);
+                            usedSkill = true;
+                        }
+
+                        if(!usedSkill) {
+                            let t = aliveTargets[Math.floor(Math.random()*aliveTargets.length)];
+                            let dmg = eData.currentAttack;
+                            if(pData[t].shield > 0) {
+                                if(pData[t].shield >= dmg) {
+                                    pData[t].shield -= dmg; addLog(`🛡️ ボスの攻撃！ ${pData[t].nickname} のバリアで防いだ！`); dmg=0;
+                                } else {
+                                    dmg -= pData[t].shield; pData[t].shield = 0; addLog(`🛡️ ボスの攻撃！ バリアが壊れ ${pData[t].nickname} に ${dmg} ダメージ！`);
+                                }
+                            } else {
+                                addLog(`👹 ボスの攻撃！ ${pData[t].nickname} に ${dmg} ダメージ！`);
+                            }
+                            pData[t].hp -= dmg;
+                            if(pData[t].hp <= 0) {
+                                pData[t].dead = true;
+                                pData[t].hp = 0;
+                                addLog(`💀 ${pData[t].nickname} が倒れた！`);
+                            }
+                        }
+
+                        if(eData.type === 'boss_shield_niki' && eData.shield <= 0 && Math.random() < 0.35) {
+                            eData.shield = 100;
+                            addLog(`🛡️ シールドニキは 100 のシールドを張った！`);
+                        }
+
+                        aliveTargets = Object.keys(pData).filter(uid => !pData[uid].dead);
+                        if(aliveTargets.length === 0) break;
+                    }
+                }
+
+                if(aliveTargets.length === 0) {
+                    addLog("💀 パーティーは全滅した...");
+                    update(dbRef, { state: 'lost', enemy: eData, players: pData, logs: [...(data.logs||[]), ...newLogs].slice(-30) });
+                    return;
+                }
+
+                // 状態リセット
+                for(let uid in pData) {
+                    pData[uid].actionReady = false;
+                    pData[uid].action = null;
+                }
+
+                const finalLogs = [...(data.logs||[]), ...newLogs].slice(-30); // 最大30件
+                update(dbRef, { state: 'typing', enemy: eData, players: pData, logs: finalLogs });
+            },
+
+            // ===== 共通UI更新 =====
+            renderState: function() {
+                if(!this.localState) return;
+                const e = this.localState.enemy;
+                const ps = this.localState.players;
+
+                // ボスUI
+                document.getElementById('party-boss-name').textContent = e.name;
+                document.getElementById('party-boss-hp').textContent = Math.floor(e.hp);
+                document.getElementById('party-boss-max-hp').textContent = e.maxHp;
+                document.getElementById('party-boss-hp-text').textContent = `${Math.floor(e.hp)} / ${e.maxHp}`;
+                document.getElementById('party-boss-hp-bar').style.width = `${Math.max(0, (e.hp / e.maxHp) * 100)}%`;
+                
+                const bShieldDiv = document.getElementById('party-boss-shield-container');
+                if (e.shield > 0) {
+                    bShieldDiv.style.display = 'block';
+                    document.getElementById('party-boss-shield-bar').style.width = '100%';
+                } else {
+                    bShieldDiv.style.display = 'none';
+                }
+
+                // メンバーUI (右側)
+                const sContainer = document.getElementById('party-status-container');
+                const mList = document.getElementById('party-battle-members-list');
+                sContainer.innerHTML = '';
+                mList.innerHTML = '';
+                
+                for(let uid in ps) {
+                    const p = ps[uid];
+                    const deadClass = p.dead ? 'dead' : '';
+                    
+                    mList.innerHTML += `<div>${p.nickname} ${p.dead?'(💀)':''}</div>`;
+
+                    let shieldHtml = p.shield > 0 ? `<div style="color:#1e90ff; font-size:12px;">🛡️ バリア: ${p.shield}</div>` : '';
+                    let effHtml = p.frozenTurns > 0 ? `<span class="effect-icon effect-freeze">氷結 (${p.frozenTurns})</span>` : '';
+                    
+                    sContainer.innerHTML += `
+                        <div class="party-member-status-box ${deadClass}">
+                            <div style="font-weight:bold; margin-bottom:5px;">${p.nickname} ${uid===userId?'(あなた)':''}</div>
+                            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:2px;">
+                                <span>HP</span> <span>${Math.floor(p.hp)} / ${p.maxHp}</span>
+                            </div>
+                            <div class="hp-bar-container" style="height:10px; margin-top:0;">
+                                <div class="hp-bar player-hp-bar" style="width: ${(p.hp/p.maxHp)*100}%"></div>
+                            </div>
+                            ${shieldHtml}
+                            <div class="status-effects" style="position:relative; right:0; top:0; margin-top:5px;">${effHtml}</div>
+                        </div>
+                    `;
+                }
+
+                // ログUI
+                const lContainer = document.getElementById('party-battle-log');
+                lContainer.innerHTML = '';
+                if(this.localState.logs) {
+                    this.localState.logs.forEach(l => {
+                        lContainer.innerHTML += `<p>${l.msg}</p>`;
+                    });
+                    lContainer.scrollTop = lContainer.scrollHeight;
+                }
+            },
+
+            finishBattle: function(result) {
+                if(!this.isActive) return;
+                this.isActive = false;
+                
+                document.getElementById('result-title').textContent = result === 'won' ? "🎉 パーティー勝利！" : "💀 パーティー敗北...";
+                document.getElementById('result-title').style.color = result === 'won' ? "#4caf50" : "#f44336";
+                
+                let desc = "";
+                let packs = 0;
+                if(result === 'won') {
+                    const eType = this.localState.enemy.type;
+                    if(eType === 'pack_easy') packs = 50;
+                    if(eType === 'pack_medium') packs = 100;
+                    if(eType === 'pack_hard') packs = 200;
+                    if(eType === 'boss_shield_niki') packs = 80;
+                    
+                    window.playerData.packs += packs;
+                    desc = `見事な連携だった！<br><br>獲得: 📦 ${packs} パック`;
+                    
+                    if(eType === 'boss_shield_niki' && Math.random() < 0.1) {
+                        desc += `<br><br><span style="color:gold;">🌟 レアカード『ウルトラシールド』をゲット！</span>`;
+                        window.playerData.inventory["og_ultra_shield"] = (window.playerData.inventory["og_ultra_shield"] || 0) + 1;
+                    }
+                    GameDataManager.saveData();
+                    AudioController.playWin();
+                } else {
+                    desc = "無念...";
+                }
+                
+                document.getElementById('result-desc').innerHTML = desc;
+                document.getElementById('battle-result-modal').classList.add('active');
+                
+                if(PartyController.isLeader) {
+                    update(ref(database, `parties/${this.partyId}`), { status: 'lobby' });
+                    remove(ref(database, `party_battles/${this.partyId}`));
+                }
+            },
+
+            leaveBattle: function() {
+                this.isActive = false;
+                if(this.unsubscribe) {
+                    off(ref(database, `party_battles/${this.partyId}`), 'value', this.unsubscribe);
+                    this.unsubscribe = null;
+                }
+                PartyController.leavePartyContext();
+                GameController.switchScreen('home-screen');
+            }
+        };
+
+        // キーボード入力リスナーの統合
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') return;
+            const key = e.key;
+            // 既存ソロバトル
+            if (window.battleState.isActive && window.battleState.activeCard && !window.battleState.playerFrozenTurns) {
+                const en = window.battleState.currentWord.en;
+                if (key.match(/^[a-zA-Z-]$/) && window.battleState.typedIndex < en.length) {
+                    BattleController.handleTyping(key);
+                }
+            }
+            // パーティーバトル
+            if (window.PartyBattleController.isActive && window.PartyBattleController.activeCard) {
+                const pState = window.PartyBattleController.localState.players[userId];
+                if(pState && !pState.dead && pState.frozenTurns === 0) {
+                    const en = window.battleState.currentWord.en;
+                    if (key.match(/^[a-zA-Z-]$/) && window.battleState.typedIndex < en.length) {
+                        window.PartyBattleController.handleTyping(key);
+                    }
+                }
+            }
         });
 
-        // 招待承認・拒否バインド[cite: 2]
-        document.getElementById('party-accept-btn').onclick = () => PartyController.acceptInvite();
-        document.getElementById('party-decline-btn').onclick = () => PartyController.declineInvite();
-
-        // 初期ロード実行
-        window.GameDataManager.loadData();
+        // 起動処理
+        window.onload = function() {
+            AudioController.init();
+            GameDataManager.loadData();
+            document.body.addEventListener('click', () => AudioController.init(), {once:true});
+        };
+        
+        // 既存空実装のモック (UI上エラーにならないように残す)
+        window.TradeController = { renderMainMenu:()=>{}, showReceiveTab:()=>{}, showNotificationTab:()=>{}, showCardSelectForOffer:()=>{}, closeSelectionModal:()=>{}, renderTradeCardSelection:()=>{} };
+        window.CraftController = { renderScreen:()=>{} };
     </script>
 </body>
 </html>
-
-```
